@@ -1,0 +1,24 @@
+[submodule "external/vim-markdown"]
+	path = external/vim-markdown
+	url = https://github.com/da-x/vim-markdown
+[submodule "external/rust.vim"]
+	path = external/rust.vim
+	url = https://github.com/da-x/rust.vim
+[submodule "external/vim-racer"]
+	path = external/vim-racer
+	url = https://github.com/racer-rust/vim-racer
+[submodule "external/vim-man"]
+	path = external/vim-man
+	url = https://github.com/vim-utils/vim-man
+[submodule "external/vim-localvimrc"]
+	path = external/vim-localvimrc
+	url = https://github.com/embear/vim-localvimrc
+[submodule "external/lh-vim-lib"]
+	path = external/lh-vim-lib
+	url = https://github.com/LucHermitte/lh-vim-lib
+[submodule "external/vim-syntax-extra"]
+	path = external/vim-syntax-extra
+	url = https://github.com/justinmk/vim-syntax-extra
+[submodule "external/vim-bufkill"]
+	path = external/vim-bufkill
+	url = https://github.com/da-x/vim-bufkill

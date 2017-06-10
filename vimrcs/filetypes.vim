@@ -62,14 +62,12 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 """"""""""""""""""""""""""""""
 " => Shell section
 """"""""""""""""""""""""""""""
-if exists('$TMUX') 
-    if has('nvim')
-        set termguicolors
-    else
-        set term=screen-256color 
-    endif
-endif
 
+" All of my terminals are fully capable - forcing VIM
+" to use true-colors on all of them here.
+
+set termguicolors
+set term=rxvt-unicode-256color
 
 """"""""""""""""""""""""""""""
 " => Twig section

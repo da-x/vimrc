@@ -11,6 +11,7 @@
 let s:vim_runtime = expand('<sfile>:p:h')."/.."
 call pathogen#infect(s:vim_runtime.'/sources_forked/{}')
 call pathogen#infect(s:vim_runtime.'/sources_non_forked/{}')
+call pathogen#infect(s:vim_runtime.'/external/{}')
 call pathogen#helptags()
 
 """"""""""""""""""""""""""""""
@@ -44,7 +45,9 @@ let g:ctrlp_working_path_mode = 0
 
 let g:ctrlp_map = '<c-f>'
 map <leader>j :CtrlP<cr>
-map <c-b> :CtrlPBuffer<cr>
+
+" We use c-c instead of c-b because we run under tmux
+map <c-c> :CtrlPBuffer<cr>
 
 let g:ctrlp_max_height = 20
 let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'

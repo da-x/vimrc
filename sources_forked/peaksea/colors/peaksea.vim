@@ -259,14 +259,24 @@ elseif &background=='dark'
   " for background=dark {{{2
   " DARK COLOR DEFINE START
 
-  hi Normal		guifg=#d0d0d0	guibg=#202020	gui=NONE
+  hi Normal		guifg=#e5e5e5	guibg=#000000	gui=NONE
   hi Comment		guifg=#d0d090	guibg=NONE	gui=NONE
   hi Constant		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi Number		guifg=#e0c060	guibg=NONE	gui=NONE
   hi Identifier		guifg=#f0c0f0	guibg=NONE	gui=NONE
   hi Statement		guifg=#c0d8f8	guibg=NONE	gui=NONE
-  hi PreProc		guifg=#60f080	guibg=NONE	gui=NONE
+  hi PreProc		guifg=#ffff00 	guibg=NONE	gui=NONE
+  hi cDefine		guifg=#ffcc00   guibg=NONE  gui=NONE
+  hi cIncluded		guifg=#00ffff   guibg=NONE  gui=NONE
+  hi cString		guifg=#00ffff   guibg=NONE  gui=NONE
+  hi cFormat		guifg=#00c0ff   guibg=NONE  gui=NONE
+  hi cCppParen		guifg=#a0ffa0 	guibg=NONE	gui=NONE
+  hi cStructure  	guifg=#ffff00 	guibg=NONE	gui=NONE
+  hi cType       	guifg=#50dd50 	guibg=NONE	gui=NONE
   hi Type		guifg=#b0d0f0	guibg=NONE	gui=NONE
+  hi cStorageClass      guifg=#ffff00 	guibg=NONE	gui=NONE
+  hi cRepeat            guifg=#ffff00 	guibg=NONE	gui=NONE
+  hi cConditional       guifg=#ffff00 	guibg=NONE	gui=NONE
   hi Special		guifg=#e0c060	guibg=NONE	gui=NONE
   hi Error		guifg=#f08060	guibg=NONE	gui=NONE
   hi Todo		guifg=#800000	guibg=#d0d090	gui=NONE
@@ -276,19 +286,19 @@ elseif &background=='dark'
   " NOTE THIS IS IN THE COOL SECTION
   " hi CursorIM		guifg=#000000	guibg=#f000f0	gui=NONE
   hi StatusLine		guifg=#000000	guibg=#a6caf0	gui=NONE
-  hi LineNr		guifg=#b0b0b0	guibg=NONE	gui=NONE
+  hi LineNr		guifg=#505050	guibg=NONE	gui=NONE
   hi Question		guifg=#000000	guibg=#d0d090	gui=NONE
   hi ModeMsg		guifg=fg	guibg=#000080	gui=NONE
   hi VisualNOS		guifg=fg	guibg=#000080	gui=NONE
   hi SpecialKey		guifg=#b0d0f0	guibg=NONE	gui=NONE
-  hi NonText		guifg=#202020	guibg=#202020	gui=NONE
+  hi NonText		guifg=#000000	guibg=#000000	gui=NONE
   hi Directory		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi ErrorMsg		guifg=#d0d090	guibg=#800000	gui=NONE
   hi MoreMsg		guifg=#c0e080	guibg=NONE	gui=NONE
   hi Title		guifg=#f0c0f0	guibg=NONE	gui=NONE
   hi WarningMsg		guifg=#f08060	guibg=NONE	gui=NONE
   hi WildMenu		guifg=#000000	guibg=#d0d090	gui=NONE
-  hi Folded		guifg=#aaaaaa	guibg=#333333	gui=NONE
+  hi Folded		guifg=#aaaaaa	guibg=#002255	gui=NONE
   hi FoldColumn		guifg=#202020	guibg=NONE	gui=NONE
   hi DiffAdd		guifg=NONE	guibg=#000080	gui=NONE
   hi DiffChange		guifg=NONE	guibg=#800080	gui=NONE
