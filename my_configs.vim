@@ -2,6 +2,11 @@ set nocompatible
 set number
 set shortmess+=at
 
+" Make keystores the most predictable being time-independent:
+
+set notimeout
+set nottimeout
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Windowing-related
 
@@ -30,6 +35,7 @@ map <ESC>[1;5F <C-End>
 map <ESC>[1;5H <C-Home>
 map <ESC>[Z <S-tab>
 map <ESC>h <A-h>
+map <ESC>a <A-a>
 map <ESC>[5;30001~ <S-CR>
 map <ESC>[5;30004~ <C-S-s>
 map <ESC>[1;5Q <C-F2>
@@ -51,6 +57,7 @@ map! <ESC>[1;5C <C-Right>
 map! <ESC>[1;5F <C-End>
 map! <ESC>[1;5H <C-Home>
 map! <ESC>h <A-h>
+map! <ESC>a <A-a>
 map! <ESC>[5;30001~ <S-CR>
 map! <ESC>[5;30004~ <C-S-s>
 map! <ESC>[1;5Q <C-F2>
@@ -106,15 +113,23 @@ noremap <silent> <C-J> O<Esc>j
 " Exit insert mode
 inoremap jK x<C-c>"_x
 
-" Remap <Enter> to something more useful than 'line down'
-nmap <CR> o
+" Remap Ctrl-D to single line removal
+map <C-d> "_dd
+
+" Single character insertion
+noremap <silent> <A-a> "=nr2char(getchar())<cr>P
 
 " Fixes it up for command mode:
+function! MyEnterRemap()
+  if &buftype ==# ''  &&  &filetype != 'qf'
+    nmap <buffer> <CR> o
+  endif
+endfunction
+
 augroup myEnterRebinding
   autocmd!
-  nmap <S-CR> i<CR>
-  autocmd CmdwinEnter * nnoremap <CR> <CR>
-  autocmd BufReadPost quickfix nnoremap <CR> <CR>
+  autocmd FileType * call MyEnterRemap()
+  autocmd BufNewFile * call MyEnterRemap()
 augroup END
 
 " By file type
@@ -125,7 +140,7 @@ endfunction
 
 function! MyVimEditSettings()
   setlocal ts=1 sw=2 expandtab
-  nnoremap <buffer> <C-x>e call VimEvalLine()
+  noremap <buffer> <C-e> :call VimEvalLine()<cr>
 endfunction
 
 augroup myVimEditSettings
@@ -159,6 +174,9 @@ function! CleverTab()
   endif
 endfunction
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Completion
+
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
 inoremap <C-f> <C-x><C-f>
@@ -176,6 +194,9 @@ nmap K <Plug>(Man)
 nmap <C-s> /
 nmap <C-S-s> ?
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Function keys
+
 nmap <F2> <C-c>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
@@ -190,6 +211,7 @@ map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
 
 " Navigate location lists
+
 nmap <F4> :lnext<cr>
 map! <F4> <Nop>
 imap <F4> <C-c><F4>
@@ -200,6 +222,15 @@ nmap <C-F4> :lfirst<cr>
 map! <C-F4> <Nop>
 imap <C-F4> <C-c><C-F4>
 
+nmap <F5> :cnext<cr>
+map! <F5> <Nop>
+imap <F5> <C-c><F5>
+nmap <M-F5> :cprev<cr>
+map! <M-F5> <Nop>
+imap <M-F5> <C-c><M-F5>
+nmap <C-F5> :cfirst<cr>
+map! <C-F5> <Nop>
+imap <C-F5> <C-c><C-F5>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
 
@@ -295,7 +326,7 @@ let g:local_vimrc = ['.git/vimrc_local.vim']
 " File is not checked-in on purpose:
 
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
-    source ~/.vim_runtime/project-specific.vim
+  source ~/.vim_runtime/project-specific.vim
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -304,14 +335,14 @@ endif
 let g:gitgutter_highlight_lines = 0
 
 func! GitGrep(...)
-	let save = &grepprg
-	set grepprg=git\ grep\ -n\ $*
-	let s = 'grep'
-	for i in a:000
-		let s = s . ' ' . i
-	endfor
-	exe s
-	let &grepprg = save
+  let save = &grepprg
+  set grepprg=git\ grep\ -n\ $*
+  let s = 'grep'
+  for i in a:000
+    let s = s . ' ' . i
+  endfor
+  exe s
+  let &grepprg = save
 endfun
 
 command! -nargs=? G call GitGrep(<f-args>)
@@ -340,15 +371,15 @@ func! MyGitRebaseTodoHook(...)
   nmap <buffer> <M-PageDown> <M-j>
 endfun
 
-augroup myEnterRebinding
+augroup myGitRebaseTodoRebinding
   autocmd!
   autocmd! BufRead git-rebase-todo call MyGitRebaseTodoHook()
 augroup END
 
 func! Gamd()
-   silent exec "Gcommit --amend -a --no-edit"
-   echo "File saved, all added and commit amended"
-   silent w
+  silent w
+  silent exec "Gcommit --amend -a --no-edit"
+  echo "File saved, all added and commit amended"
 endfun
 
 command! -bar Gamd call Gamd()
@@ -363,11 +394,11 @@ nnoremap <silent> <C-x>f :NERDTreeFind<cr>
 nmap <esc>x <Nop>
 
 " Saving from anywhere
-inoremap <C-x>s <C-c>:w<cr>
-inoremap <C-x><C-s> <C-c>:w<cr>
-nnoremap <C-x>s :w<cr>
-nnoremap <C-x><C-s> :w<cr>
-inoremap <C-x>q <C-c>:q<cr>
-inoremap <C-x><C-q> <C-c>:q<cr>
-nnoremap <C-x>q :q<cr>
-nnoremap <C-x><C-q> :q<cr>
+noremap <C-x>s <C-c>:w<cr>
+noremap <C-x><C-s> <C-c>:w<cr>
+noremap! <C-x>s <C-c>:w<cr>
+noremap! <C-x><C-s> <C-c>:w<cr>
+noremap <C-x>q <C-c>:q<cr>
+noremap <C-x><C-q> <C-c>:q<cr>
+noremap! <C-x>q <C-c>:q<cr>
+noremap! <C-x><C-q> <C-c>:q<cr>

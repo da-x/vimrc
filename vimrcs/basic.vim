@@ -197,7 +197,7 @@ set softtabstop=8
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=8
+set shiftwidth=4
 set tabstop=8
 
 " Linebreak on 500 characters
@@ -252,8 +252,11 @@ map <leader>t<leader> :tabnext
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
-au TabLeave * let g:lasttab = tabpagenr()
 
+augroup DotfilesBasicTabLeave
+  au!
+  au TabLeave * let g:lasttab = tabpagenr()
+augroup END
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -270,7 +273,10 @@ catch
 endtry
 
 " Return to last edit position when opening files (You want this!)
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup DotfilesBasicLastEdit
+  au!
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
 
 
 """"""""""""""""""""""""""""""
@@ -312,7 +318,10 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
+  augroup DotfilesBasicBufWritePre
+    au!
     autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+  augroup END
 endif
 
 
