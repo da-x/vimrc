@@ -37,3 +37,9 @@
 [submodule "external/haskell-vim"]
 	path = external/haskell-vim
 	url = https://github.com/neovimhaskell/haskell-vim
+[submodule "external/vim-grepper"]
+	path = external/vim-grepper
+	url = https://github.com/mhinz/vim-grepper
+[submodule "external/vim-rooter"]
+	path = external/vim-rooter
+	url = https://github.com/airblade/vim-rooter.git

@@ -37,6 +37,9 @@ map <ESC>[Z <S-tab>
 map <ESC>h <A-h>
 map <ESC>a <A-a>
 map <ESC>[5;30001~ <S-CR>
+map <ESC>[5;30002~ <A-CR>
+map <ESC>[5;30003~ <C-CR>
+map <ESC>[5;30005~ <C-A-CR>
 map <ESC>[5;30004~ <C-S-s>
 map <ESC>[1;5Q <C-F2>
 map <ESC>[1;5R <C-F3>
@@ -59,6 +62,9 @@ map! <ESC>[1;5H <C-Home>
 map! <ESC>h <A-h>
 map! <ESC>a <A-a>
 map! <ESC>[5;30001~ <S-CR>
+map! <ESC>[5;30002~ <A-CR>
+map! <ESC>[5;30003~ <C-CR>
+map! <ESC>[5;30005~ <C-A-CR>
 map! <ESC>[5;30004~ <C-S-s>
 map! <ESC>[1;5Q <C-F2>
 map! <ESC>[1;5R <C-F3>
@@ -82,19 +88,34 @@ vnoremap <M-j> :m '>+1<CR>gv=gv
 vnoremap <M-k> :m '<-2<CR>gv=gv
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Movement
+
 " Faster moving of the cursor using Ctrl and arrows
 
-nnoremap <silent> <C-Up> {
+nnoremap <silent> <C-Up>   {
 nnoremap <silent> <C-Down> }
-inoremap <silent> <C-Up> <C-c>{i
+inoremap <silent> <C-Up>   <C-c>{i
 inoremap <silent> <C-Down> <C-c>}i
-vnoremap <silent> <C-Up> {
+vnoremap <silent> <C-Up>   {
 vnoremap <silent> <C-Down> }
 
-" Got used to this from other environments (go to start of file / end of file):
+" Got used to this from other environments (go to start of file / end of file)
 
 nmap <silent> <c-home> 1G
-nmap <silent> <c-end> G
+nmap <silent> <c-end>  G
+
+" When navigating on line wraps with arrows, be more visual about it
+
+nmap <Down> gj
+nmap <Up>   gk
+
+" Arrows are special and break out of operator-pending mode. Can still use
+" hjkl in operator mode.
+
+omap <Down>  <esc><Down>
+omap <Up>    <esc><Up>
+omap <Right> <esc><Right>
+omap <Left>  <esc><Left>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Editing
@@ -112,6 +133,26 @@ noremap <silent> <C-J> O<Esc>j
 
 " Exit insert mode
 inoremap jK x<C-c>"_x
+
+" Operator pending remaps ( http://learnvimscriptthehardway.stevelosh.com/chapters/15.html )
+onoremap ( i(
+onoremap ' i'
+onoremap " i"
+onoremap < i<
+onoremap [ i[
+onoremap { i{
+onoremap p( :<c-u>normal! F(vi(<cr>
+onoremap p' :<c-u>normal! F'vi'<cr>
+onoremap p" :<c-u>normal! F"vi"<cr>
+onoremap p< :<c-u>normal! F<vi<<cr>
+onoremap p[ :<c-u>normal! F[vi<<cr>
+onoremap p{ :<c-u>normal! F{vi{<cr>
+onoremap n( :<c-u>normal! f(vi(<cr>
+onoremap n' :<c-u>normal! f'vi'<cr>
+onoremap n" :<c-u>normal! f"vi"<cr>
+onoremap n< :<c-u>normal! f<vi<<cr>
+onoremap n[ :<c-u>normal! f[vi<<cr>
+onoremap n{ :<c-u>normal! f{vi{<cr>
 
 " Remap Ctrl-D to single line removal
 map <C-d> "_dd
@@ -231,6 +272,7 @@ imap <M-F5> <C-c><M-F5>
 nmap <C-F5> :cfirst<cr>
 map! <C-F5> <Nop>
 imap <C-F5> <C-c><C-F5>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
 
@@ -285,6 +327,14 @@ au InsertLeave * hi Normal guibg=#000000
 inoremap <C-c> <C-c>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CTRL P open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
+
+let g:ctrlp_prompt_mappings = {
+      \ 'AcceptSelection("h")': ['<c-x>', '<c-s>'],
+      \ 'AcceptSelection("t")': ['<c-t>', '<c-cr>','<s-cr>'],
+      \ }
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Markdown
 
 let g:vim_markdown_no_default_key_mappings = 1
@@ -307,6 +357,7 @@ au FileType rust nmap <M-,> <Plug>(rust-def)
 " picks up on a per-project build system.
 
 let g:syntastic_c_checkers = ['dax']
+let g:syntastic_cpp_checkers = ['dax']
 let g:linuxsty_patterns = ['_only_used_per_tree']
 
 func! Indent4Spaces(...)
@@ -328,6 +379,24 @@ let g:local_vimrc = ['.git/vimrc_local.vim']
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
   source ~/.vim_runtime/project-specific.vim
 endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-rooter
+
+let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'Makefile']
+let g:rooter_change_directory_for_non_project_files = 'current'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Grepper
+
+nmap gs <plug>(GrepperOperator)
+xmap gs <plug>(GrepperOperator)
+nmap <F9> :Grepper -noquickfix -noprompt -cword<cr>
+nmap <C-F9> :Grepper -noquickfix -cword<cr>
+
+let g:grepper = {
+        \ 'tools': ['git', 'grep'],
+        \ }
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Git-related stuff
@@ -394,6 +463,7 @@ nnoremap <silent> <C-x>f :NERDTreeFind<cr>
 nmap <esc>x <Nop>
 
 " Saving from anywhere
+
 noremap <C-x>s <C-c>:w<cr>
 noremap <C-x><C-s> <C-c>:w<cr>
 noremap! <C-x>s <C-c>:w<cr>
