@@ -43,3 +43,12 @@
 [submodule "external/vim-rooter"]
 	path = external/vim-rooter
 	url = https://github.com/airblade/vim-rooter.git
+[submodule "external/bufexplorer"]
+	path = external/bufexplorer
+	url = https://github.com/jlanzarotta/bufexplorer.git
+[submodule "external/vim-qf"]
+	path = external/vim-qf
+	url = https://github.com/romainl/vim-qf.git
+[submodule "external/vim-signature"]
+	path = external/vim-signature
+	url = https://github.com/kshenoy/vim-signature

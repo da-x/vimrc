@@ -16,82 +16,99 @@ map <tab><tab> <c-w><c-w>
 map <tab>\ <c-w>v
 map <tab>- <c-w>s
 
+" Thanks https://github.com/assaflavie
+
+nnoremap <silent> -        :resize -2<CR>
+nnoremap <silent> =        :resize +2<CR>
+nnoremap <silent> <Bar>    :vert resize +2<CR>
+nnoremap <silent> <Bslash> :vert resize -2<CR>
+
+function! CtrlBar()
+  exec "vsplit"
+endfunction
+
+function! CtrlMinus()
+  exec "split"
+endfunction
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Terminal fixups
 
+" Prevent Ctrl-S terminal suspend function
 silent exec "!stty -ixon"
 
+" Various missing ansi code mappings.
 " The ANSI codes for Shift-Enter were specially invented.
+map <Char-0x1c> :call CtrlBar()<cr>
+map <Char-0x1f> :call CtrlMinus()<cr>
 
-map  <C-x>
-map  <C-s>
-map j <M-j>
-map k <M-k>
-map <ESC> <C-w>v
-map <ESC> <C-w>s
-map <ESC>[1;5C <C-Right>
-map <ESC>[1;5D <C-Left>
-map <ESC>[1;5F <C-End>
-map <ESC>[1;5H <C-Home>
-map <ESC>[Z <S-tab>
-map <ESC>h <A-h>
-map <ESC>a <A-a>
-map <ESC>[5;30001~ <S-CR>
-map <ESC>[5;30002~ <A-CR>
-map <ESC>[5;30003~ <C-CR>
-map <ESC>[5;30005~ <C-A-CR>
-map <ESC>[5;30004~ <C-S-s>
+map <ESC><Char-0x10> <C-A-p>
+map <ESC>[11;3~ <A-F1>
+map <ESC>[11;5~ <C-F1>
+map <ESC>[11;6~ <C-S-F1>
+map <ESC>[12;3~ <A-F2>
+map <ESC>[12;5~ <C-F2>
+map <ESC>[12;6~ <C-S-F2>
+map <ESC>[13;3~ <A-F3>
+map <ESC>[13;5~ <C-F3>
+map <ESC>[13;6~ <C-S-F3>
+map <ESC>[14;3~ <A-F4>
+map <ESC>[14;5~ <C-F4>
+map <ESC>[14;6~ <C-S-F4>
+map <ESC>[1;5P <C-F1>
 map <ESC>[1;5Q <C-F2>
 map <ESC>[1;5R <C-F3>
 map <ESC>[1;5S <C-F4>
-map <ESC>[1;3S <M-F4>
-map <ESC>[5;3~ <M-PageUp>
-map <ESC>[6;3~ <M-PageDown>
-
-map!  <C-x>
-map!  <C-s>
-map! j <M-j>
-map! k <M-k>
-map! , <M-,>
-map! <ESC> <C-w>v
-map! <ESC> <C-w>s
-map! <ESC>[0;5D <C-Left>
-map! <ESC>[1;5C <C-Right>
-map! <ESC>[1;5F <C-End>
-map! <ESC>[1;5H <C-Home>
-map! <ESC>h <A-h>
-map! <ESC>a <A-a>
+map <ESC>[3;5~ <C-Delete>
+map <ESC>[5;30001~ <S-CR>
+map <ESC>[5;30002~ <A-CR>
+map <ESC>[5;30003~ <C-CR>
+map <ESC>[5;30004~ <C-S-s>
+map <ESC>[5;30005~ <C-A-CR>
+map <ESC>[Z <S-tab>
+map <ESC>a <A-a>
+map <ESC>h <A-h>
+map <ESC>j <M-j>
+map <ESC>k <M-k>
+map <ESC>p <A-p>
+map <ESC>t <A-t>
+map! <ESC><Char-0x10> <C-A-p>
+map! <ESC>[11;3~ <A-F1>
+map! <ESC>[11;5~ <C-F1>
+map! <ESC>[11;6~ <C-S-F1>
+map! <ESC>[12;3~ <A-F2>
+map! <ESC>[12;5~ <C-F2>
+map! <ESC>[12;6~ <C-S-F2>
+map! <ESC>[13;3~ <A-F3>
+map! <ESC>[13;5~ <C-F3>
+map! <ESC>[13;6~ <C-S-F3>
+map! <ESC>[14;3~ <A-F4>
+map! <ESC>[14;5~ <C-F4>
+map! <ESC>[14;6~ <C-S-F4>
+map! <ESC>[1;5P <C-F1>
+map! <ESC>[1;5Q <C-F2>
+map! <ESC>[1;5R <C-F3>
+map! <ESC>[1;5S <C-F4>
+map! <ESC>[3;5~ <C-Delete>
 map! <ESC>[5;30001~ <S-CR>
 map! <ESC>[5;30002~ <A-CR>
 map! <ESC>[5;30003~ <C-CR>
 map! <ESC>[5;30005~ <C-A-CR>
-map! <ESC>[5;30004~ <C-S-s>
-map! <ESC>[1;5Q <C-F2>
-map! <ESC>[1;5R <C-F3>
-map! <ESC>[1;5S <C-F4>
-map! <ESC>[1;3S <M-F4>
-map! <ESC>[5;3~ <M-PageUp>
-map! <ESC>[6;3~ <M-PageDown>
-
+map! <ESC>j <M-j>
+map! <ESC>k <M-k>
+map! <ESC>p <A-p>
+map! <ESC>t <A-t>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Give indication in which mode we are at, using a cursor shape
 
-map <silent> <F8>   :Explore<CR>
-map <silent> <S-F8> :sp +Explore<CR>
-
-" Moving text around, extremely handy when re-ordering code manually
-
-nnoremap <M-j> :m .+1<CR>==
-nnoremap <M-k> :m .-2<CR>==
-inoremap <M-j> <Esc>:m .+1<CR>==gi
-inoremap <M-k> <Esc>:m .-2<CR>==gi
-vnoremap <M-j> :m '>+1<CR>gv=gv
-vnoremap <M-k> :m '<-2<CR>gv=gv
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Movement
 
 " Faster moving of the cursor using Ctrl and arrows
-
 nnoremap <silent> <C-Up>   {
 nnoremap <silent> <C-Down> }
 inoremap <silent> <C-Up>   <C-c>{i
@@ -100,18 +117,15 @@ vnoremap <silent> <C-Up>   {
 vnoremap <silent> <C-Down> }
 
 " Got used to this from other environments (go to start of file / end of file)
-
 nmap <silent> <c-home> 1G
 nmap <silent> <c-end>  G
 
 " When navigating on line wraps with arrows, be more visual about it
-
 nmap <Down> gj
 nmap <Up>   gk
 
 " Arrows are special and break out of operator-pending mode. Can still use
 " hjkl in operator mode.
-
 omap <Down>  <esc><Down>
 omap <Up>    <esc><Up>
 omap <Right> <esc><Right>
@@ -120,8 +134,17 @@ omap <Left>  <esc><Left>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Editing
 
+" Moving text around, adjusting for indentation.
+" Extremely handy when re-ordering code manually.
+nnoremap <M-j> :m .+1<CR>==
+nnoremap <M-k> :m .-2<CR>==
+inoremap <M-j> <Esc>:m .+1<CR>==gi
+inoremap <M-k> <Esc>:m .-2<CR>==gi
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
+
 " Make Backspace behave like it normally does, in normal mode
-nnoremap <BS> X
+nnoremap <BS> "_X
 
 " Search replace the highlight marking, either in the entire buffer or in the
 " currently selected region in visual mode.
@@ -133,6 +156,102 @@ noremap <silent> <C-J> O<Esc>j
 
 " Exit insert mode
 inoremap jK x<C-c>"_x
+map! <C-Delete> <C-c>
+
+"
+" Saner yanking and pasting behavior using <A-p> and <C-A-p>:
+"
+" * When yanking, put the cursor at the cursor right after the yanked region,
+"   whether it is multiple lines or not.
+" * When pasting, put the cursor either at the beginning of the pasted text or
+"   after its end.
+"
+
+function! NextCharacter()
+  let l:line = getcurpos()[1]
+  let l:col = getcurpos()[2]
+  let len = strlen(getline('.'))
+  if len > l:col
+     call cursor(l:line, l:col + 1)
+  else
+     call cursor(l:line+1, 1)
+  endif
+endfunction
+
+" function! PrevCharacter()
+"   let l:line = getcurpos()[1]
+"   let l:col = getcurpos()[2]
+"   let len = strlen(getline(l:line - 1))
+"   if l:col == 1
+"      call cursor(l:line - 1, len)
+"   else
+"      call cursor(l:line, l:col - 1)
+"   endif
+" endfunction
+
+function! PasteBeforeHack()
+  let l:line = getcurpos()[1]
+  let l:col = getcurpos()[2]
+  execute "normal! P"
+  call cursor(l:line, l:col)
+endfunction
+
+vnoremap <silent> y y`]:call NextCharacter()<cr>
+noremap <silent> <A-p> :call PasteBeforeHack()<cr>
+inoremap <silent> <C-A-p> <C-R>"
+inoremap <silent> <A-p> <nop>
+noremap <C-A-p> gP
+
+"
+" Move either the current line or the selected text to the place where
+" there's a marker, moving keeping the marker down after the new place
+" of the text, while keeping the cursor where the text was. This works
+" whether the marker is global or local, so it can be used between
+" buffers freely.
+"
+" The function is useful when moving scattered pieces of text from one
+" file to another (imagine splitting a C header file, for example).
+"
+function! MoveTextToMarkAndStay(marker) range
+  let l:markx = getpos("'".a:marker)
+  if l:markx[1] ==# 0
+    echo "No marker set"
+    return
+  endif
+  let l:curx = getcurpos()
+  let l:cur = [bufnr("%"), l:curx[1], l:curx[2], l:curx[3], l:curx[4]]
+  if l:markx[0] ==# 0
+    let l:mark = [bufnr("%"), l:markx[1], l:markx[2], l:markx[3]]
+  else
+    let l:mark = l:markx
+  endif
+  if l:mark[0] ==# l:cur[0]
+    " Same buffer
+    let l:line = l:cur[1]
+    let l:col = l:cur[2]
+    let l:mark_line = line("'".a:marker)
+    if a:lastline != a:firstline
+      execute "'<,'>move '".a:marker."-1"
+    else
+      execute "move '".a:marker."-1"
+    endif
+  else
+    " Different buffer
+    let l:mark = [l:markx[0], l:markx[1] - 1, l:markx[2], l:markx[3]]
+    if a:lastline != a:firstline
+      execute "'<,'>delete"
+    else
+      execute "delete"
+    endif
+    execute "buffer " . l:mark[0]
+    call setpos(".", l:mark)
+    execute "put"
+    execute "buffer " . l:cur[0]
+  endif
+  call setpos(".", l:cur)
+endfunction
+
+command! -range -nargs=* Mtmas :<line1>,<line2>call MoveTextToMarkAndStay(<f-args>)
 
 " Operator pending remaps ( http://learnvimscriptthehardway.stevelosh.com/chapters/15.html )
 onoremap ( i(
@@ -154,29 +273,45 @@ onoremap n< :<c-u>normal! f<vi<<cr>
 onoremap n[ :<c-u>normal! f[vi<<cr>
 onoremap n{ :<c-u>normal! f{vi{<cr>
 
-" Remap Ctrl-D to single line removal
+" Remap Ctrl-D to a single line removal, not affecting the register
 map <C-d> "_dd
 
 " Single character insertion
 noremap <silent> <A-a> "=nr2char(getchar())<cr>P
 
-" Fixes it up for command mode:
-function! MyEnterRemap()
+imap <S-CR> <cr>
+
+function! SetPerBufferActions()
+  " A more useful biding for Enter in normal mode
   if &buftype ==# ''  &&  &filetype != 'qf'
     nmap <buffer> <CR> o
+    nmap <buffer> <S-CR> O
+  endif
+
+  " Prevent certain actions in various buffers
+  if &filetype ==# 'qf' || &filetype ==# 'nerdtree'
+    map <buffer> <leader>o <nop>
+    map <buffer> <C-F2> <nop>
+  endif
+  if &filetype ==# 'bufexplorer'
+    map <buffer> <tab>q <nop>
+  endif
+  if &filetype ==# 'nerdtree'
+    map <buffer> <tab>o <nop>
   endif
 endfunction
 
-augroup myEnterRebinding
+augroup myPerBufferActions
   autocmd!
-  autocmd FileType * call MyEnterRemap()
-  autocmd BufNewFile * call MyEnterRemap()
+  autocmd FileType * call SetPerBufferActions()
+  autocmd BufNewFile * call SetPerBufferActions()
 augroup END
 
-" By file type
+" Some settings by file type
 function! VimEvalLine()
   execute getline(".")
-  echo 'Line evaluted'
+  echo 'Line evaluated'
+  execute "normal! gj"
 endfunction
 
 function! MyVimEditSettings()
@@ -207,6 +342,26 @@ function! TrimWhiteSpace()
   %s/\s\+$//e
 endfunction
 
+" Search for selected text, forwards or backwards.
+" http://vim.wikia.com/wiki/Search_for_visually_selected_text
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+vmap <A-t> #*
+imap <A-t> <C-c>#*
+nmap <A-t> #*
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Invoking completions
+
 function! CleverTab()
   if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
     return "\<Tab>"
@@ -214,9 +369,6 @@ function! CleverTab()
     return "\<C-N>"
   endif
 endfunction
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Completion
 
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
@@ -226,18 +378,24 @@ inoremap <C-l> <C-x><C-l>
 inoremap <C-]> <C-x><C-]>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Misc
+" Modern-like selections
 
-" Look for a man page
-nmap K <Plug>(Man)
-
-" Search
-nmap <C-s> /
-nmap <C-S-s> ?
+nmap <S-Up> v<Up>
+nmap <S-Down> v<Down>
+nmap <S-Left> v<Left>
+nmap <S-Right> v<Right>
+nmap <S-Home> v<Home>
+nmap <S-End> v<End>
+vmap <S-Up> <Up>
+vmap <S-Down> <Down>
+vmap <S-Left> <Left>
+vmap <S-Right> <Right>
+vmap <S-End> <End>
+vmap <S-Home> <Home>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Function keys
 
+" Various mappings for function keys
 nmap <F2> <C-c>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
@@ -252,7 +410,6 @@ map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
 
 " Navigate location lists
-
 nmap <F4> :lnext<cr>
 map! <F4> <Nop>
 imap <F4> <C-c><F4>
@@ -263,6 +420,7 @@ nmap <C-F4> :lfirst<cr>
 map! <C-F4> <Nop>
 imap <C-F4> <C-c><C-F4>
 
+" Navigate the quickfix list
 nmap <F5> :cnext<cr>
 map! <F5> <Nop>
 imap <F5> <C-c><F5>
@@ -316,15 +474,6 @@ function! s:ToggleWhitespaceMatch(mode)
     let w:whitespace_match_number =  matchadd('ExtraWhitespace', pattern)
   endif
 endfunction
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Give indication in which mode we are at
-
-au InsertEnter * hi Normal guibg=#002000
-au InsertLeave * hi Normal guibg=#000000
-
-" Fix it for C-c, which does not run the hooks above
-inoremap <C-c> <C-c>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CTRL P open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
@@ -403,19 +552,6 @@ let g:grepper = {
 
 let g:gitgutter_highlight_lines = 0
 
-func! GitGrep(...)
-  let save = &grepprg
-  set grepprg=git\ grep\ -n\ $*
-  let s = 'grep'
-  for i in a:000
-    let s = s . ' ' . i
-  endfor
-  exe s
-  let &grepprg = save
-endfun
-
-command! -nargs=? G call GitGrep(<f-args>)
-
 nmap <leader>hu :GitGutterUndoHunk<cr>
 nnoremap <C-h><Delete> :GitGutterUndoHunk<cr>:w<cr>
 nmap <C-h><Down> <Plug>GitGutterNextHunk
@@ -453,16 +589,16 @@ endfun
 
 command! -bar Gamd call Gamd()
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Emacs migration path:
 
-unmap <C-x>
 nnoremap <c-z> :undo<cr>
 inoremap <c-z> <ESC>:undo<cr>i
 nnoremap <silent> <C-x>f :NERDTreeFind<cr>
 nmap <esc>x <Nop>
 
-" Saving from anywhere
+" Saving or quiting from anywhere
 
 noremap <C-x>s <C-c>:w<cr>
 noremap <C-x><C-s> <C-c>:w<cr>
@@ -472,3 +608,23 @@ noremap <C-x>q <C-c>:q<cr>
 noremap <C-x><C-q> <C-c>:q<cr>
 noremap! <C-x>q <C-c>:q<cr>
 noremap! <C-x><C-q> <C-c>:q<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Misc
+
+let g:qf_auto_resize = 0
+let g:qf_window_bottom = 0
+let g:qf_mapping_ack_style = 1
+
+map <silent> <F8>   :Explore<CR>
+map <silent> <S-F8> :sp +Explore<CR>
+
+" Look for a man page
+map <C-F1> <Plug>(Man)
+
+" Search
+nmap <C-s> /
+nmap <C-S-s> ?
+
+" Goodbye!
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
