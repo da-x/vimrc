@@ -52,3 +52,9 @@
 [submodule "external/vim-signature"]
 	path = external/vim-signature
 	url = https://github.com/kshenoy/vim-signature
+[submodule "external/vim-css-color"]
+	path = external/vim-css-color
+	url = https://github.com/da-x/vim-css-color
+[submodule "external/vim-easy-align"]
+	path = external/vim-easy-align
+	url = https://github.com/junegunn/vim-easy-align

@@ -52,11 +52,14 @@ filetype indent on
 
 " Set to auto read when a file is changed from the outside
 set autoread
+au CursorHold * checktime
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
+map <Space> <leader>
+set showcmd
 
 " Fast saving
 nmap <leader>w :w!<cr>
@@ -221,8 +224,6 @@ vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <space> V
-map <c-space> v
 
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>

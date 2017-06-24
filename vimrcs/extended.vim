@@ -41,6 +41,8 @@ map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
 map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ea :e! ~/.config/alacritty/alacritty.yml<cr>
 map <leader>ex :e! ~/.Xdefaults<cr>
+map <leader>ew :CtrlP ~/dkr<cr>
+map <leader>eW :edit ~/dkr/
 
 autocmd! bufwritepost ~/.vim_runtime/my_configs.vim source ~/.vim_runtime/my_configs.vim
 

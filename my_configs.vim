@@ -65,6 +65,7 @@ map <ESC>[5;30002~ <A-CR>
 map <ESC>[5;30003~ <C-CR>
 map <ESC>[5;30004~ <C-S-s>
 map <ESC>[5;30005~ <C-A-CR>
+map <ESC>[5;30014~ <C-Space>
 map <ESC>[Z <S-tab>
 map <ESC>a <A-a>
 map <ESC>h <A-h>
@@ -94,6 +95,7 @@ map! <ESC>[5;30001~ <S-CR>
 map! <ESC>[5;30002~ <A-CR>
 map! <ESC>[5;30003~ <C-CR>
 map! <ESC>[5;30005~ <C-A-CR>
+map! <ESC>[5;30014~ <C-Space>
 map! <ESC>j <M-j>
 map! <ESC>k <M-k>
 map! <ESC>p <A-p>
@@ -157,6 +159,7 @@ noremap <silent> <C-J> O<Esc>j
 " Exit insert mode
 inoremap jK x<C-c>"_x
 map! <C-Delete> <C-c>
+map <C-Delete> <Nop>
 
 "
 " Saner yanking and pasting behavior using <A-p> and <C-A-p>:
@@ -324,6 +327,11 @@ augroup myVimEditSettings
   autocmd Filetype vim call MyVimEditSettings()
 augroup END
 
+augroup myMarkdownEditSettings
+  autocmd!
+  autocmd Filetype markdown map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+augroup END
+
 augroup myHaskellEditSettings
   autocmd!
   autocmd FileType haskell setlocal smartcase
@@ -359,6 +367,17 @@ vmap <A-t> #*
 imap <A-t> <C-c>#*
 nmap <A-t> #*
 
+function! DuplicateLine()
+  " And keep in the same column
+  let l:prevpos = getcurpos()
+  execute "t."
+  let l:curpos = getcurpos()
+  let l:curpos_prev_col = [l:curpos[0], l:curpos[1], l:prevpos[2], l:curpos[3]]
+  call setpos(".", l:curpos_prev_col)
+endfunction
+
+nmap <leader>d :call DuplicateLine()<cr>
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Invoking completions
 
@@ -392,6 +411,9 @@ vmap <S-Left> <Left>
 vmap <S-Right> <Right>
 vmap <S-End> <End>
 vmap <S-Home> <Home>
+
+nmap <C-Space> V
+vmap <Cr> y
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
