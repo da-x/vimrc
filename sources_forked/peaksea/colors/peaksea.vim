@@ -609,6 +609,7 @@ hi link		MyTagListTagScope	Constant
 hi TabLineFill guifg=#9098a0 guibg=#111111
 hi TabLine guifg=black guibg=#888888
 hi TabLineSel guifg=white guibg=#202020 gui=bold
+hi QuickFixLine guifg=white guibg=#503030 gui=bold
 
 " COLOR LINKS DEFINE END
 

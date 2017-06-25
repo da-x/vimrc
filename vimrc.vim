@@ -1,48 +1,104 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Maintainer:
-"       Amir Salihefendic
-"       http://amix.dk - amix@amix.dk
-"
-" Version:
-"       6.0 - 01/04/17 14:24:34
-"
-" Blog_post:
-"       http://amix.dk/blog/post/19691#The-ultimate-Vim-configuration-on-Github
-"
-" Awesome_version:
-"       Get this config, nice color schemes and lots of plugins!
-"
-"       Install the awesome version from:
-"
-"           https://github.com/amix/vimrc
-"
-" Syntax_highlighted:
-"       http://amix.dk/vim/vimrc.html
-"
-" Raw_version:
-"       http://amix.dk/vim/vimrc.txt
-"
-" Sections:
-"    -> General
-"    -> VIM user interface
-"    -> Colors and Fonts
-"    -> Files and backups
-"    -> Text, tab and indent related
-"    -> Visual mode related
-"    -> Moving around, tabs and buffers
-"    -> Status line
-"    -> Editing mappings
-"    -> vimgrep searching and cope displaying
-"    -> Spell checking
-"    -> Misc
-"    -> Helper functions
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Welcome!
+set nocompatible
 
+" Make keystores the most predictable being time-independent:
+set notimeout
+set nottimeout
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Terminal fixups
+
+" Prevent Ctrl-S terminal suspend function
+silent exec "!stty -ixon"
+
+" Various missing ansi code mappings.
+" The ANSI codes for Shift-Enter were specially invented.
+map <Char-0x1c> :call CtrlBar()<cr>
+map <Char-0x1f> :call CtrlMinus()<cr>
+
+map <ESC><Char-0x10> <C-A-p>
+map <ESC>[11;3~ <A-F1>
+map <ESC>[11;5~ <C-F1>
+map <ESC>[11;6~ <C-S-F1>
+map <ESC>[12;3~ <A-F2>
+map <ESC>[12;5~ <C-F2>
+map <ESC>[12;6~ <C-S-F2>
+map <ESC>[13;3~ <A-F3>
+map <ESC>[13;5~ <C-F3>
+map <ESC>[13;6~ <C-S-F3>
+map <ESC>[14;3~ <A-F4>
+map <ESC>[14;5~ <C-F4>
+map <ESC>[14;6~ <C-S-F4>
+map <ESC>[1;5P <C-F1>
+map <ESC>[1;5Q <C-F2>
+map <ESC>[1;5R <C-F3>
+map <ESC>[1;5S <C-F4>
+map <ESC>[3;5~ <C-Delete>
+map <ESC>[5;30001~ <S-CR>
+map <ESC>[5;30002~ <A-CR>
+map <ESC>[5;30003~ <C-CR>
+map <ESC>[5;30004~ <C-S-s>
+map <ESC>[5;30005~ <C-A-CR>
+map <ESC>[5;30014~ <C-Space>
+map <ESC>[Z <S-tab>
+map <ESC>a <A-a>
+map <ESC>h <A-h>
+map <ESC>j <M-j>
+map <ESC>k <M-k>
+map <ESC>p <A-p>
+map <ESC>t <A-t>
+map <ESC>1 <A-1>
+map <ESC>2 <A-2>
+map <ESC>3 <A-3>
+map <ESC>4 <A-4>
+map <ESC>q <A-q>
+map <ESC>e <A-e>
+map <ESC>d <A-d>
+map! <ESC><Char-0x10> <C-A-p>
+map! <ESC>[11;3~ <A-F1>
+map! <ESC>[11;5~ <C-F1>
+map! <ESC>[11;6~ <C-S-F1>
+map! <ESC>[12;3~ <A-F2>
+map! <ESC>[12;5~ <C-F2>
+map! <ESC>[12;6~ <C-S-F2>
+map! <ESC>[13;3~ <A-F3>
+map! <ESC>[13;5~ <C-F3>
+map! <ESC>[13;6~ <C-S-F3>
+map! <ESC>[14;3~ <A-F4>
+map! <ESC>[14;5~ <C-F4>
+map! <ESC>[14;6~ <C-S-F4>
+map! <ESC>[1;5P <C-F1>
+map! <ESC>[1;5Q <C-F2>
+map! <ESC>[1;5R <C-F3>
+map! <ESC>[1;5S <C-F4>
+map! <ESC>[3;5~ <C-Delete>
+map! <ESC>[5;30001~ <S-CR>
+map! <ESC>[5;30002~ <A-CR>
+map! <ESC>[5;30003~ <C-CR>
+map! <ESC>[5;30004~ <C-S-s>
+map! <ESC>[5;30005~ <C-A-CR>
+map! <ESC>[5;30014~ <C-Space>
+map! <ESC>j <M-j>
+map! <ESC>k <M-k>
+map! <ESC>p <A-p>
+map! <ESC>t <A-t>
+map! <ESC>1 <A-1>
+map! <ESC>2 <A-2>
+map! <ESC>3 <A-3>
+map! <ESC>4 <A-4>
+map! <ESC>q <A-q>
+map! <ESC>e <A-e>
+map! <ESC>d <A-d>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Line numbers
+set number
+
+" Concise messages
+set shortmess+=at
+
 " Sets how many lines of history VIM has to remember
 set history=500
 
@@ -64,14 +120,6 @@ set showcmd
 " Fast saving
 nmap <leader>w :w!<cr>
 
-" :W sudo saves the file
-" (useful for handling the permission-denied error)
-command! W w !sudo tee % > /dev/null
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
@@ -92,7 +140,7 @@ else
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 
-"Always show current position
+" Always show current position
 set ruler
 
 " Height of the command bar
@@ -145,8 +193,8 @@ set foldcolumn=1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Colors and Fonts
+
 " Enable syntax highlighting
 syntax enable
 
@@ -176,21 +224,18 @@ set encoding=utf8
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Files, backups and undo
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups and undo
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Turn backup off, since most stuff is in SVN, git et.c anyway...
+" Turn backup off, since most stuff is in Git anyway
 set nobackup
 set nowb
 set noswapfile
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Text, tab and indent related
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text, tab and indent related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-
 set noexpandtab
 set cindent
 set cinoptions=:0,l1,t0,g0,(0
@@ -205,40 +250,24 @@ set tabstop=8
 
 " Linebreak on 500 characters
 set lbr
-set tw=500
 
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+""""""""""""""""""""""""""""""
+" Visual mode related
 
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Moving around, tabs, windows and buffers
 
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
-
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
-" Close the current buffer
-map <leader>bd :Bclose<cr>:tabclose<cr>gT
-
-" Close all the buffers
-map <leader>ba :bufdo bd<cr>
 
 map <leader>l :bnext<cr>
 map <leader>h :bprevious<cr>
@@ -252,7 +281,7 @@ map <leader>t<leader> :tabnext
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
-nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+nmap <leader>tl :exe "tabn ".g:lasttab<CR>
 
 augroup DotfilesBasicTabLeave
   au!
@@ -279,20 +308,18 @@ augroup DotfilesBasicLastEdit
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 augroup END
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Status line
 
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
 " Always show the status line
 set laststatus=2
 
 " Format the status line
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Editing mappings
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap VIM 0 to first non-blank character
 map 0 ^
 
@@ -327,8 +354,8 @@ endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Spell checking
+
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
 
@@ -338,26 +365,18 @@ map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Misc
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
-
-" Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
+noremap <leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Helper functions
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Returns true if paste mode is enabled
 function! HasPaste()
     if &paste
@@ -366,29 +385,9 @@ function! HasPaste()
     return ''
 endfunction
 
-" Don't close window, when deleting a buffer
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
-
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
-
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
-
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
-endfunction
 """"""""""""""""""""""""""""""
-" => Python section
-""""""""""""""""""""""""""""""
+" Python section
+
 let python_highlight_all = 1
 au FileType python syn keyword pythonDecorator True None False self
 
@@ -411,8 +410,8 @@ au FileType python set indentkeys-=0#
 
 
 """"""""""""""""""""""""""""""
-" => JavaScript section
-"""""""""""""""""""""""""""""""
+" JavaScript section
+
 au FileType javascript call JavaScriptFold()
 au FileType javascript setl fen
 au FileType javascript setl nocindent
@@ -434,10 +433,9 @@ function! JavaScriptFold()
     setl foldtext=FoldText()
 endfunction
 
-
 """"""""""""""""""""""""""""""
-" => CoffeeScript section
-"""""""""""""""""""""""""""""""
+" CoffeeScript section
+
 function! CoffeeScriptFold()
     setl foldmethod=indent
     setl foldlevelstart=1
@@ -446,10 +444,8 @@ au FileType coffee call CoffeeScriptFold()
 
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
-
 """"""""""""""""""""""""""""""
-" => Shell section
-""""""""""""""""""""""""""""""
+" Shell section
 
 " All of my terminals are fully capable - forcing VIM
 " to use true-colors on all of them here.
@@ -458,18 +454,12 @@ set termguicolors
 set term=rxvt-unicode-256color
 
 """"""""""""""""""""""""""""""
-" => Twig section
+" Twig section
 """"""""""""""""""""""""""""""
 autocmd BufRead *.twig set syntax=html filetype=html
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Important:
-"       This requries that you install https://github.com/amix/vimrc !
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 
 """"""""""""""""""""""""""""""
-" => Load pathogen paths
+" Load pathogen paths
 """"""""""""""""""""""""""""""
 let s:vim_runtime = expand('<sfile>:p:h')
 call pathogen#infect(s:vim_runtime.'/sources_forked/{}')
@@ -478,7 +468,7 @@ call pathogen#infect(s:vim_runtime.'/external/{}')
 call pathogen#helptags()
 
 """"""""""""""""""""""""""""""
-" => bufExplorer plugin
+" bufExplorer plugin
 """"""""""""""""""""""""""""""
 let g:bufExplorerDefaultHelp=0
 let g:bufExplorerShowRelativePath=1
@@ -486,25 +476,17 @@ let g:bufExplorerFindActive=1
 let g:bufExplorerSortBy='name'
 map <leader>o :BufExplorer<cr>
 
-
 """"""""""""""""""""""""""""""
-" => MRU plugin
+" MRU plugin
 """"""""""""""""""""""""""""""
 let MRU_Max_Entries = 400
 map <leader>f :MRU<CR>
 
-
 """"""""""""""""""""""""""""""
-" => YankStack
-""""""""""""""""""""""""""""""
-nmap <c-p> <Plug>yankstack_substitute_older_paste
-nmap <c-P> <Plug>yankstack_substitute_newer_paste
-
-
-""""""""""""""""""""""""""""""
-" => CTRL-P
+" CTRL-P
 """"""""""""""""""""""""""""""
 let g:ctrlp_working_path_mode = 0
+let g:ctrlp_mruf_max = 400
 
 let g:ctrlp_map = '<c-f>'
 map <leader>j :CtrlP<cr>
@@ -515,57 +497,51 @@ map <c-c> :CtrlPBuffer<cr>
 let g:ctrlp_max_height = 20
 let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 
-
 """"""""""""""""""""""""""""""
-" => ZenCoding
+" ZenCoding
 """"""""""""""""""""""""""""""
 " Enable all functions in all modes
 let g:user_zen_mode='a'
 
-
 """"""""""""""""""""""""""""""
-" => snipMate (beside <TAB> support <CTRL-j>)
+" snipMate (beside <TAB> support <CTRL-j>)
 """"""""""""""""""""""""""""""
 ino <c-j> <c-r>=snipMate#TriggerSnippet()<cr>
 snor <c-j> <esc>i<right><c-r>=snipMate#TriggerSnippet()<cr>
 
-
 """"""""""""""""""""""""""""""
-" => Vim grep
+" Vim grep
 """"""""""""""""""""""""""""""
 let Grep_Skip_Dirs = 'RCS CVS SCCS .svn generated'
 set grepprg=/bin/grep\ -nH
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Nerd Tree
+" Nerd Tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeWinPos = "right"
 let NERDTreeShowHidden=0
-let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+let NERDTreeIgnore = ['\.pyc$', '__pycache__', '\.o$']
 let g:NERDTreeWinSize=35
+
 map <leader>nn :NERDTreeToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-multiple-cursors
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vim-multiple-cursors
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:multi_cursor_next_key="\<C-s>"
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" surround.vim config
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => surround.vim config
 " Annotate strings with gettext http://amix.dk/blog/post/19678
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" lightline
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => lightline
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lightline = {
       \ 'colorscheme': 'default',
       \ 'active': {
@@ -588,23 +564,21 @@ let g:lightline = {
       \ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vimroom
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimroom
+
 let g:goyo_width=100
 let g:goyo_margin_top = 2
 let g:goyo_margin_bottom = 2
 nnoremap <silent> <leader>z :Goyo<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-go
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim-go
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:go_fmt_command = "goimports"
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntastic (syntax checker)
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Syntastic (syntax checker)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Python
 let g:syntastic_python_checkers=['pyflakes']
 
@@ -624,21 +598,9 @@ func! SyntasticCheckCoffeescript()
 endfunc
 nnoremap <silent> <leader>c :call SyntasticCheckCoffeescript()<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GUI related
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Git gutter (Git diff)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <silent> <leader>d :GitGutterToggle<cr>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Important:
-"       This requries that you install https://github.com/amix/vimrc !
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => GUI related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set font according to system
 if has("mac") || has("macunix")
     set gfn=Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
@@ -662,35 +624,32 @@ set guioptions-=L
 set background=dark
 colorscheme peaksea
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fast editing and reloading of vimrc configs
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Fast editing and reloading of vimrc configs
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <leader>ee :e! ~/.vim_runtime/vimrc.vim<cr>
 map <leader>eR :source ~/.vimrc<cr>
 map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
 map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ea :e! ~/.config/alacritty/alacritty.yml<cr>
 map <leader>ex :e! ~/.Xdefaults<cr>
+map <leader>eg :e! ~/.gitconfig<cr>
 map <leader>ew :CtrlP ~/dkr<cr>
 map <leader>eW :edit ~/dkr/
 
-autocmd! bufwritepost ~/.vim_runtime/my_configs.vim source ~/.vim_runtime/my_configs.vim
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Turn persistent undo on
-"    means that you can undo even when you close a buffer/VIM
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn persistent undo on
+"
+" Means that you can undo even when you close a buffer/VIM
 try
     set undodir=~/.vim_runtime/temp_dirs/undodir
     set undofile
 catch
 endtry
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Command mode related
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Command mode related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Smart mappings on the command line
 cno $h e ~/
 cno $d e ~/Desktop/
@@ -709,82 +668,38 @@ cnoremap <C-K>		<C-U>
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
 
-" Map ½ to something useful
-map ½ $
-cmap ½ $
-imap ½ $
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Parenthesis/bracket
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vnoremap $1 <esc>`>a)<esc>`<i(<esc>
-vnoremap $2 <esc>`>a]<esc>`<i[<esc>
-vnoremap $3 <esc>`>a}<esc>`<i{<esc>
-vnoremap $$ <esc>`>a"<esc>`<i"<esc>
-vnoremap $q <esc>`>a'<esc>`<i'<esc>
-vnoremap $e <esc>`>a"<esc>`<i"<esc>
+" Parenthesis/bracket
+vnoremap <A-1> <esc>`>a)<esc>`<i(<esc>
+vnoremap <A-2> <esc>`>a]<esc>`<i[<esc>
+vnoremap <A-3> <esc>`>a}<esc>`<i{<esc>
+vnoremap <A-4> <esc>`>a"<esc>`<i"<esc>
+vnoremap <A-q> <esc>`>a'<esc>`<i'<esc>
+vnoremap <A-e> <esc>`>a"<esc>`<i"<esc>
 
 " Map auto complete of (, ", ', [
-inoremap 1 ()<esc>i
-inoremap 2 []<esc>i
-inoremap 3 {}<esc>i
-inoremap 4 {<esc>o}<esc>O
-inoremap q ''<esc>i
-inoremap d ""<esc>i
+inoremap <A-1> ()<esc>i
+inoremap <A-2> []<esc>i
+inoremap <A-3> {}<esc>i
+inoremap <A-4> {<esc>o}<esc>O
+inoremap <A-q> ''<esc>i
+inoremap <A-d> ""<esc>i
 
+" Map auto complete of (, ", ', [
+nnoremap <A-1> i()<esc>i
+nnoremap <A-2> i[]<esc>i
+nnoremap <A-3> i{}<esc>i
+nnoremap <A-4> i{<esc>o}<esc>O
+nnoremap <A-q> i''<esc>i
+nnoremap <A-d> i""<esc>i
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General abbreviations
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Omni complete functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Omni complete functions
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ack searching and cope displaying
-"    requires ack.vim - it's much better than vimgrep/grep
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use the the_silver_searcher if possible (much faster than Ack)
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep --smart-case'
-endif
+" Helper functions
 
-" When you press gv you Ack after the selected text
-vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
-
-" Open Ack and put the cursor in the right position
-map <leader>g :Ack
-
-" When you press <leader>r you can search and replace the selected text
-vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
-
-" Do :help cope if you are unsure what cope is. It's super useful!
-"
-" When you search with Ack, display your results in cope by doing:
-"   <leader>cc
-"
-" To go to the next search result do:
-"   <leader>n
-"
-" To go to the previous search results do:
-"   <leader>p
-"
-map <leader>cc :botright cope<cr>
-map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
-map <leader>n :cn<cr>
-map <leader>p :cp<cr>
-
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 func! DeleteTillSlash()
     let g:cmd = getcmdline()
 
@@ -832,16 +747,6 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-
-set nocompatible
-set number
-set shortmess+=at
-
-" Make keystores the most predictable being time-independent:
-
-set notimeout
-set nottimeout
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Windowing-related
 
@@ -867,80 +772,16 @@ function! CtrlMinus()
 endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Terminal fixups
-
-" Prevent Ctrl-S terminal suspend function
-silent exec "!stty -ixon"
-
-" Various missing ansi code mappings.
-" The ANSI codes for Shift-Enter were specially invented.
-map <Char-0x1c> :call CtrlBar()<cr>
-map <Char-0x1f> :call CtrlMinus()<cr>
-
-map <ESC><Char-0x10> <C-A-p>
-map <ESC>[11;3~ <A-F1>
-map <ESC>[11;5~ <C-F1>
-map <ESC>[11;6~ <C-S-F1>
-map <ESC>[12;3~ <A-F2>
-map <ESC>[12;5~ <C-F2>
-map <ESC>[12;6~ <C-S-F2>
-map <ESC>[13;3~ <A-F3>
-map <ESC>[13;5~ <C-F3>
-map <ESC>[13;6~ <C-S-F3>
-map <ESC>[14;3~ <A-F4>
-map <ESC>[14;5~ <C-F4>
-map <ESC>[14;6~ <C-S-F4>
-map <ESC>[1;5P <C-F1>
-map <ESC>[1;5Q <C-F2>
-map <ESC>[1;5R <C-F3>
-map <ESC>[1;5S <C-F4>
-map <ESC>[3;5~ <C-Delete>
-map <ESC>[5;30001~ <S-CR>
-map <ESC>[5;30002~ <A-CR>
-map <ESC>[5;30003~ <C-CR>
-map <ESC>[5;30004~ <C-S-s>
-map <ESC>[5;30005~ <C-A-CR>
-map <ESC>[5;30014~ <C-Space>
-map <ESC>[Z <S-tab>
-map <ESC>a <A-a>
-map <ESC>h <A-h>
-map <ESC>j <M-j>
-map <ESC>k <M-k>
-map <ESC>p <A-p>
-map <ESC>t <A-t>
-map! <ESC><Char-0x10> <C-A-p>
-map! <ESC>[11;3~ <A-F1>
-map! <ESC>[11;5~ <C-F1>
-map! <ESC>[11;6~ <C-S-F1>
-map! <ESC>[12;3~ <A-F2>
-map! <ESC>[12;5~ <C-F2>
-map! <ESC>[12;6~ <C-S-F2>
-map! <ESC>[13;3~ <A-F3>
-map! <ESC>[13;5~ <C-F3>
-map! <ESC>[13;6~ <C-S-F3>
-map! <ESC>[14;3~ <A-F4>
-map! <ESC>[14;5~ <C-F4>
-map! <ESC>[14;6~ <C-S-F4>
-map! <ESC>[1;5P <C-F1>
-map! <ESC>[1;5Q <C-F2>
-map! <ESC>[1;5R <C-F3>
-map! <ESC>[1;5S <C-F4>
-map! <ESC>[3;5~ <C-Delete>
-map! <ESC>[5;30001~ <S-CR>
-map! <ESC>[5;30002~ <A-CR>
-map! <ESC>[5;30003~ <C-CR>
-map! <ESC>[5;30005~ <C-A-CR>
-map! <ESC>[5;30014~ <C-Space>
-map! <ESC>j <M-j>
-map! <ESC>k <M-k>
-map! <ESC>p <A-p>
-map! <ESC>t <A-t>
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Give indication in which mode we are at, using a cursor shape
 
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
+augroup cursorShape
+  " This is on Autocmds because for some reason Vim-GnuPG reverts to the
+  " original behavior.
+  autocmd!
+  au BufEnter * let &t_SI = "\<Esc>[6 q"
+  au BufEnter * let &t_SR = "\<Esc>[4 q"
+  au BufEnter * let &t_EI = "\<Esc>[2 q"
+augroup END
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Movement
@@ -980,6 +821,14 @@ inoremap <M-k> <Esc>:m .-2<CR>==gi
 vnoremap <M-j> :m '>+1<CR>gv=gv
 vnoremap <M-k> :m '<-2<CR>gv=gv
 
+" Limit idle time in insert mode
+augroup myPreventInsertModeStalling
+  autocmd!
+  au CursorHoldI * stopinsert
+  au InsertEnter * let updaterestore=&updatetime | set updatetime=4000
+  au InsertLeave * let &updatetime=updaterestore
+augroup END
+
 " Make Backspace behave like it normally does, in normal mode
 nnoremap <BS> "_X
 
@@ -991,12 +840,11 @@ vnoremap <A-h> :s///g<left><left>
 " Add a newline and move down
 noremap <silent> <C-J> O<Esc>j
 
-" Exit insert mode
+" Exit insert mode (other than <Esc> and <C-c>)
 inoremap jK x<C-c>"_x
 map! <C-Delete> <C-c>
 map <C-Delete> <Nop>
 
-"
 " Saner yanking and pasting behavior using <A-p> and <C-A-p>:
 "
 " * When yanking, put the cursor at the cursor right after the yanked region,
@@ -1114,18 +962,15 @@ onoremap n{ :<c-u>normal! f{vi{<cr>
 " Remap Ctrl-D to a single line removal, not affecting the register
 map <C-d> "_dd
 
+" Use the delete key without affecting the register
+map <Delete> "_x
+
 " Single character insertion
 noremap <silent> <A-a> "=nr2char(getchar())<cr>P
 
 imap <S-CR> <cr>
 
 function! SetPerBufferActions()
-  " A more useful biding for Enter in normal mode
-  if &buftype ==# ''  &&  &filetype != 'qf'
-    nmap <buffer> <CR> o
-    nmap <buffer> <S-CR> O
-  endif
-
   " Prevent certain actions in various buffers
   if &filetype ==# 'qf' || &filetype ==# 'nerdtree'
     map <buffer> <leader>o <nop>
@@ -1198,9 +1043,9 @@ vnoremap <silent> # :<C-U>
   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gV:call setreg('"', old_reg, old_regtype)<CR>
 
-vmap <A-t> #*
-imap <A-t> <C-c>#*
-nmap <A-t> #*
+vmap <A-t> *``
+imap <A-t> <C-c>*``
+nmap <A-t> *``
 
 function! DuplicateLine()
   " And keep in the same column
@@ -1249,6 +1094,7 @@ vmap <S-Home> <Home>
 
 nmap <C-Space> V
 vmap <Cr> y
+vmap <C-Cr> *``
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -1256,7 +1102,7 @@ vmap <Cr> y
 nmap <F2> <C-c>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
-nmap <C-F2> <leader>f
+nmap <C-F2> :CtrlPMRUFiles<cr>
 map! <C-F2> <Nop>
 imap <C-F2> <C-c><C-F2>
 nmap <F3> :NERDTreeFind<cr>
@@ -1445,7 +1291,6 @@ func! Gamd()
 endfun
 
 command! -bar Gamd call Gamd()
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Emacs migration path:
