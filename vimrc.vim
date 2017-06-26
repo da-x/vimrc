@@ -55,6 +55,7 @@ map <ESC>4 <A-4>
 map <ESC>q <A-q>
 map <ESC>e <A-e>
 map <ESC>d <A-d>
+map <ESC>[4~ <End>
 map! <ESC><Char-0x10> <C-A-p>
 map! <ESC>[11;3~ <A-F1>
 map! <ESC>[11;5~ <C-F1>
@@ -90,6 +91,7 @@ map! <ESC>4 <A-4>
 map! <ESC>q <A-q>
 map! <ESC>e <A-e>
 map! <ESC>d <A-d>
+map! <ESC>[4~ <End>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -173,6 +175,7 @@ set magic
 
 " Show matching brackets when text indicator is over them
 set showmatch
+
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
@@ -248,9 +251,6 @@ set smarttab
 set shiftwidth=4
 set tabstop=8
 
-" Linebreak on 500 characters
-set lbr
-
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
@@ -279,9 +279,41 @@ map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
 map <leader>t<leader> :tabnext
 
+map <C-t><Insert> :tabnew<cr>
+map! <C-t><Insert> <C-c><C-t><Insert>
+map <C-t><Delete> :tabclose<cr>
+map! <C-t><Delete> <C-c><C-t><Delete>
+map <C-t><Left> :-tabmove<cr>
+map! <C-t><Left> <C-c><C-t><Left>
+map <C-t><Right> :+tabmove<cr>
+map! <C-t><Right> <C-c><C-t><Right>
+map <C-t><Home> :0tabmove<cr>
+map! <C-t><Home> <C-c><C-t><Home>
+map <C-t><End> :tabmove<cr>
+map! <C-t><End> <C-c><C-t><End>
+map <C-t>1 :1tabnext<cr>
+map <C-t>2 :2tabnext<cr>
+map <C-t>3 :3tabnext<cr>
+map <C-t>4 :4tabnext<cr>
+map <C-t>5 :5tabnext<cr>
+map <C-t>6 :6tabnext<cr>
+map <C-t>7 :7tabnext<cr>
+map <C-t>8 :8tabnext<cr>
+map <C-t>9 :9tabnext<cr>
+map! <C-t>1 :1tabnext<cr>
+map! <C-t>2 :2tabnext<cr>
+map! <C-t>3 :3tabnext<cr>
+map! <C-t>4 :4tabnext<cr>
+map! <C-t>5 :5tabnext<cr>
+map! <C-t>6 :6tabnext<cr>
+map! <C-t>7 :7tabnext<cr>
+map! <C-t>8 :8tabnext<cr>
+map! <C-t>9 :9tabnext<cr>
+
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <leader>tl :exe "tabn ".g:lasttab<CR>
+nmap <C-t><Cr> <leader>tl
 
 augroup DotfilesBasicTabLeave
   au!
@@ -319,6 +351,14 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Editing mappings
+
+" Allow cursor to go after one last character of the line, like in
+" modern editing environments.
+set virtualedit=onemore
+
+" Make <End> really go to the end of line (but only in normal mode),
+" because in visual mode we already have it.
+nnoremap <expr> <End> (col('$') > 1 ? "<end><right>":'')
 
 " Remap VIM 0 to first non-blank character
 map 0 ^
@@ -639,7 +679,7 @@ map <leader>eW :edit ~/dkr/
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn persistent undo on
-"
+
 " Means that you can undo even when you close a buffer/VIM
 try
     set undodir=~/.vim_runtime/temp_dirs/undodir
@@ -661,9 +701,9 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 cno $q <C-\>eDeleteTillSlash()<cr>
 
 " Bash like keys for the command line
-cnoremap <C-A>		<Home>
-cnoremap <C-E>		<End>
-cnoremap <C-K>		<C-U>
+cnoremap <C-A>	<Home>
+cnoremap <C-E>	<End>
+cnoremap <C-K>	<C-U>
 
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
@@ -775,7 +815,7 @@ endfunction
 " Give indication in which mode we are at, using a cursor shape
 
 augroup cursorShape
-  " This is on Autocmds because for some reason Vim-GnuPG reverts to the
+  " This is on Autocmds because for some reason vim-gnupg reverts to the
   " original behavior.
   autocmd!
   au BufEnter * let &t_SI = "\<Esc>[6 q"
@@ -847,33 +887,17 @@ map <C-Delete> <Nop>
 
 " Saner yanking and pasting behavior using <A-p> and <C-A-p>:
 "
-" * When yanking, put the cursor at the cursor right after the yanked region,
-"   whether it is multiple lines or not.
+" * When yanking, put the cursor right after the yanked region, whether was
+"   yanked in visual mode (lines or not).
 " * When pasting, put the cursor either at the beginning of the pasted text or
 "   after its end.
 "
-
-function! NextCharacter()
-  let l:line = getcurpos()[1]
-  let l:col = getcurpos()[2]
-  let len = strlen(getline('.'))
-  if len > l:col
-     call cursor(l:line, l:col + 1)
-  else
-     call cursor(l:line+1, 1)
+function! MyAfterYank()
+  if @@[strlen(@@) - 1] !=# "\n" || visualmode() ==# 'V'
+    " This requires virtualedit=onemore
+    execute "normal! l"
   endif
 endfunction
-
-" function! PrevCharacter()
-"   let l:line = getcurpos()[1]
-"   let l:col = getcurpos()[2]
-"   let len = strlen(getline(l:line - 1))
-"   if l:col == 1
-"      call cursor(l:line - 1, len)
-"   else
-"      call cursor(l:line, l:col - 1)
-"   endif
-" endfunction
 
 function! PasteBeforeHack()
   let l:line = getcurpos()[1]
@@ -882,10 +906,10 @@ function! PasteBeforeHack()
   call cursor(l:line, l:col)
 endfunction
 
-vnoremap <silent> y y`]:call NextCharacter()<cr>
+vnoremap <silent> y y`]:call MyAfterYank()<cr>
 noremap <silent> <A-p> :call PasteBeforeHack()<cr>
 inoremap <silent> <C-A-p> <C-R>"
-inoremap <silent> <A-p> <nop>
+inoremap <silent> <A-p> <Nop>
 noremap <C-A-p> gP
 
 "
@@ -969,6 +993,9 @@ map <Delete> "_x
 noremap <silent> <A-a> "=nr2char(getchar())<cr>P
 
 imap <S-CR> <cr>
+
+" Save time by using C-^ from insert mode
+imap <C-^> <C-c><C-^>
 
 function! SetPerBufferActions()
   " Prevent certain actions in various buffers
@@ -1077,7 +1104,7 @@ inoremap <C-l> <C-x><C-l>
 inoremap <C-]> <C-x><C-]>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Modern-like selections
+" Modern-like selections (moving with shift)
 
 nmap <S-Up> v<Up>
 nmap <S-Down> v<Down>
