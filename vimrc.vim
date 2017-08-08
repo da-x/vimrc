@@ -360,6 +360,15 @@ set virtualedit=onemore
 " because in visual mode we already have it.
 nnoremap <expr> <End> (col('$') > 1 ? "<end><right>":'')
 
+" 'u' and 'U' should not change case in visual mode as 'u' alreadu
+" does entirely different thing in normal mode. Make them consistent,
+" and rebind these actions to be under the leader prefix. They are
+" rare enough as it is.
+vnoremap <leader>u u
+vnoremap <leader>U U
+vnoremap u <C-c>u
+vnoremap U <C-c>U
+
 " Remap VIM 0 to first non-blank character
 map 0 ^
 
@@ -673,7 +682,7 @@ map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
 map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ea :e! ~/.config/alacritty/alacritty.yml<cr>
 map <leader>ex :e! ~/.Xdefaults<cr>
-map <leader>eg :e! ~/.gitconfig<cr>
+map <leader>eg :e! ~/.files/gitconfig<cr>
 map <leader>ew :CtrlP ~/dkr<cr>
 map <leader>eW :edit ~/dkr/
 
@@ -865,7 +874,7 @@ vnoremap <M-k> :m '<-2<CR>gv=gv
 augroup myPreventInsertModeStalling
   autocmd!
   au CursorHoldI * stopinsert
-  au InsertEnter * let updaterestore=&updatetime | set updatetime=4000
+  au InsertEnter * let updaterestore=&updatetime | set updatetime=60000
   au InsertLeave * let &updatetime=updaterestore
 augroup END
 
@@ -882,7 +891,9 @@ noremap <silent> <C-J> O<Esc>j
 
 " Exit insert mode (other than <Esc> and <C-c>)
 inoremap jK x<C-c>"_x
-map! <C-Delete> <C-c>
+
+" Exit insert and keep in the same place (because of virtualedit=onemore)
+map! <C-Delete> <C-c>l
 map <C-Delete> <Nop>
 
 " Saner yanking and pasting behavior using <A-p> and <C-A-p>:
@@ -1138,6 +1149,9 @@ imap <F3> <C-c><F3>
 nmap <C-F3> :NERDTreeToggle<cr>
 map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
+nmap <C-S-F3> :CtrlP<cr>
+map! <C-S-F3> <Nop>
+imap <C-S-F3> <C-c><F3>
 
 " Navigate location lists
 nmap <F4> :lnext<cr>
