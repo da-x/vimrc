@@ -1265,11 +1265,15 @@ command! Indent4Spaces call Indent4Spaces()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Example: setlocal path=.,subdir/,/usr/include,,"
 let g:local_vimrc = ['.git/vimrc_local.vim']
 
 " File is not checked-in on purpose:
 
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
+" examples:
+" call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
+" map <leader><tab>m :tabedit <some-path><cr>
   source ~/.vim_runtime/project-specific.vim
 endif
 
