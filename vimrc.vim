@@ -44,6 +44,8 @@ map <ESC>[5;30014~ <C-Space>
 map <ESC>[Z <S-tab>
 map <ESC>a <A-a>
 map <ESC>h <A-h>
+map <ESC>r <A-r>
+map <ESC>w <A-w>
 map <ESC>j <M-j>
 map <ESC>k <M-k>
 map <ESC>p <A-p>
@@ -885,6 +887,22 @@ nnoremap <BS> "_X
 " currently selected region in visual mode.
 nnoremap <A-h> :%s///g<left><left>
 vnoremap <A-h> :s///g<left><left>
+
+function! InsertSelectionText()
+  let l:search_mark = @/
+  let l:n = strlen(l:search_mark)
+  echom strpart(l:search_mark, 0, 1)
+  echom strpart(l:search_mark, l:n - 1, 1)
+  if strpart(l:search_mark, 0, 2) ==# "\\<" && strpart(l:search_mark, l:n - 2, 2) ==# "\\>"
+     let l:search_mark = strpart(l:search_mark, 2, l:n - 4)
+  endif
+  return l:search_mark
+endfunction
+
+nnoremap <A-r> :%s//<C-r>=InsertSelectionText()<CR>/g<left><left>
+vnoremap <A-r> :s//<C-r>=InsertSelectionText()<CR>/g<left><left>
+nnoremap <A-w> :%s/<C-r><C-w>/<C-r><C-w>/g<left><left>
+vnoremap <A-w> :s/<C-r><C-w>/<C-r><C-w>/g<left><left>
 
 " Add a newline and move down
 noremap <silent> <C-J> O<Esc>j
