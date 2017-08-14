@@ -60,4 +60,7 @@
 	url = https://github.com/cespare/vim-toml
 [submodule "external/tpope-vim-abolish"]
 	path = external/tpope-vim-abolish
-	url = https://github.com/tpope/tpope-vim-abolish
+        url = https://github.com/tpope/tpope-vim-abolish
+[submodule "external/vim-gnupg"]
+	path = external/vim-gnupg
+	url = https://github.com/jamessan/vim-gnupg
