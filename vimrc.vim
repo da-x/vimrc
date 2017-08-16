@@ -347,9 +347,21 @@ augroup END
 
 " Always show the status line
 set laststatus=2
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '%dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
 
 " Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+set statusline=\ %{HasPaste()}%{LinterStatus()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Editing mappings
@@ -628,26 +640,15 @@ nnoremap <silent> <leader>z :Goyo<cr>
 let g:go_fmt_command = "goimports"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntastic (syntax checker)
+" ALE (syntax checker)
 
-" Python
-let g:syntastic_python_checkers=['pyflakes']
-
-" Javascript
-let g:syntastic_javascript_checkers = ['jshint']
-
-" Go
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
-
-" Custom CoffeeScript SyntasticCheck
-func! SyntasticCheckCoffeescript()
-    let l:filename = substitute(expand("%:p"), '\(\w\+\)\.coffee', '.coffee.\1.js', '')
-    execute "tabedit " . l:filename
-    execute "SyntasticCheck"
-    execute "Errors"
-endfunc
-nnoremap <silent> <leader>c :call SyntasticCheckCoffeescript()<cr>
+let g:ale_rust_cargo_use_check = 1
+let g:ale_change_sign_column_error = 1
+let g:ale_set_highlights = 1
+let g:ale_linters = {}
+let g:ale_set_balloons = 1
+let g:ale_linters.c = ['pac']
+let g:ale_linters.cpp = ['pac']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " GUI related
@@ -1214,6 +1215,14 @@ hi Search                guifg=#ccffdd   guibg=#006611  gui=bold
 hi TabLineFill           guifg=#ffffff   guibg=#000000
 hi TabLine               guifg=black     guibg=#222222
 hi TabLineSel            guifg=#444444   guibg=#202020   gui=bold
+
+highlight ALEError       guibg=#770000 guifg=#ffffff
+highlight ALEErrorSign   guibg=#770000 guifg=#ff0000
+highlight ALEInfo        guibg=#774400 guifg=#ffffff
+highlight ALEInfoSign    guibg=#774400 guifg=#ff8800
+highlight ALEWarning     guibg=#777700 guifg=#ffffff
+highlight ALEWarningSign guibg=#777700 guifg=#ffff00
+
 
 highlight ExtraWhitespace ctermbg=red guibg=red
 

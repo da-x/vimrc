@@ -73,3 +73,6 @@
 [submodule "external/vim-textobj-dash"]
 	path = external/vim-textobj-dash
 	url = https://github.com/RyanMcG/vim-textobj-dash
+[submodule "external/ale"]
+	path = external/ale
+	url = https://github.com/da-x/ale
