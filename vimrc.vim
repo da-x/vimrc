@@ -915,6 +915,15 @@ inoremap jK x<C-c>"_x
 map! <C-Delete> <C-c>l
 map <C-Delete> <Nop>
 
+" Copy a string to the system's clipbard
+function! SetSystemClipboard(string)
+  let l:display = expand("$DISPLAY")
+  if l:display != "" && executable("xclip")
+    call system('xclip -sel primary', a:string)
+    call system('xclip -sel clipboard', a:string)
+  endif
+endfunction
+
 " Saner yanking and pasting behavior using <A-p> and <C-A-p>:
 "
 " * When yanking, put the cursor right after the yanked region, whether was
@@ -927,6 +936,7 @@ function! MyAfterYank()
     " This requires virtualedit=onemore
     execute "normal! l"
   endif
+  call SetSystemClipboard(getreg("\""))
 endfunction
 
 function! PasteBeforeHack()
@@ -941,6 +951,19 @@ noremap <silent> <A-p> :call PasteBeforeHack()<cr>
 inoremap <silent> <C-A-p> <C-R>"
 inoremap <silent> <A-p> <Nop>
 noremap <C-A-p> gP
+
+"Yank various pathnames relating to the current file into the system's clipboard.
+
+function! YankCurrentFilename()
+  call SetSystemClipboard(expand("%"))
+endfunction
+
+function! YankCurrentDirAbs()
+  call SetSystemClipboard(expand("%:p:h"))
+endfunction
+
+noremap <silent> <leader>yf :call YankCurrentFilename()<cr>
+noremap <silent> <leader>yd :call YankCurrentDirAbs()<cr>
 
 "
 " Move either the current line or the selected text to the place where
