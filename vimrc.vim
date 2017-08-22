@@ -642,7 +642,7 @@ let g:go_fmt_command = "goimports"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ALE (syntax checker)
 
-let g:ale_rust_cargo_use_check = 1
+let g:ale_rust_cargo_use_check = 0
 let g:ale_change_sign_column_error = 1
 let g:ale_set_highlights = 1
 let g:ale_linters = {}
