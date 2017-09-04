@@ -374,7 +374,7 @@ set virtualedit=onemore
 " because in visual mode we already have it.
 nnoremap <expr> <End> (col('$') > 1 ? "<end><right>":'')
 
-" 'u' and 'U' should not change case in visual mode as 'u' alreadu
+" 'u' and 'U' should not change case in visual mode as 'u' already
 " does entirely different thing in normal mode. Make them consistent,
 " and rebind these actions to be under the leader prefix. They are
 " rare enough as it is.
