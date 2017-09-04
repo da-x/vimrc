@@ -912,7 +912,7 @@ noremap <silent> <C-J> O<Esc>j
 inoremap jK x<C-c>"_x
 
 " Exit insert and keep in the same place (because of virtualedit=onemore)
-map! <C-Delete> <C-c>l
+inoremap <silent> <C-Delete> <C-O>:stopinsert<CR>
 map <C-Delete> <Nop>
 
 " Copy a string to the system's clipbard
