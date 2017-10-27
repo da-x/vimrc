@@ -3,7 +3,7 @@
 	url = https://github.com/da-x/vim-markdown
 [submodule "external/rust.vim"]
 	path = external/rust.vim
-	url = https://github.com/da-x/rust.vim
+        url = https://github.com/rust-lang/rust.vim
 [submodule "external/vim-racer"]
 	path = external/vim-racer
 	url = https://github.com/racer-rust/vim-racer
