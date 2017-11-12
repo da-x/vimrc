@@ -546,21 +546,6 @@ let MRU_Max_Entries = 400
 map <leader>f :MRU<CR>
 
 """"""""""""""""""""""""""""""
-" CTRL-P
-""""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_mruf_max = 400
-
-let g:ctrlp_map = '<c-f>'
-map <leader>j :CtrlP<cr>
-
-" We use c-c instead of c-b because we run under tmux
-map <c-c> :CtrlPBuffer<cr>
-
-let g:ctrlp_max_height = 20
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
-
-""""""""""""""""""""""""""""""
 " ZenCoding
 """"""""""""""""""""""""""""""
 " Enable all functions in all modes
@@ -585,6 +570,8 @@ let g:NERDTreeWinPos = "right"
 let NERDTreeShowHidden=0
 let NERDTreeIgnore = ['\.pyc$', '__pycache__', '\.o$']
 let g:NERDTreeWinSize=35
+" let NERDTreeMapOpenInTab='<ENTER>'
+let NERDTreeQuitOnOpen=1
 
 map <leader>nn :NERDTreeToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
@@ -1376,6 +1363,26 @@ nmap <C-F9> :Grepper -noquickfix -cword<cr>
 let g:grepper = {
         \ 'tools': ['git', 'grep'],
         \ }
+
+""""""""""""""""""""""""""""""
+" CTRL-P
+""""""""""""""""""""""""""""""
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_mruf_max = 400
+
+let g:ctrlp_map = '<c-f>'
+map <leader>j :CtrlP<cr>
+
+let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<c-t>'],
+    \ 'AcceptSelection("t")': ['<cr>', '<2-LeftMouse>'],
+    \ }
+
+" We use c-c instead of c-b because we run under tmux
+map <c-c> :CtrlPBuffer<cr>
+
+let g:ctrlp_max_height = 20
+let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Git-related stuff
