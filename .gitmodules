@@ -76,3 +76,6 @@
 [submodule "external/ale"]
 	path = external/ale
 	url = https://github.com/da-x/ale
+[submodule "external/sideways.vim"]
+	path = external/sideways.vim
+	url = https://github.com/AndrewRadev/sideways.vim

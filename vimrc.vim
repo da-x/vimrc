@@ -1347,6 +1347,14 @@ if filereadable(expand("~/.vim_runtime/project-specific.vim"))
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" sideways.vim
+
+nnoremap <c-x><Left>    :SidewaysLeft<cr>
+nnoremap <c-x><Right>   :SidewaysRight<cr>
+nnoremap <c-a><Left>    :SidewaysJumpLeft<cr>
+nnoremap <c-a><Right>   :SidewaysJumpRight<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-rooter
 
 let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'Makefile']
