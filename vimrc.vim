@@ -1381,14 +1381,9 @@ let g:grepper = {
 """"""""""""""""""""""""""""""
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_mruf_max = 400
-
+let g:ctrlp_mruf_default_order = 1
 let g:ctrlp_map = '<c-f>'
 map <leader>j :CtrlP<cr>
-
-let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("e")': ['<c-t>'],
-    \ 'AcceptSelection("t")': ['<cr>', '<2-LeftMouse>'],
-    \ }
 
 " We use c-c instead of c-b because we run under tmux
 map <c-c> :CtrlPBuffer<cr>
