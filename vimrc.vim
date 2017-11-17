@@ -1353,6 +1353,10 @@ nnoremap <c-x><Left>    :SidewaysLeft<cr>
 nnoremap <c-x><Right>   :SidewaysRight<cr>
 nnoremap <c-a><Left>    :SidewaysJumpLeft<cr>
 nnoremap <c-a><Right>   :SidewaysJumpRight<cr>
+omap aa <Plug>SidewaysArgumentTextobjA
+xmap aa <Plug>SidewaysArgumentTextobjA
+omap ia <Plug>SidewaysArgumentTextobjI
+xmap ia <Plug>SidewaysArgumentTextobjI
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-rooter
