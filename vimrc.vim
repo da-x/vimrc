@@ -333,7 +333,7 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers
 try
-  set switchbuf=useopen,usetab,newtab
+  set switchbuf=""
   set stal=2
 catch
 endtry
@@ -1371,11 +1371,12 @@ let g:rooter_change_directory_for_non_project_files = 'current'
 
 nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
-nmap <F9> :Grepper -noquickfix -noprompt -cword<cr>
-nmap <C-F9> :Grepper -noquickfix -cword<cr>
+nmap <F9> :Grepper -noprompt -cword<cr>
+nmap <C-F9> :Grepper -cword<cr>
 
 let g:grepper = {
         \ 'tools': ['git', 'grep'],
+        \ 'quickfix' : 1,
         \ }
 
 """"""""""""""""""""""""""""""
