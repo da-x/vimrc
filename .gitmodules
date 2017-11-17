@@ -79,3 +79,6 @@
 [submodule "external/sideways.vim"]
 	path = external/sideways.vim
 	url = https://github.com/AndrewRadev/sideways.vim
+[submodule "external/ctrlp.vim"]
+	path = external/ctrlp.vim
+	url = https://github.com/ctrlpvim/ctrlp.vim
