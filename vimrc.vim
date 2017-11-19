@@ -1377,6 +1377,7 @@ nmap <C-F9> :Grepper -cword<cr>
 let g:grepper = {
         \ 'tools': ['git', 'grep'],
         \ 'quickfix' : 1,
+        \ 'stop' : 50000,
         \ }
 
 """"""""""""""""""""""""""""""
