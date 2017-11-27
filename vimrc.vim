@@ -1161,6 +1161,43 @@ endfunction
 nmap <leader>d :call DuplicateLine()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"
+" CInsertIncludeForTag
+"
+" Search for the filename containing the prototype of the function or
+" type definition for a C tag, and insert '#include <filename>' in the
+" current file where there is the marker `i`.
+"
+" if b:insert_include_prefix_remove is defined, and the filename starts
+" with this prefix, then it is removed before being inserted as 'filename'.
+"
+
+function! CInsertIncludeForTag()
+  redir => l:matches
+  silent execute (":tselect " . expand("<cword>"))
+  redir END
+  for l:line in split(l:matches, "\n")
+    let l:fields = filter(split(l:line, " "), 'v:val != ""')
+    if len(l:fields) >= 5
+      if l:fields[2] == 'p' || l:fields[2] == 't'
+        let l:insert_include_prefix_remove = get(b:, 'insert_include_prefix_remove', "")
+        let l:s = l:fields[4]
+        if l:insert_include_prefix_remove != ''
+          if strpart(l:s, 0, len(l:insert_include_prefix_remove)) == l:insert_include_prefix_remove
+            let l:s=strpart(l:s, len(l:insert_include_prefix_remove))
+          endif
+        endif
+        call append(line("'i"), "#include <" . l:s . ">")
+        break
+      endif
+    endif
+  endfor
+endfunction
+
+command! CInsertIncludeForTag call CInsertIncludeForTag()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Invoking completions
 
 function! CleverTab()
