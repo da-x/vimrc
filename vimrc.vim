@@ -1284,6 +1284,7 @@ imap <C-F5> <C-c><C-F5>
 
 " Show highlight names at cursor
 
+
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 	\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -1332,6 +1333,23 @@ function! s:ToggleWhitespaceMatch(mode)
 endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntax highlighting speed
+
+"
+" I noticed that default settings for syntax hilightlying drag Vim to a grind
+" when ending medium-sized files.
+"
+" https://vi.stackexchange.com/questions/2875/vim-slows-down-over-time-with-syntax-on
+"
+" The difference is huge with the following:
+set regexpengine=1
+" I'm guessing that it depends on the type of file you're editing.
+
+" This may also be helpful, but more experimentation is needed:
+
+" syntax sync minlines=50
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CTRL P open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
 
 let g:ctrlp_prompt_mappings = {
@@ -1377,9 +1395,39 @@ command! Indent4Spaces call Indent4Spaces()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Need to work out why these change hilight colors:
+
+"nnoremap <tab>O <C-w>o
+"nnoremap <C-w>O <C-w>o
+"nnoremap <tab>o :call MaximizeToggle()<CR>
+"nnoremap <C-W>o :call MaximizeToggle()<CR>
+
+function! MaximizeToggle()
+  if exists("s:maximize_session")
+    exec "source " . s:maximize_session
+    call delete(s:maximize_session)
+    unlet s:maximize_session
+    let &hidden=s:maximize_hidden_save
+    unlet s:maximize_hidden_save
+  else
+    let s:maximize_hidden_save = &hidden
+    let s:maximize_session = tempname()
+    set hidden
+    exec "mksession! " . s:maximize_session
+    only
+  endif
+endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Example: setlocal path=.,subdir/,/usr/include,,"
 let g:local_vimrc = ['.git/vimrc_local.vim']
 
+func! LocalVimrc()
+  exec ":edit .git/vimrc_local.vim"
+endfun
+
+command! -bar LocalVimrc call LocalVimrc()
 " File is not checked-in on purpose:
 
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
