@@ -1092,6 +1092,20 @@ augroup myPerBufferActions
   autocmd BufNewFile * call SetPerBufferActions()
 augroup END
 
+" Insert previous relative buffer filename into the current buffer
+let g:previous_buffer_filename = ""
+function! LeavePreviousBuffer()
+  let g:previous_buffer_filename = expand("%")
+endfunction
+
+augroup myRememberPreviousBufferFilename
+  autocmd!
+  autocmd BufLeave * call LeavePreviousBuffer()
+augroup END
+
+imap <A-e>f <c-r>=g:previous_buffer_filename<cr>
+nmap <A-e>f i<c-r>=g:previous_buffer_filename<cr>
+
 " Some settings by file type
 function! VimEvalLine()
   execute getline(".")
