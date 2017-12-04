@@ -1230,6 +1230,13 @@ inoremap <C-l> <C-x><C-l>
 inoremap <C-]> <C-x><C-]>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Shortcuts for path-relative commands
+
+map ,e :e <C-R>=expand("%:p:h") . "/" <CR>
+map ,t :tabe <C-R>=expand("%:p:h") . "/" <CR>
+map ,s :split <C-R>=expand("%:p:h") . "/" <CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Modern-like selections (moving with shift)
 
 nmap <S-Up> v<Up>
