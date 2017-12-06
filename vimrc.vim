@@ -338,6 +338,9 @@ try
 catch
 endtry
 
+" Don't switch to the beginning of the line when switching between buffers
+set nostartofline
+
 " Return to last edit position when opening files (You want this!)
 augroup DotfilesBasicLastEdit
   au!
