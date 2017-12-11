@@ -704,15 +704,13 @@ colorscheme peaksea
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast editing and reloading of vimrc configs
 
-map <leader>ee :e! ~/.vim_runtime/vimrc.vim<cr>
 map <leader>eR :source ~/.vimrc<cr>
-map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
-map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ea :e! ~/.config/alacritty/alacritty.yml<cr>
-map <leader>ex :e! ~/.Xdefaults<cr>
+map <leader>ee :e! ~/.vim_runtime/vimrc.vim<cr>
 map <leader>eg :e! ~/.files/gitconfig<cr>
-map <leader>ew :CtrlP ~/dkr<cr>
-map <leader>eW :edit ~/dkr/
+map <leader>et :e! ~/.tmux.conf<cr>
+map <leader>ex :e! ~/.Xdefaults<cr>
+map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn persistent undo on
@@ -1460,6 +1458,8 @@ if filereadable(expand("~/.vim_runtime/project-specific.vim"))
 " map <leader><tab>m :tabedit <some-path><cr>
   source ~/.vim_runtime/project-specific.vim
 endif
+
+nmap <leader><tab>s :call lh#local_vimrc#_open_local_vimrc()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " sideways.vim
