@@ -904,6 +904,9 @@ augroup myPreventInsertModeStalling
   au InsertLeave * let &updatetime=updaterestore
 augroup END
 
+" Split lines
+nnoremap <C-k> i<CR><Esc>
+
 " Make Backspace behave like it normally does, in normal mode
 nnoremap <BS> "_X
 
