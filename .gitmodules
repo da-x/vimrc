@@ -82,3 +82,18 @@
 [submodule "external/ctrlp.vim"]
 	path = external/ctrlp.vim
 	url = https://github.com/ctrlpvim/ctrlp.vim
+[submodule "external/tlib_vim"]
+	path = external/tlib_vim
+	url = https://github.com/tomtom/tlib_vim.git
+[submodule "external/vim-addon-mw-utils"]
+	path = external/vim-addon-mw-utils
+	url = https://github.com/MarcWeber/vim-addon-mw-utils.git
+[submodule "external/snipmate"]
+	path = external/vim-snipmate
+	url = https://github.com/garbas/vim-snipmate.git
+[submodule "external/vim-snippets"]
+	path = external/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
+[submodule "external/vim-abolish"]
+	path = external/vim-abolish
+	url = git://github.com/tpope/vim-abolish.git
