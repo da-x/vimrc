@@ -563,8 +563,8 @@ let g:user_zen_mode='a'
 """"""""""""""""""""""""""""""
 " snipMate (beside <TAB> support <CTRL-j>)
 """"""""""""""""""""""""""""""
-ino <c-j> <c-r>=snipMate#TriggerSnippet()<cr>
-snor <c-j> <esc>i<right><c-r>=snipMate#TriggerSnippet()<cr>
+imap <c-j> <Plug>snipMateNextOrTrigger
+smap <c-j> <Plug>snipMateNextOrTrigger
 
 """"""""""""""""""""""""""""""
 " Vim grep
