@@ -1104,7 +1104,9 @@ function! UseAssignedName(marker) range
 endfunction
 
 command! -range -nargs=* UseAssignedName :<line1>,<line2>call UseAssignedName(<f-args>)
-xnoremap <leader>k :UseAssignedName k<cr>
+map <Esc>= mk
+imap <Esc>= <C-c><right><Esc>=
+xnoremap <Esc>= :UseAssignedName k<cr>
 
 " Operator pending remaps ( http://learnvimscriptthehardway.stevelosh.com/chapters/15.html )
 onoremap ( i(
