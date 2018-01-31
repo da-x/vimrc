@@ -96,4 +96,7 @@
 	url = https://github.com/honza/vim-snippets.git
 [submodule "external/vim-abolish"]
 	path = external/vim-abolish
-	url = git://github.com/tpope/vim-abolish.git
+        url = git://github.com/tpope/vim-abolish.git
+[submodule "external/name-assign.vim"]
+        path = external/name-assign.vim
+        url = git://github.com/da-x/name-assign.vim
