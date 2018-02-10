@@ -1,4 +1,37 @@
-snippet use_rc
+snippet userc
 	use std::cell::RefCell;
 	use std::rc::Rc;
 	${0}
+
+snippet usefs
+	use std::fs;
+	${0}
+
+snippet letsome
+	if let Some(path) = ${0} {
+	}
+
+snippet struct
+	struct ${1} {
+	}
+
+	impl ${2} {
+	    fn new() -> Self {
+		Self {
+		    ${3}
+		}
+	    }
+	}
+snippet portablefn
+	#[cfg(target_os = "linux")]
+	pub fn ${1} {
+	    ${0}
+	}
+
+	#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
+	pub fn ${1} {
+	}
+
+	#[cfg(target_os = "windows")]
+	pub fn ${1} {
+	}

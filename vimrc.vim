@@ -566,6 +566,7 @@ let g:user_zen_mode='a'
 """"""""""""""""""""""""""""""
 imap <c-j> <Plug>snipMateNextOrTrigger
 smap <c-j> <Plug>snipMateNextOrTrigger
+map <leader>sm :SnipMateOpenSnippetFiles<cr>
 
 """"""""""""""""""""""""""""""
 " Vim grep
@@ -712,6 +713,7 @@ map <leader>eg :e! ~/.files/gitconfig<cr>
 map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ex :e! ~/.Xdefaults<cr>
 map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
+map <leader>ed :e! .git/todo.md<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn persistent undo on

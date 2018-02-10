@@ -100,3 +100,6 @@
 [submodule "external/name-assign.vim"]
         path = external/name-assign.vim
         url = git://github.com/da-x/name-assign.vim
+[submodule "external/vim-markdown-folding"]
+	path = external/vim-markdown-folding
+	url = https://github.com/nelstrom/vim-markdown-folding
