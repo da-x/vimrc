@@ -1189,6 +1189,13 @@ endfunction
 nmap <leader>d :call DuplicateLine()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Execute something without the prompt
+
+command! -nargs=1 Silent
+\   execute 'silent !' . <q-args>
+\ | execute 'redraw!'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "
 " CInsertIncludeForTag
