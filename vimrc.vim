@@ -564,8 +564,10 @@ let g:user_zen_mode='a'
 """"""""""""""""""""""""""""""
 " snipMate (beside <TAB> support <CTRL-j>)
 """"""""""""""""""""""""""""""
-imap <c-j> <Plug>snipMateNextOrTrigger
-smap <c-j> <Plug>snipMateNextOrTrigger
+imap <C-q> <Plug>snipMateNextOrTrigger
+smap <C-q> <Plug>snipMateNextOrTrigger
+imap <C-j> <Plug>snipMateNextOrTrigger
+smap <C-j> <Plug>snipMateNextOrTrigger
 map <leader>sm :SnipMateOpenSnippetFiles<cr>
 
 """"""""""""""""""""""""""""""

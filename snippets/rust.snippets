@@ -22,6 +22,11 @@ snippet struct
 		}
 	    }
 	}
+
+snippet unimp
+	unimplemented!();
+	${1}
+
 snippet portablefn
 	#[cfg(target_os = "linux")]
 	pub fn ${1} {
