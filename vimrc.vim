@@ -1112,8 +1112,20 @@ augroup myRememberPreviousBufferFilename
   autocmd BufLeave * call LeavePreviousBuffer()
 augroup END
 
+function! MyInsertRandom()
+  execute "py import vim, random; vim.command('normal i' + str(''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])))"
+  execute "normal! l"
+endfunction
+
+function! MyInsertRandomInInsertMode()
+  python import random
+  return pyeval("''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])")
+endfunction
+
 imap <A-e>f <c-r>=g:previous_buffer_filename<cr>
 nmap <A-e>f i<c-r>=g:previous_buffer_filename<cr>
+imap <A-e>r  <c-r>=MyInsertRandomInInsertMode()<cr>
+map <A-e>r  :call MyInsertRandom()<cr>
 
 " Some settings by file type
 function! VimEvalLine()
