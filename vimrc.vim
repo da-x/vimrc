@@ -195,6 +195,9 @@ endif
 " Add a bit extra margin to the left
 set foldcolumn=1
 
+" No folding by default
+set nofoldenable
+
 " Disable ex mode
 map q: <Nop>
 nnoremap Q <nop>
