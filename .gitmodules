@@ -103,3 +103,12 @@
 [submodule "external/vim-markdown-folding"]
 	path = external/vim-markdown-folding
 	url = https://github.com/nelstrom/vim-markdown-folding
+[submodule "external/gv.vim"]
+	path = external/gv.vim
+	url = https://github.com/junegunn/gv.vim
+[submodule "external/vim-gitgutter"]
+	path = external/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
+[submodule "external/vim-fugitive"]
+	path = external/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
