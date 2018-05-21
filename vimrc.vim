@@ -545,7 +545,10 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 " to use true-colors on all of them here.
 
 set termguicolors
-set term=rxvt-unicode-256color
+
+if !has('nvim')
+    set term=rxvt-unicode-256color
+endif
 
 """"""""""""""""""""""""""""""
 " Twig section
