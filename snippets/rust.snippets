@@ -15,12 +15,11 @@ snippet ifls
 snippet struct
 	struct ${1} {
 	}
-
 	impl ${2} {
 	    fn new() -> Self {
-		Self {
-		    ${3}
-		}
+	        Self {
+	            ${0}
+	        }
 	    }
 	}
 
@@ -29,14 +28,32 @@ snippet ifrom
 	    fn from(v: ${1}) -> Self { ${2}::${3}(v) }
 	}
 
-snippet unused_imp
+snippet fnms
+	fn ${1}(&mut self) {
+	    ${0}
+	}
+
+snippet fns
+	fn ${1}(&self) {
+	    ${0}
+	}
+
+snippet fnS
+	fn ${1}(self) {
+	    ${0}
+	}
+
+snippet unimp
 	#![allow(unused_imports)]
 
 snippet unused
 	#[allow(unused)]
 
 snippet unimp
-	unimplemented!();${1}
+	unimplemented!();${0}
+
+snippet pan
+	panic!();${0}
 
 snippet portablefn
 	#[cfg(target_os = "linux")]

@@ -202,6 +202,8 @@ set nofoldenable
 map q: <Nop>
 nnoremap Q <nop>
 
+nnoremap ; :
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colors and Fonts
 
