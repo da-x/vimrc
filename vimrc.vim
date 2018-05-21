@@ -218,6 +218,10 @@ noremap <leader>' ct'
 noremap <leader>" ct"
 noremap <leader>, ct,
 noremap <leader>; ct;
+map <leader>i] ysiw]
+map <leader>i- ysiw-
+map <leader>i' ysiw'
+map <leader>i" ysiw"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colors and Fonts
