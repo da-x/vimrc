@@ -198,11 +198,26 @@ set foldcolumn=1
 " No folding by default
 set nofoldenable
 
+set splitright
+set splitbelow
+
+" Tags are auto-generated, and not ignored by Git, so put them
+" in the git meta-directory
+set tags=.git/_TAGS_
+
 " Disable ex mode
 map q: <Nop>
 nnoremap Q <nop>
 
+" Shortcuts
 nnoremap ; :
+nnoremap <leader><leader> <c-^>
+noremap <leader>_ ct_
+noremap <leader>- ct-
+noremap <leader>' ct'
+noremap <leader>" ct"
+noremap <leader>, ct,
+noremap <leader>; ct;
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Colors and Fonts
@@ -232,6 +247,7 @@ endif
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
+set scrolloff=3
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
@@ -659,6 +675,7 @@ function! LightlineLinterOK() abort
 endfunction
 
 autocmd User ALELint call lightline#update()
+autocmd BufRead *.orig set readonly
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vimroom
