@@ -1287,6 +1287,8 @@ function! CleverTab()
 endfunction
 
 inoremap <Tab> <C-R>=CleverTab()<CR>
+" inoremap <expr><Tab> (pumvisible()?(empty(v:completed_item)?"\<C-n>":"\<C-y>"):"\<Tab>")
+" inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<CR>\<CR>":"\<C-y>"):"\<CR>")
 
 inoremap <C-f> <C-x><C-f>
 inoremap <C-d> <C-x><C-d>
@@ -1452,10 +1454,8 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Rust
 
-let g:syntastic_rust_checkers = ['rustc']
-let g:racer_cmd = expand("$HOME/.cargo/bin/racer")
-let g:rustc_syntax_only = 0
-let $RUST_SRC_PATH = expand("$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src")
+let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
+
 au FileType rust nmap <M-,> <Plug>(rust-def)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1631,6 +1631,23 @@ noremap <C-x>q <C-c>:q<cr>
 noremap <C-x><C-q> <C-c>:q<cr>
 noremap! <C-x>q <C-c>:q<cr>
 noremap! <C-x><C-q> <C-c>:q<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Language server
+
+let g:deoplete#enable_at_startup = 1
+
+set hidden
+set completeopt-=preview
+
+let g:LanguageClient_serverCommands = {
+     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+     \ }
+
+let g:LanguageClient_autoStart = 1
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Misc

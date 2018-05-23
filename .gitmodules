@@ -112,3 +112,21 @@
 [submodule "external/vim-fugitive"]
 	path = external/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
+[submodule "external/LanguageClient-neovim"]
+	path = external/LanguageClient-neovim
+	url = https://github.com/autozimu/LanguageClient-neovim
+[submodule "external/nvim-yarp"]
+	path = external/nvim-yarp
+	url = https://github.com/roxma/nvim-yarp
+[submodule "external/vim-hug-neovim-rpc"]
+	path = external/vim-hug-neovim-rpc
+	url = https://github.com/roxma/vim-hug-neovim-rpc
+[submodule "external/deoplete.nvim"]
+	path = external/deoplete.nvim
+	url = https://github.com/Shougo/deoplete.nvim
+[submodule "external/fzf"]
+	path = external/fzf
+	url = https://github.com/junegunn/fzf
+[submodule "external/nvim-completion-manager"]
+	path = external/nvim-completion-manager
+	url = https://github.com/roxma/nvim-completion-manager
