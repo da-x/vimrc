@@ -2,6 +2,7 @@
 " Welcome!
 
 " Some bits are taken from: https://github.com/amix/vimrc
+" Others from https://github.com/jonhoo/configs/blob/master/.vimrc
 
 set nocompatible
 set shell=/bin/bash
@@ -219,6 +220,7 @@ set backspace=eol,start,indent
 set cindent
 set cinoptions=:0,l1,t0,g0,(0
 set cmdheight=2
+set completeopt-=preview
 set encoding=utf8
 set ffs=unix,dos,mac
 set foldcolumn=1
@@ -237,6 +239,7 @@ set noerrorbells
 set noexpandtab
 set nofoldenable
 set noignorecase
+set noshowmode
 set nostartofline
 set noswapfile
 set novisualbell
@@ -245,16 +248,15 @@ set number
 set ruler
 set scrolloff=3
 set shiftwidth=4
-set shortmess+=at
+set shortmess+=atc
 set showmatch
-set smartindent
+set showtabline=2
 set smartcase
+set smartindent
 set smarttab
 set softtabstop=8
 set splitbelow
 set splitright
-set showtabline=2
-set noshowmode
 set switchbuf=useopen
 set t_vb=
 set tabstop=8
@@ -274,6 +276,8 @@ map q: <Nop>
 nnoremap Q <nop>
 
 " Shortcuts
+
+nnoremap Q @q
 nnoremap ; :
 nnoremap <leader><leader> <c-^>
 noremap <leader>_ ct_
@@ -423,6 +427,7 @@ imap <C-j> <Plug>snipMateNextOrTrigger
 smap <C-j> <Plug>snipMateNextOrTrigger
 map <leader>sm :SnipMateOpenSnippetFiles<cr>
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeWinPos = "right"
 let g:NERDTreeWinSize=35
@@ -492,7 +497,7 @@ function! LightlineLinterOK() abort
 endfunction
 
 autocmd User ALELint call lightline#update()
-autocmd BufRead *.orig set readonly
+autocmd BufRead *.orig setlocal readonly
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ALE (syntax checker)
@@ -558,10 +563,6 @@ nnoremap <A-3> i{}<esc>i
 nnoremap <A-4> i{<esc>o}<esc>O
 nnoremap <A-q> i''<esc>i
 nnoremap <A-d> i""<esc>i
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Omni complete functions
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Windowing-related
@@ -984,15 +985,11 @@ command! CInsertIncludeForTag call CInsertIncludeForTag()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Invoking completions
 
-function! CleverTab()
-  if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-    return "\<Tab>"
-  else
-    return "\<C-N>"
-  endif
-endfunction
-
-inoremap <Tab> <C-R>=CleverTab()<CR>
+" Completion
+" tab to select
+" and don't hijack my enter key
+" inoremap <expr><Tab> (pumvisible()?(empty(v:completed_item)?"\<C-n>":"\<C-y>"):"\<Tab>")
+" inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<CR>\<CR>":"\<C-y>"):"\<CR>")
 
 map <C-f> :Files<CR>
 inoremap <C-f> <C-x><C-f>
@@ -1160,6 +1157,8 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
 
 au FileType rust nmap <M-,> <Plug>(rust-def)
+" au FileType rust EchoDocEnable
+" EchoDoc does not support methods well yet.
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C
@@ -1314,10 +1313,6 @@ noremap! <C-x><C-q> <C-c>:q<cr>
 " Language server
 
 let g:deoplete#enable_at_startup = 1
-
-set hidden
-set completeopt-=preview
-
 let g:LanguageClient_serverCommands = {
      \ 'rust': ['rustup', 'run', 'stable', 'rls'],
      \ }
