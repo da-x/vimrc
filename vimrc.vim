@@ -28,7 +28,6 @@ Plug 'airblade/vim-rooter'
 
 " Navigation and other state manipulation
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-unimpaired'
 Plug 'kshenoy/vim-signature'
@@ -59,6 +58,8 @@ Plug 'da-x/ale'
 
 " Search
 Plug 'mhinz/vim-grepper'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " RPC and completions
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -993,6 +994,7 @@ endfunction
 
 inoremap <Tab> <C-R>=CleverTab()<CR>
 
+map <C-f> :Files<CR>
 inoremap <C-f> <C-x><C-f>
 inoremap <C-d> <C-x><C-d>
 inoremap <C-l> <C-x><C-l>
@@ -1024,7 +1026,7 @@ vmap <C-Cr> *``
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Various mappings for function keys
-nmap <F2> <C-c>
+nmap <F2> :Buffers<CR>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
 nmap <C-F2> :CtrlPMRUFiles<cr>
