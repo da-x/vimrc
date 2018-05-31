@@ -521,6 +521,7 @@ map <leader>eg :e! ~/.files/gitconfig<cr>
 map <leader>et :e! ~/.tmux.conf<cr>
 map <leader>ex :e! ~/.Xdefaults<cr>
 map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
+map <leader>e_ :e! ~/.vim_runtime/project-specific.vim<cr>
 map <leader>ed :e! .git/todo.md<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
