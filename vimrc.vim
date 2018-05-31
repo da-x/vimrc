@@ -254,6 +254,7 @@ set tabstop=8
 set tm=500
 set undodir=~/.vim_runtime/.temp_dirs/undodir
 set undofile
+set updatetime=500
 set whichwrap+=<,>,h,l
 set wrap
 
