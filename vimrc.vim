@@ -39,6 +39,7 @@ Plug 'terryma/vim-expand-region'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
+Plug 'vim-scripts/auto-pairs-gentle'
 
 " Snipppets
 Plug 'garbas/vim-snipmate'
@@ -502,6 +503,13 @@ let g:ale_linters = {}
 let g:ale_set_balloons = 1
 let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Config for auto-pairs
+
+let g:AutoPairsShortcutToggle = ''
+let g:AutoPairsShortcutFastWrap = ''
+let g:AutoPairsCenterLine = ''
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast editing and reloading of vimrc configs
