@@ -43,6 +43,7 @@ Plug 'honza/vim-snippets'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/gv.vim'
+Plug 'tpope/vim-fugitive'
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
