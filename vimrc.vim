@@ -669,8 +669,8 @@ map <C-Delete> <Nop>
 function! SetSystemClipboard(string)
   let l:display = expand("$DISPLAY")
   if l:display != "" && executable("xsel")
-    call system('xsel -p', a:string)
-    call system('xsel -s', a:string)
+    call system('xsel -i -p', a:string)
+    call system('xsel -i -s', a:string)
   endif
 endfunction
 
