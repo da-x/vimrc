@@ -26,10 +26,12 @@ Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'da-x/local_vimrc'
 Plug 'airblade/vim-rooter'
 
-" Navigation
+" Navigation and other state manipulation
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-unimpaired'
+Plug 'kshenoy/vim-signature'
 
 " Text manipulation
 Plug 'AndrewRadev/sideways.vim'
@@ -49,7 +51,6 @@ Plug 'tpope/vim-fugitive'
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
-Plug 'kshenoy/vim-signature'
 
 " Themes
 Plug 'itchyny/lightline.vim'
@@ -251,6 +252,7 @@ set softtabstop=8
 set splitbelow
 set splitright
 set showtabline=2
+set noshowmode
 set switchbuf=useopen
 set t_vb=
 set tabstop=8
