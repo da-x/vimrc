@@ -1,0 +1,70 @@
+snippet userc
+	use std::cell::RefCell;
+	use std::rc::Rc;
+	${0}
+
+snippet usefs
+	use std::fs;
+	${0}
+
+snippet ifls
+	if let Some(${1}) = ${2} {
+	    ${0}
+	}
+
+snippet struct
+	struct ${1} {
+	}
+	impl ${2} {
+	    fn new() -> Self {
+	        Self {
+	            ${0}
+	        }
+	    }
+	}
+
+snippet ifrom
+	impl From<${1}> for ${2} {
+	    fn from(v: ${1}) -> Self { ${2}::${3}(v) }
+	}
+
+snippet fnms
+	fn ${1}(&mut self) {
+	    ${0}
+	}
+
+snippet fns
+	fn ${1}(&self) {
+	    ${0}
+	}
+
+snippet fnS
+	fn ${1}(self) {
+	    ${0}
+	}
+
+snippet unimp
+	#![allow(unused_imports)]
+
+snippet unused
+	#[allow(unused)]
+
+snippet unimp
+	unimplemented!();${0}
+
+snippet pan
+	panic!();${0}
+
+snippet portablefn
+	#[cfg(target_os = "linux")]
+	pub fn ${1} {
+	    ${0}
+	}
+
+	#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
+	pub fn ${1} {
+	}
+
+	#[cfg(target_os = "windows")]
+	pub fn ${1} {
+	}
