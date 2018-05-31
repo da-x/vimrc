@@ -35,6 +35,8 @@ Plug 'scrooloose/nerdtree'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'terryma/vim-expand-region'
 Plug 'junegunn/vim-easy-align'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
 
 " Snipppets
 Plug 'garbas/vim-snipmate'
