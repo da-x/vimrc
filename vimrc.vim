@@ -32,6 +32,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-unimpaired'
 Plug 'kshenoy/vim-signature'
+Plug 'majutsushi/tagbar'
 
 " Text manipulation
 Plug 'AndrewRadev/sideways.vim'
@@ -95,6 +96,7 @@ call plug#end()
 
 " Various missing ansi code mappings.
 " The ANSI codes for Shift-Enter were specially invented.
+map <Char-0x0c> :call OnF11()<cr>
 map <Char-0x1c> :call CtrlBar()<cr>
 map <Char-0x1f> :call CtrlMinus()<cr>
 
@@ -425,6 +427,11 @@ imap <C-j> <Plug>snipMateNextOrTrigger
 smap <C-j> <Plug>snipMateNextOrTrigger
 map <leader>sm :SnipMateOpenSnippetFiles<cr>
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Commentary
+
+xmap <C-r> gc
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeWinPos = "right"
@@ -950,6 +957,16 @@ command! -nargs=1 Silent
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+function! OnF11()
+   execute "ptag " . expand("<cword>")
+endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+map <F10> :Tagbar<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 "
 " CInsertIncludeForTag
 "
@@ -1072,9 +1089,13 @@ imap <C-F5> <C-c><C-F5>
 
 " Show highlight names at cursor
 
-map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-	\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-	\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+func! IdentifySyn(...)
+  echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+        \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+        \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"
+endfun
+
+command! IdentifySyn call IdentifySyn()
 
 set termguicolors
 set background=dark
