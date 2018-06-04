@@ -269,7 +269,8 @@ set wrap
 
 " Tags are auto-generated, and not ignored by Git, so put them
 " in the git meta-directory
-set tags=.git/_TAGS_
+set tags=_TAGS_
+set cpoptions+=d
 
 " Disable ex mode
 map q: <Nop>
@@ -1223,6 +1224,19 @@ xmap ia <Plug>SidewaysArgumentTextobjI
 
 let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'Makefile']
 let g:rooter_change_directory_for_non_project_files = 'current'
+
+func! MyRooterHook(...)
+  let $PROJ_ROOT = FindRootDirectory()
+  if len($PROJ_ROOT) > 0
+    set tags='$PROJ_ROOT/_TAGS_'
+  endif
+endfunction
+
+augroup myRooterHook
+  autocmd!
+  autocmd! BufRead * call MyRooterHook()
+augroup END
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Grepper
