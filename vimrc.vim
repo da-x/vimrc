@@ -267,8 +267,7 @@ set updatetime=500
 set whichwrap+=<,>,h,l
 set wrap
 
-set tags=._TAGS_
-set cpoptions+=d
+set tags=._TAGS_,./rusty-tags.vi;/
 
 " Disable ex mode
 map q: <Nop>
