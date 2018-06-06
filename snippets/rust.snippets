@@ -41,6 +41,13 @@ snippet fns
 snippet dernum
 	#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]${0}
 
+snippet script
+	#!/usr/bin/env run-cargo-script
+
+	fn main() {
+	    ${0}
+	}
+
 snippet fnS
 	fn ${1}(self) {
 	    ${0}
