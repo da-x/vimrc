@@ -1,20 +1,13 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Welcome!
 
-" Some bits are taken from: https://github.com/amix/vimrc
+" Some original work, plus some bits from: https://github.com/amix/vimrc
 " Others from https://github.com/jonhoo/configs/blob/master/.vimrc
-
-set nocompatible
-set shell=/bin/bash
-
-" Prevent Ctrl-S terminal suspend function
-silent exec "!stty -ixon"
 
 " =============================================================================
 " # PLUGINS
 " =============================================================================
 
-filetype off
 call plug#begin('~/.vim_runtime/vim-plugged')
 
 " Libs
@@ -68,7 +61,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'roxma/nvim-yarp'
 
 if has('nvim')
-   Plug 'roxma/nvim-completion-manager'
+  Plug 'roxma/nvim-completion-manager'
 endif
 
 " Syntax related
@@ -90,15 +83,15 @@ Plug 'Shougo/echodoc.vim'
 
 call plug#end()
 
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Terminal fixups
 
-" Various missing ansi code mappings.
-" The ANSI codes for Shift-Enter were specially invented.
-map <Char-0x0c> :call OnF11()<cr>
-map <Char-0x1c> :call CtrlBar()<cr>
-map <Char-0x1f> :call CtrlMinus()<cr>
+" Various missing ansi code mappings, plus special mappings that are intrinsic
+" to how I configure Alacritty.
+
+map <Char-0x0c> :call OnF11()<CR>
+map <Char-0x1c> :call OnCtrlBar()<CR>
+map <Char-0x1f> :call OnCtrlMinus()<CR>
 
 map <ESC><Char-0x10> <C-A-p>
 map <ESC>[11;3~ <A-F1>
@@ -178,213 +171,223 @@ map! <ESC>e <A-e>
 map! <ESC>d <A-d>
 map! <ESC>[4~ <End>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 " Make keystores the most predictable being time-independent:
 set notimeout
 set nottimeout
 
+" Give indication in which mode we are at, using a cursor shape.
+" | for insert
+" _ for replace
+" ■ for normal
+augroup cursorShape
+  " This is in an BufEnter autocmds because for some reason vim-gnupg reverts
+  " to the original behavior.
+  autocmd!
+  autocmd BufEnter * let &t_SI = "\<Esc>[6 q"
+  autocmd BufEnter * let &t_SR = "\<Esc>[4 q"
+  autocmd BufEnter * let &t_EI = "\<Esc>[2 q"
+augroup END
 
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
+" To be most compatible in a subprocess invocations
+set shell=/bin/bash
 
-" Set to auto read when a file is changed from the outside
-set autoread
-au CursorHold * checktime
-
-" With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
-let mapleader = "\<Space>"
-let g:mapleader = "\<Space>"
-map <Space> <leader>
-set showcmd
-
-" Fast saving
-nmap <leader>w :w!<cr>
-
-" Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
-
-" Turn on the WiLd menu
-set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
-else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
-
-set autoindent
-set backspace=eol,start,indent
-set cindent
-set cinoptions=:0,l1,t0,g0,(0
-set cmdheight=2
-set completeopt-=preview
-set encoding=utf8
-set ffs=unix,dos,mac
-set foldcolumn=1
-set hidden
-set history=500
-set hlsearch
-set incsearch
-set laststatus=2
-set lazyredraw
-set linebreak
-set magic
-set mat=2
-set nobackup
-set noequalalways
-set noerrorbells
-set noexpandtab
-set nofoldenable
-set noignorecase
-set noshowmode
-set nostartofline
-set noswapfile
-set novisualbell
-set nowb
-set number
-set ruler
-set scrolloff=3
-set shiftwidth=4
-set shortmess+=atc
-set showmatch
-set showtabline=2
-set smartcase
-set smartindent
-set smarttab
-set softtabstop=8
-set splitbelow
-set splitright
-set switchbuf=useopen
-set t_vb=
-set tabstop=8
-set tm=500
-set undodir=~/.vim_runtime/.temp_dirs/undodir
-set undofile
-set updatetime=500
-set whichwrap+=<,>,h,l
-set wrap
-
-set tags=._TAGS_,./rusty-tags.vi;/
-
-" Disable ex mode
-map q: <Nop>
-nnoremap Q <nop>
-
-" Shortcuts
-
-nnoremap Q @q
-nnoremap ; :
-nnoremap <leader><leader> <c-^>
-noremap <leader>_ ct_
-noremap <leader>- ct-
-noremap <leader>' ct'
-noremap <leader>" ct"
-noremap <leader>, ct,
-noremap <leader>; ct;
-map <leader>i] ysiw]
-map <leader>i- ysiw-
-map <leader>i' ysiw'
-map <leader>i" ysiw"
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Enable syntax highlighting
-syntax enable
+" Prevent Ctrl-S terminal suspend function
+silent exec "!stty -ixon"
 
 if !has('nvim')
-    set term=xterm-256color
+  set term=xterm-256color
 endif
 
 " Enable 256 colors palette in Gnome Terminal
 if $COLORTERM == 'gnome-terminal'
-    set t_Co=256
+  set t_Co=256
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Visual mode related
+" Fast terminal
+set showcmd
+set lazyredraw
 
-" Visual mode pressing * or # searches for the current selection
-" Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+" =============================================================================
+" Main settings
+"
+" Leader key
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
+map <Space> <leader>
 
-if has('nvim')
-    set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
-    set inccommand=nosplit
-    noremap <C-q> :confirm qall<CR>
-end
+" Wild menu
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+  set wildignore+=.git\*,.hg\*,.svn\*
+else
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+set wildmenu
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Moving around, tabs, windows and buffers
+" Tabs and indentation
+set autoindent
+set cindent
+set cinoptions=:0,l1,t0,g0,(0
+set smartcase
+set shiftwidth=4
+set smarttab
+set softtabstop=8
+set noexpandtab
 
-" Disable highlight when <leader><cr> is pressed
-map <silent> <leader><cr> :noh<cr>
+" Backup files and undo
+set nobackup
+set undodir=~/.vim_runtime/.temp_dirs/undodir
+set undofile
+set noswapfile
+set nowritebackup
 
-map <C-t><Insert> :tabnew<cr>
-map! <C-t><Insert> <C-c><C-t><Insert>
-map <C-t><Delete> :tabclose<cr>
-map! <C-t><Delete> <C-c><C-t><Delete>
-map <C-t><Left> :-tabmove<cr>
-map! <C-t><Left> <C-c><C-t><Left>
-map <C-t><Right> :+tabmove<cr>
-map! <C-t><Right> <C-c><C-t><Right>
-map <C-t><Home> :0tabmove<cr>
-map! <C-t><Home> <C-c><C-t><Home>
-map <C-t><End> :tabmove<cr>
-map! <C-t><End> <C-c><C-t><End>
-map <C-t>1 :1tabnext<cr>
-map <C-t>2 :2tabnext<cr>
-map <C-t>3 :3tabnext<cr>
-map <C-t>4 :4tabnext<cr>
-map <C-t>5 :5tabnext<cr>
-map <C-t>6 :6tabnext<cr>
-map <C-t>7 :7tabnext<cr>
-map <C-t>8 :8tabnext<cr>
-map <C-t>9 :9tabnext<cr>
-map! <C-t>1 :1tabnext<cr>
-map! <C-t>2 :2tabnext<cr>
-map! <C-t>3 :3tabnext<cr>
-map! <C-t>4 :4tabnext<cr>
-map! <C-t>5 :5tabnext<cr>
-map! <C-t>6 :6tabnext<cr>
-map! <C-t>7 :7tabnext<cr>
-map! <C-t>8 :8tabnext<cr>
-map! <C-t>9 :9tabnext<cr>
+" Appearance of stuff
+set number
+set ruler
+set cmdheight=2
+set completeopt-=preview
+set showmatch
+set matchtime=2
+set showtabline=2
+set laststatus=2
+set foldcolumn=1
+set noshowmode
+set shortmess+=atc
+set scrolloff=3
 
-" Let 'tl' toggle between this and the last accessed tab
-let g:lasttab = 1
-nmap <leader>tl :exe "tabn ".g:lasttab<CR>
-nmap <C-t><Cr> <leader>tl
+set history=500
+set magic
+set noequalalways
+set nofoldenable
+set noignorecase
+set switchbuf=useopen
 
-augroup DotfilesBasicTabLeave
-  au!
-  au TabLeave * let g:lasttab = tabpagenr()
+" Windowing
+set hidden
+set splitbelow
+set splitright
+
+" Encoding and file formats
+set encoding=utf8
+set fileformats=unix,dos,mac
+
+" Bells
+set noerrorbells
+set novisualbell
+set t_vb=
+
+" Possible tag files
+set tags=._TAGS_,./rusty-tags.vi;/
+
+" =============================================================================
+" Disabling various behaviors using mappings
+
+" Disable ex mode, I keep entering it by mistake
+map q: <Nop>
+
+" =============================================================================
+" Various single-line shortcuts
+
+" Fast saving
+nnoremap <leader>w :w!<CR>
+
+" Quickly record a macro and execute it
+nnoremap <F6> qm
+nnoremap <C-F6> @m
+imap <F6> <C-c><F6>
+imap <C-F6> <C-c><C-F6>
+
+" No need for entering shift when going into command mode
+nnoremap ; :
+
+" Quickly switch to other buffer
+nnoremap <leader><leader> <c-^>
+
+" Disable highlight when <leader><CR> is pressed
+map <silent> <leader><CR> :noh<CR>
+
+" =============================================================================
+" Various mappings for function keys
+
+nmap <F2> :Buffers<CR>
+map! <F2> <Nop>
+imap <F2> <C-c><F2>
+nmap <C-F2> :CtrlPMRUFiles<CR>
+map! <C-F2> <Nop>
+imap <C-F2> <C-c><C-F2>
+nmap <F3> :NERDTreeFind<CR>
+map! <F3> <Nop>
+imap <F3> <C-c><F3>
+nmap <C-F3> :NERDTreeToggle<CR>
+map! <C-F3> <Nop>
+imap <C-F3> <C-c><F3>
+nmap <C-S-F3> :CtrlP<CR>
+map! <C-S-F3> <Nop>
+imap <C-S-F3> <C-c><F3>
+
+" Navigate location lists
+nmap <F4> :lnext<CR>
+map! <F4> <Nop>
+imap <F4> <C-c><F4>
+nmap <M-F4> :lprev<CR>
+map! <M-F4> <Nop>
+imap <M-F4> <C-c><M-F4>
+nmap <C-S-F4> :lfirst<CR>
+map! <C-S-F4> <Nop>
+imap <C-S-F4> <C-c><C-F4>
+nmap <C-F4> :lopen<CR>
+map! <C-F4> <Nop>
+imap <C-F4> <C-c><C-F4>
+
+" Navigate the quickfix list
+nmap <F5> :cnext<CR>
+map! <F5> <Nop>
+imap <F5> <C-c><F5>
+nmap <M-F5> :cprev<CR>
+map! <M-F5> <Nop>
+imap <M-F5> <C-c><M-F5>
+nmap <C-F5> :cfirst<CR>
+map! <C-F5> <Nop>
+imap <C-F5> <C-c><C-F5>
+
+" =============================================================================
+" Auto-read
+"
+" Set to auto read when a file is changed from the outside
+set autoread
+
+augroup CursorHoldCheckTime
+  autocmd!
+  autocmd CursorHold * checktime
 augroup END
 
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
+" =============================================================================
+" Maps for Editing
 
-" Return to last edit position when opening files (You want this!)
-augroup DotfilesBasicLastEdit
-  au!
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-augroup END
+" Split lines at cursor quickly using C-k
+nnoremap <C-k> i<CR><Esc>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Editing mappings
+" Make Backspace behave like it normally does, in normal mode
+nnoremap <BS> "_X
 
-" Allow cursor to go after one last character of the line, like in
-" modern editing environments.
-set virtualedit=onemore,block
+" Function and hotkey to duplicate a line for the purpose of editing the
+" duplicate. Seems to be doing that a lot.
+function! DuplicateLine() abort
+  " And keep in the same column
+  let l:prevpos = getcurpos()
+  execute "t."
+  let l:curpos = getcurpos()
+  let l:curpos_prev_col = [l:curpos[0], l:curpos[1], l:prevpos[2], l:curpos[3]]
+  call setpos(".", l:curpos_prev_col)
+endfunction
 
-" Make <End> really go to the end of line (but only in normal mode),
-" because in visual mode we already have it.
-nnoremap <expr> <End> (col('$') > 1 ? "<end><right>":'')
+nnoremap <leader>d :call DuplicateLine()<CR>
+
+" Remap Ctrl-D to a single line removal, not affecting the register
+nnoremap <C-d> "_dd
+
+" Use the delete key without affecting the register
+nnoremap <Delete> "_x
 
 " 'u' and 'U' should not change case in visual mode as 'u' already
 " does entirely different thing in normal mode. Make them consistent,
@@ -395,69 +398,449 @@ vnoremap <leader>U U
 vnoremap u <C-c>u
 vnoremap U <C-c>U
 
-" Remap VIM 0 to first non-blank character
-map 0 ^
-
-" Move lines and selections
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+" Moving text up and down, either the current line or a selection, adjusting
+" for indentation. Extremely handy when re-ordering code manually.
+nnoremap <M-j> :m .+1<CR>==
+inoremap <M-j> <Esc>:m .+1<CR>==gi
+inoremap <M-k> <Esc>:m .-2<CR>==gi
+vnoremap <M-j> :m '>+1<CR>gv=gv
+nnoremap <M-k> :m .-2<CR>==
+vnoremap <M-k> :m '<-2<CR>gv=gv
 
 " Quickly add empty lines
-nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
-nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<CR>'[
+nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Limit idle time in insert mode
+augroup PreventInsertModeStalling
+  autocmd!
+  autocmd CursorHoldI * stopinsert
+  autocmd InsertEnter * let updaterestore=&updatetime | set updatetime=60000
+  autocmd InsertLeave * let &updatetime=updaterestore
+augroup END
+
+" Search replace the highlight marking, either in the entire buffer or in the
+" currently selected region in visual mode.
+nnoremap <A-h> :%s///g<left><left>
+vnoremap <A-h> :s///g<left><left>
+
+function! InsertSelectionText() abort
+  let l:search_mark = @/
+  let l:n = strlen(l:search_mark)
+  echom strpart(l:search_mark, 0, 1)
+  echom strpart(l:search_mark, l:n - 1, 1)
+  if strpart(l:search_mark, 0, 2) ==# "\\<" && strpart(l:search_mark, l:n - 2, 2) ==# "\\>"
+    let l:search_mark = strpart(l:search_mark, 2, l:n - 4)
+  endif
+  return l:search_mark
+endfunction
+
+" Search and replace the current word at cursor, either with an edit or with
+" a new expression.
+nnoremap <A-r> :%s//<C-r>=InsertSelectionText()<CR>/g<left><left>
+vnoremap <A-r> :s//<C-r>=InsertSelectionText()<CR>/g<left><left>
+nnoremap <A-w> :%s/<C-r><C-w>/<C-r><C-w>/g<left><left>
+vnoremap <A-w> :s/<C-r><C-w>/<C-r><C-w>/g<left><left>
+
+" Add a newline and move down
+noremap <silent> <C-J> O<Esc>j
+
+" Operator pending remaps ( http://learnvimscriptthehardway.stevelosh.com/chapters/15.html )
+onoremap ( i(
+onoremap ' i'
+onoremap " i"
+onoremap < i<
+onoremap [ i[
+onoremap { i{
+onoremap p( :<c-u>normal! F(vi(<CR>
+onoremap p' :<c-u>normal! F'vi'<CR>
+onoremap p" :<c-u>normal! F"vi"<CR>
+onoremap p< :<c-u>normal! F<vi<<CR>
+onoremap p[ :<c-u>normal! F[vi<<CR>
+onoremap p{ :<c-u>normal! F{vi{<CR>
+onoremap n( :<c-u>normal! f(vi(<CR>
+onoremap n' :<c-u>normal! f'vi'<CR>
+onoremap n" :<c-u>normal! f"vi"<CR>
+onoremap n< :<c-u>normal! f<vi<<CR>
+onoremap n[ :<c-u>normal! f[vi<<CR>
+onoremap n{ :<c-u>normal! f{vi{<CR>
+
+" Single character insertion
+noremap <silent> <A-a> "=nr2char(getchar())<CR>P
+
+" Shift-Enter in insert mode is just Enter
+imap <S-CR> <CR>
+
+" Change-until certain character
+noremap <leader>_ ct_
+noremap <leader>- ct-
+noremap <leader>' ct'
+noremap <leader>" ct"
+noremap <leader>, ct,
+noremap <leader>; ct;
+
+" Removes trailing spaces
+function! TrimWhiteSpace() abort
+  %s/\s\+$//e
+endfunction
+
+" =============================================================================
+" MoveTo
+"
+" Hack for moving text from where you are to some place else where is a mark,
+" and staying where you are.
+"
+" Move either the current line or the selected text to the place where
+" there's a marker, moving keeping the marker down after the new place
+" of the text, while keeping the cursor where the text was. This works
+" whether the marker is global or local, so it can be used between
+" buffers freely.
+"
+" The function is useful when moving scattered pieces of text from one
+" file to another (imagine splitting a C header file, for example).
+"
+command! -range -nargs=* MoveTo :<line1>,<line2>call MoveTextToMarkAndStay(<f-args>)
+
+function! MoveTextToMarkAndStay(marker) abort range
+  let l:markx = getpos("'".a:marker)
+  if l:markx[1] ==# 0
+    echo "No marker set"
+    return
+  endif
+  let l:curx = getcurpos()
+  let l:cur = [bufnr("%"), l:curx[1], l:curx[2], l:curx[3], l:curx[4]]
+  if l:markx[0] ==# 0
+    let l:mark = [bufnr("%"), l:markx[1], l:markx[2], l:markx[3]]
+  else
+    let l:mark = l:markx
+  endif
+  if l:mark[0] ==# l:cur[0]
+    " Same buffer
+    let l:line = l:cur[1]
+    let l:col = l:cur[2]
+    let l:mark_line = line("'".a:marker)
+    if a:lastline != a:firstline
+      execute "'<,'>move '".a:marker."-1"
+    else
+      execute "move '".a:marker."-1"
+    endif
+  else
+    " Different buffer
+    let l:mark = [l:markx[0], l:markx[1] - 1, l:markx[2], l:markx[3]]
+    if a:lastline != a:firstline
+      execute "'<,'>delete"
+    else
+      execute "delete"
+    endif
+    execute "buffer " . l:mark[0]
+    call setpos(".", l:mark)
+    execute "put"
+    execute "buffer " . l:cur[0]
+  endif
+  call setpos(".", l:cur)
+endfunction
+
+" =============================================================================
+" Settings and maps for movement
+
+set linebreak
+set whichwrap+=<,>
+set wrap
+set nostartofline
+set backspace=eol,start,indent
+
+" Faster moving of the cursor using Ctrl and arrows
+nnoremap <silent> <C-Up>   {
+nnoremap <silent> <C-Down> }
+inoremap <silent> <C-Up>   <C-c>{i
+inoremap <silent> <C-Down> <C-c>}i
+vnoremap <silent> <C-Up>   {
+vnoremap <silent> <C-Down> }
+
+" Got used to this from other environments (go to start of file / end of file)
+nnoremap <silent> <C-Home> 1G
+nnoremap <silent> <C-End>  G
+
+" When navigating on line wraps with arrows, be more visual about it
+nnoremap <Down> gj
+nnoremap <Up>   gk
+
+" Arrows are special and break out of operator-pending mode. Can still use
+" hjkl in operator mode.
+omap <Down>  <Esc><Down>
+omap <Up>    <Esc><Up>
+omap <Right> <Esc><Right>
+omap <Left>  <Esc><Left>
+
+" Allow cursor to go after one last character of the line, like in
+" modern editing environments.
+set virtualedit=onemore,block
+
+" Make <End> really go to the end of line (but only in normal mode),
+" because in visual mode we already have it.
+nnoremap <expr> <End> (col('$') > 1 ? "<end><right>":'')
+
+" Remap 0 to first non-blank character
+noremap 0 ^
+
+" Modern-like selections (moving with shift)
+nnoremap <S-Up> v<Up>
+nnoremap <S-Down> v<Down>
+nnoremap <S-Left> v<Left>
+nnoremap <S-Right> v<Right>
+nnoremap <S-Home> v<Home>
+nnoremap <S-End> v<End>
+vnoremap <S-Up> <Up>
+vnoremap <S-Down> <Down>
+vnoremap <S-Left> <Left>
+vnoremap <S-Right> <Right>
+vnoremap <S-End> <End>
+vnoremap <S-Home> <Home>
+
+" Exit insert mode (other than <Esc> and <C-c>)
+inoremap jK x<C-c>"_x
+
+" Exit insert and keep in the same place (because of virtualedit=onemore)
+inoremap <silent> <C-Delete> <C-O>:stopinsert<CR>
+map <C-Delete> <Nop>
+
+" Save time by using C-^ from insert mode
+imap <C-^> <C-c><C-^>
+
+" =============================================================================
+" Searching
+
+set hlsearch
+set incsearch
+
+" Search for selected text, forwards or backwards.
+" http://vim.wikia.com/wiki/Search_for_visually_selected_text
+vnoremap <silent> * :<C-U>
+      \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+      \gvy/<C-R><C-R>=substitute(
+      \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+      \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+      \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+      \gvy?<C-R><C-R>=substitute(
+      \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+      \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" Select the current cursor word and search it in the buffer, without
+" moving, unlike '*' and '#' which move.
+vmap <A-t> *``
+imap <A-t> <C-c>*``
+nmap <A-t> *``
+
+" Be similar to other programs:
+map <C-f> /
+
+" =============================================================================
+" Shortcuts for quickly opening various config files
+
+nnoremap <leader>eR :source ~/.vimrc<CR>
+nnoremap <leader>ea :e! ~/.config/alacritty/alacritty.yml<CR>
+nnoremap <leader>ee :e! ~/.vim_runtime/vimrc.vim<CR>
+nnoremap <leader>eg :e! ~/.files/gitconfig<CR>
+nnoremap <leader>et :e! ~/.tmux.conf<CR>
+nnoremap <leader>ex :e! ~/.Xdefaults<CR>
+nnoremap <leader>ez :e! ~/.zsh/zshrc.sh<CR>
+nnoremap <leader>e_ :e! ~/.vim_runtime/project-specific.vim<CR>
+nnoremap <leader>ed :e! .git/todo.md<CR>
+
+" =============================================================================
+" Behaviors to have when opening buffers
+
+" Return to last edit position when opening files (You want this!)
+augroup BasicLastEdit
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
+
+" Mark '.orig' file buffers as read-only on open
+augroup MarkOrigReadonly
+  autocmd!
+  autocmd BufRead *.orig setlocal readonly
+augroup END
+
+" =============================================================================
+" Window management
+
+" Tab is nicer than <C-w>
+nnoremap <tab> <C-w>
+nnoremap <tab><tab> <C-w><C-w>
+nnoremap <tab>\ <C-w>v
+nnoremap <tab>- <C-w>s
+
+" Resizing windows - thanks https://github.com/assaflavie
+nnoremap <silent> -        :resize -2<CR>
+nnoremap <silent> =        :resize +2<CR>
+nnoremap <silent> <Bar>    :vert resize +2<CR>
+nnoremap <silent> <Bslash> :vert resize -2<CR>
+
+" Splitting windows
+function! OnCtrlBar() abort
+  exec "vsplit"
+endfunction
+
+function! OnCtrlMinus() abort
+  exec "split"
+endfunction
+
+" =============================================================================
+" Tab management (I am not really using tabs, but this is handy)
+
+noremap <C-t><Insert> :tabnew<CR>
+noremap! <C-t><Insert> <C-c><C-t><Insert>
+noremap <C-t><Delete> :tabclose<CR>
+noremap! <C-t><Delete> <C-c><C-t><Delete>
+noremap <C-t><Left> :-tabmove<CR>
+noremap! <C-t><Left> <C-c><C-t><Left>
+noremap <C-t><Right> :+tabmove<CR>
+noremap! <C-t><Right> <C-c><C-t><Right>
+noremap <C-t><Home> :0tabmove<CR>
+noremap! <C-t><Home> <C-c><C-t><Home>
+noremap <C-t><End> :tabmove<CR>
+noremap! <C-t><End> <C-c><C-t><End>
+noremap <C-t>1 :1tabnext<CR>
+noremap <C-t>2 :2tabnext<CR>
+noremap <C-t>3 :3tabnext<CR>
+noremap <C-t>4 :4tabnext<CR>
+noremap <C-t>5 :5tabnext<CR>
+noremap <C-t>6 :6tabnext<CR>
+noremap <C-t>7 :7tabnext<CR>
+noremap <C-t>8 :8tabnext<CR>
+noremap <C-t>9 :9tabnext<CR>
+noremap! <C-t>1 :1tabnext<CR>
+noremap! <C-t>2 :2tabnext<CR>
+noremap! <C-t>3 :3tabnext<CR>
+noremap! <C-t>4 :4tabnext<CR>
+noremap! <C-t>5 :5tabnext<CR>
+noremap! <C-t>6 :6tabnext<CR>
+noremap! <C-t>7 :7tabnext<CR>
+noremap! <C-t>8 :8tabnext<CR>
+noremap! <C-t>9 :9tabnext<CR>
+
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <leader>tl :exe "tabn ".g:lasttab<CR>
+nmap <C-t><Cr> <leader>tl
+
+augroup BasicTabLeave
+  autocmd!
+  autocmd TabLeave * let g:lasttab = tabpagenr()
+augroup END
+
+map <leader>te :tabedit <c-r>=expand("%:p:h")<CR>/
+map <leader>cd :cd %:p:h<CR>:pwd<CR>
+
+" =============================================================================
 " Spell checking
 
 " Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+nnoremap <leader>ss :setlocal spell!<CR>
 
 " Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
+nnoremap <leader>sn ]s
+nnoremap <leader>sp [s
+nnoremap <leader>sa zg
+nnoremap <leader>s? z=
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
+" local_vimrc.vim
+
+" Example: setlocal path=.,subdir/,/usr/include,,"
+let g:local_vimrc = ['.git/vimrc_local.vim']
+
+func! LocalVimrc()
+  exec ":edit .git/vimrc_local.vim"
+endfun
+
+command! -bar LocalVimrc call LocalVimrc()
+
+" File is not checked-in on purpose:
+if filereadable(expand("~/.vim_runtime/project-specific.vim"))
+  " examples:
+  " call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
+  " map <leader><tab>m :tabedit <some-path><CR>
+  source ~/.vim_runtime/project-specific.vim
+endif
+
+nmap <leader><tab>s :call lh#local_vimrc#_open_local_vimrc()<CR>
+
+" =============================================================================
+" CTRL-P
+
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_mruf_max = 400
+let g:ctrlp_mruf_default_order = 1
+let g:ctrlp_map = '<c-f>'
+noremap <leader>j :CtrlP<CR>
+
+" We use C-c instead of C-b because we run under tmux
+noremap <C-c> :CtrlPBuffer<CR>
+
+let g:ctrlp_max_height = 20
+let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
+
+" Open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
+let g:ctrlp_prompt_mappings = {
+      \ 'AcceptSelection("h")': ['<c-x>', '<c-s>'],
+      \ 'AcceptSelection("t")': ['<c-t>', '<c-cr>','<s-cr>'],
+      \ }
+
+" =============================================================================
+" Snipmate
+
 imap <C-q> <Plug>snipMateNextOrTrigger
 smap <C-q> <Plug>snipMateNextOrTrigger
 imap <C-j> <Plug>snipMateNextOrTrigger
 smap <C-j> <Plug>snipMateNextOrTrigger
-map <leader>sm :SnipMateOpenSnippetFiles<cr>
+nnoremap <leader>sm :SnipMateOpenSnippetFiles<CR>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Commentary
 
 xmap <C-r> gc
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
+" NERDTree
+
 let g:NERDTreeWinPos = "right"
 let g:NERDTreeWinSize=35
 let NERDTreeShowHidden=0
 let NERDTreeQuitOnOpen=1
 
-map <leader>nn :NERDTreeToggle<cr>
-map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeFind<cr>
+nnoremap <leader>nn :NERDTreeToggle<CR>
+nnoremap <leader>nb :NERDTreeFromBookmark<Space>
+nnoremap <leader>nf :NERDTreeFind<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" surround.vim config
+" =============================================================================
+" Shortcuts for surround.vim
 
-" Annotate strings with gettext http://amix.dk/blog/post/19678
+map <leader>i] ysiw]
+map <leader>i- ysiw-
+map <leader>i' ysiw'
+map <leader>i" ysiw"
 
-vmap Si S(i_<esc>f)
 vmap ( S)
 vmap [ S]
 vmap { S{
 vmap } S}
 
-au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
+" =============================================================================
+" ALE (syntax checker)
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" lightline
+let g:ale_rust_cargo_use_check = 0
+let g:ale_change_sign_column_error = 1
+let g:ale_set_highlights = 1
+let g:ale_linters = {}
+let g:ale_set_balloons = 1
+let g:ale_linters.c = ['pac']
+let g:ale_linters.cpp = ['pac']
+
+" =============================================================================
+" lightline with ALE integration
 
 let g:lightline = {
       \ 'colorscheme': 'default',
@@ -507,41 +890,19 @@ function! LightlineLinterOK() abort
   return l:counts.total == 0 ? '✓ ' : ''
 endfunction
 
-autocmd User ALELint call lightline#update()
-autocmd BufRead *.orig setlocal readonly
+augroup ALELintUpdateLightline
+  autocmd!
+  autocmd User ALELint call lightline#update()
+augroup END
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ALE (syntax checker)
-
-let g:ale_rust_cargo_use_check = 0
-let g:ale_change_sign_column_error = 1
-let g:ale_set_highlights = 1
-let g:ale_linters = {}
-let g:ale_set_balloons = 1
-let g:ale_linters.c = ['pac']
-let g:ale_linters.cpp = ['pac']
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Config for auto-pairs
 
 let g:AutoPairsShortcutToggle = ''
 let g:AutoPairsShortcutFastWrap = ''
 let g:AutoPairsCenterLine = ''
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Fast editing and reloading of vimrc configs
-
-map <leader>eR :source ~/.vimrc<cr>
-map <leader>ea :e! ~/.config/alacritty/alacritty.yml<cr>
-map <leader>ee :e! ~/.vim_runtime/vimrc.vim<cr>
-map <leader>eg :e! ~/.files/gitconfig<cr>
-map <leader>et :e! ~/.tmux.conf<cr>
-map <leader>ex :e! ~/.Xdefaults<cr>
-map <leader>ez :e! ~/.zsh/zshrc.sh<cr>
-map <leader>e_ :e! ~/.vim_runtime/project-specific.vim<cr>
-map <leader>ed :e! .git/todo.md<cr>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Bash like keys for the command line
 cnoremap <C-A>	<Home>
 cnoremap <C-E>	<End>
@@ -550,151 +911,60 @@ cnoremap <C-K>	<C-U>
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Parenthesis/bracket
-vnoremap <A-1> <esc>`>a)<esc>`<i(<esc>
-vnoremap <A-2> <esc>`>a]<esc>`<i[<esc>
-vnoremap <A-3> <esc>`>a}<esc>`<i{<esc>
-vnoremap <A-4> <esc>`>a"<esc>`<i"<esc>
-vnoremap <A-q> <esc>`>a'<esc>`<i'<esc>
-vnoremap <A-e> <esc>`>a"<esc>`<i"<esc>
+" =============================================================================
+" Shortcuts for adding pairs of parenthesis/bracket
+vnoremap <A-1> <Esc>`>a)<Esc>`<i(<Esc>
+vnoremap <A-2> <Esc>`>a]<Esc>`<i[<Esc>
+vnoremap <A-3> <Esc>`>a}<Esc>`<i{<Esc>
+vnoremap <A-4> <Esc>`>a"<Esc>`<i"<Esc>
+vnoremap <A-q> <Esc>`>a'<Esc>`<i'<Esc>
+vnoremap <A-e> <Esc>`>a"<Esc>`<i"<Esc>
 
 " Map auto complete of (, ", ', [
-inoremap <A-1> ()<esc>i
-inoremap <A-2> []<esc>i
-inoremap <A-3> {}<esc>i
-inoremap <A-4> {<esc>o}<esc>O
-inoremap <A-q> ''<esc>i
-inoremap <A-d> ""<esc>i
+inoremap <A-1> ()<Esc>i
+inoremap <A-2> []<Esc>i
+inoremap <A-3> {}<Esc>i
+inoremap <A-4> {<Esc>o}<Esc>O
+inoremap <A-q> ''<Esc>i
+inoremap <A-d> ""<Esc>i
 
 " Map auto complete of (, ", ', [
-nnoremap <A-1> i()<esc>i
-nnoremap <A-2> i[]<esc>i
-nnoremap <A-3> i{}<esc>i
-nnoremap <A-4> i{<esc>o}<esc>O
-nnoremap <A-q> i''<esc>i
-nnoremap <A-d> i""<esc>i
+nnoremap <A-1> i()<Esc>i
+nnoremap <A-2> i[]<Esc>i
+nnoremap <A-3> i{}<Esc>i
+nnoremap <A-4> i{<Esc>o}<Esc>O
+nnoremap <A-q> i''<Esc>i
+nnoremap <A-d> i""<Esc>i
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Windowing-related
+" =============================================================================
+" Various Per-Buffeer mapping overrides
 
-map <tab> <c-w>
-map <tab><tab> <c-w><c-w>
-map <tab>\ <c-w>v
-map <tab>- <c-w>s
-
-" Thanks https://github.com/assaflavie
-
-nnoremap <silent> -        :resize -2<CR>
-nnoremap <silent> =        :resize +2<CR>
-nnoremap <silent> <Bar>    :vert resize +2<CR>
-nnoremap <silent> <Bslash> :vert resize -2<CR>
-
-function! CtrlBar()
-  exec "vsplit"
-endfunction
-
-function! CtrlMinus()
-  exec "split"
-endfunction
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Give indication in which mode we are at, using a cursor shape
-
-augroup cursorShape
-  " This is on Autocmds because for some reason vim-gnupg reverts to the
-  " original behavior.
-  autocmd!
-  au BufEnter * let &t_SI = "\<Esc>[6 q"
-  au BufEnter * let &t_SR = "\<Esc>[4 q"
-  au BufEnter * let &t_EI = "\<Esc>[2 q"
-augroup END
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Movement
-
-" Faster moving of the cursor using Ctrl and arrows
-nnoremap <silent> <C-Up>   {
-nnoremap <silent> <C-Down> }
-inoremap <silent> <C-Up>   <C-c>{i
-inoremap <silent> <C-Down> <C-c>}i
-vnoremap <silent> <C-Up>   {
-vnoremap <silent> <C-Down> }
-
-" Got used to this from other environments (go to start of file / end of file)
-nmap <silent> <c-home> 1G
-nmap <silent> <c-end>  G
-
-" When navigating on line wraps with arrows, be more visual about it
-nmap <Down> gj
-nmap <Up>   gk
-
-" Arrows are special and break out of operator-pending mode. Can still use
-" hjkl in operator mode.
-omap <Down>  <esc><Down>
-omap <Up>    <esc><Up>
-omap <Right> <esc><Right>
-omap <Left>  <esc><Left>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Editing
-
-" Moving text around, adjusting for indentation.
-" Extremely handy when re-ordering code manually.
-nnoremap <M-j> :m .+1<CR>==
-nnoremap <M-k> :m .-2<CR>==
-inoremap <M-j> <Esc>:m .+1<CR>==gi
-inoremap <M-k> <Esc>:m .-2<CR>==gi
-vnoremap <M-j> :m '>+1<CR>gv=gv
-vnoremap <M-k> :m '<-2<CR>gv=gv
-
-" Limit idle time in insert mode
-augroup myPreventInsertModeStalling
-  autocmd!
-  au CursorHoldI * stopinsert
-  au InsertEnter * let updaterestore=&updatetime | set updatetime=60000
-  au InsertLeave * let &updatetime=updaterestore
-augroup END
-
-" Split lines
-nnoremap <C-k> i<CR><Esc>
-
-" Make Backspace behave like it normally does, in normal mode
-nnoremap <BS> "_X
-
-" Search replace the highlight marking, either in the entire buffer or in the
-" currently selected region in visual mode.
-nnoremap <A-h> :%s///g<left><left>
-vnoremap <A-h> :s///g<left><left>
-
-function! InsertSelectionText()
-  let l:search_mark = @/
-  let l:n = strlen(l:search_mark)
-  echom strpart(l:search_mark, 0, 1)
-  echom strpart(l:search_mark, l:n - 1, 1)
-  if strpart(l:search_mark, 0, 2) ==# "\\<" && strpart(l:search_mark, l:n - 2, 2) ==# "\\>"
-     let l:search_mark = strpart(l:search_mark, 2, l:n - 4)
+function! SetPerBufferMappings() abort
+  " Prevent certain actions in various buffers
+  if &filetype ==# 'qf' || &filetype ==# 'nerdtree'
+    map <buffer> <leader>o <nop>
+    map <buffer> <C-F2> <nop>
   endif
-  return l:search_mark
+  if &filetype ==# 'bufexplorer'
+    map <buffer> <tab>q <nop>
+  endif
+  if &filetype ==# 'nerdtree'
+    map <buffer> <tab>o <nop>
+  endif
 endfunction
 
-nnoremap <A-r> :%s//<C-r>=InsertSelectionText()<CR>/g<left><left>
-vnoremap <A-r> :s//<C-r>=InsertSelectionText()<CR>/g<left><left>
-nnoremap <A-w> :%s/<C-r><C-w>/<C-r><C-w>/g<left><left>
-vnoremap <A-w> :s/<C-r><C-w>/<C-r><C-w>/g<left><left>
+augroup PerBufferActions
+  autocmd!
+  autocmd FileType * call SetPerBufferMappings()
+  autocmd BufNewFile * call SetPerBufferMappings()
+augroup END
 
-" Add a newline and move down
-noremap <silent> <C-J> O<Esc>j
 
-" Exit insert mode (other than <Esc> and <C-c>)
-inoremap jK x<C-c>"_x
-
-" Exit insert and keep in the same place (because of virtualedit=onemore)
-inoremap <silent> <C-Delete> <C-O>:stopinsert<CR>
-map <C-Delete> <Nop>
+" =============================================================================
+" Yanking and pasting
 
 " Copy a string to the system's clipbard
-function! SetSystemClipboard(string)
+function! SetSystemClipboard(string) abort
   let l:display = expand("$DISPLAY")
   if l:display != "" && executable("xsel")
     call system('xsel -i -p', a:string)
@@ -709,7 +979,7 @@ endfunction
 " * When pasting, put the cursor either at the beginning of the pasted text or
 "   after its end.
 "
-function! MyAfterYank()
+function! SpecialAfterYank() abort
   if @@[strlen(@@) - 1] !=# "\n" || visualmode() ==# 'V'
     " This requires virtualedit=onemore
     execute "normal! l"
@@ -717,258 +987,83 @@ function! MyAfterYank()
   call SetSystemClipboard(getreg("\""))
 endfunction
 
-function! PasteBeforeHack()
+function! PasteBeforeHack() abort
   let l:line = getcurpos()[1]
   let l:col = getcurpos()[2]
   execute "normal! P"
   call cursor(l:line, l:col)
 endfunction
 
-vnoremap <silent> y y`]:call MyAfterYank()<cr>
-noremap <silent> <A-p> :call PasteBeforeHack()<cr>
+vnoremap <silent> y y`]:call SpecialAfterYank()<CR>
+noremap <silent> <A-p> :call PasteBeforeHack()<CR>
 inoremap <silent> <C-A-p> <C-R>"
 inoremap <silent> <A-p> <Nop>
 noremap <C-A-p> gP
 
+" =============================================================================
+" Yanking to system clipboard various stuff
+
 "Yank various pathnames relating to the current file into the system's clipboard.
 
-function! YankCurrentFilename()
+function! YankCurrentFilename() abort
   call SetSystemClipboard(expand("%"))
 endfunction
 
-function! YankCurrentDirAbs()
+function! YankCurrentDirAbs() abort
   call SetSystemClipboard(expand("%:p:h"))
 endfunction
 
-noremap <silent> <leader>yf :call YankCurrentFilename()<cr>
-noremap <silent> <leader>yd :call YankCurrentDirAbs()<cr>
+noremap <silent> <leader>yf :call YankCurrentFilename()<CR>
+noremap <silent> <leader>yd :call YankCurrentDirAbs()<CR>
 
-"
-" Move either the current line or the selected text to the place where
-" there's a marker, moving keeping the marker down after the new place
-" of the text, while keeping the cursor where the text was. This works
-" whether the marker is global or local, so it can be used between
-" buffers freely.
-"
-" The function is useful when moving scattered pieces of text from one
-" file to another (imagine splitting a C header file, for example).
-"
-function! MoveTextToMarkAndStay(marker) range
-  let l:markx = getpos("'".a:marker)
-  if l:markx[1] ==# 0
-    echo "No marker set"
-    return
-  endif
-  let l:curx = getcurpos()
-  let l:cur = [bufnr("%"), l:curx[1], l:curx[2], l:curx[3], l:curx[4]]
-  if l:markx[0] ==# 0
-    let l:mark = [bufnr("%"), l:markx[1], l:markx[2], l:markx[3]]
-  else
-    let l:mark = l:markx
-  endif
-  if l:mark[0] ==# l:cur[0]
-    " Same buffer
-    let l:line = l:cur[1]
-    let l:col = l:cur[2]
-    let l:mark_line = line("'".a:marker)
-    if a:lastline != a:firstline
-      execute "'<,'>move '".a:marker."-1"
-    else
-      execute "move '".a:marker."-1"
-    endif
-  else
-    " Different buffer
-    let l:mark = [l:markx[0], l:markx[1] - 1, l:markx[2], l:markx[3]]
-    if a:lastline != a:firstline
-      execute "'<,'>delete"
-    else
-      execute "delete"
-    endif
-    execute "buffer " . l:mark[0]
-    call setpos(".", l:mark)
-    execute "put"
-    execute "buffer " . l:cur[0]
-  endif
-  call setpos(".", l:cur)
-endfunction
-
-command! -range -nargs=* Mtmas :<line1>,<line2>call MoveTextToMarkAndStay(<f-args>)
-
-" Operator pending remaps ( http://learnvimscriptthehardway.stevelosh.com/chapters/15.html )
-onoremap ( i(
-onoremap ' i'
-onoremap " i"
-onoremap < i<
-onoremap [ i[
-onoremap { i{
-onoremap p( :<c-u>normal! F(vi(<cr>
-onoremap p' :<c-u>normal! F'vi'<cr>
-onoremap p" :<c-u>normal! F"vi"<cr>
-onoremap p< :<c-u>normal! F<vi<<cr>
-onoremap p[ :<c-u>normal! F[vi<<cr>
-onoremap p{ :<c-u>normal! F{vi{<cr>
-onoremap n( :<c-u>normal! f(vi(<cr>
-onoremap n' :<c-u>normal! f'vi'<cr>
-onoremap n" :<c-u>normal! f"vi"<cr>
-onoremap n< :<c-u>normal! f<vi<<cr>
-onoremap n[ :<c-u>normal! f[vi<<cr>
-onoremap n{ :<c-u>normal! f{vi{<cr>
-
-" Remap Ctrl-D to a single line removal, not affecting the register
-map <C-d> "_dd
-
-" Use the delete key without affecting the register
-map <Delete> "_x
-
-" Single character insertion
-noremap <silent> <A-a> "=nr2char(getchar())<cr>P
-
-imap <S-CR> <cr>
-
-" Save time by using C-^ from insert mode
-imap <C-^> <C-c><C-^>
-
-function! SetPerBufferActions()
-  " Prevent certain actions in various buffers
-  if &filetype ==# 'qf' || &filetype ==# 'nerdtree'
-    map <buffer> <leader>o <nop>
-    map <buffer> <C-F2> <nop>
-  endif
-  if &filetype ==# 'bufexplorer'
-    map <buffer> <tab>q <nop>
-  endif
-  if &filetype ==# 'nerdtree'
-    map <buffer> <tab>o <nop>
-  endif
-endfunction
-
-augroup myPerBufferActions
-  autocmd!
-  autocmd FileType * call SetPerBufferActions()
-  autocmd BufNewFile * call SetPerBufferActions()
-augroup END
+" =============================================================================
+" Paste various things
 
 " Insert previous relative buffer filename into the current buffer
 let g:previous_buffer_filename = ""
-function! LeavePreviousBuffer()
+function! LeavePreviousBuffer() abort
   let g:previous_buffer_filename = expand("%")
 endfunction
 
-augroup myRememberPreviousBufferFilename
+augroup RememberPreviousBufferFilename
   autocmd!
   autocmd BufLeave * call LeavePreviousBuffer()
 augroup END
 
-function! MyInsertRandom()
+function! MyInsertRandom() abort
   execute "py import vim, random; vim.command('normal i' + str(''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])))"
   execute "normal! l"
 endfunction
 
-function! MyInsertRandomInInsertMode()
+function! MyInsertRandomInInsertMode() abort
   python import random
   return pyeval("''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])")
 endfunction
 
-imap <A-e>f <c-r>=g:previous_buffer_filename<cr>
-nmap <A-e>f i<c-r>=g:previous_buffer_filename<cr>
-imap <A-e>r  <c-r>=MyInsertRandomInInsertMode()<cr>
-map <A-e>r  :call MyInsertRandom()<cr>
+imap <A-e>f <c-r>=g:previous_buffer_filename<CR>
+nmap <A-e>f i<c-r>=g:previous_buffer_filename<CR>
+imap <A-e>r  <c-r>=MyInsertRandomInInsertMode()<CR>
+map <A-e>r  :call MyInsertRandom()<CR>
 
-" Some settings by file type
-function! VimEvalLine()
-  execute getline(".")
-  echo 'Line evaluated'
-  execute "normal! gj"
-endfunction
-
-function! MyVimEditSettings()
-  setlocal ts=1 sw=2 expandtab
-  noremap <buffer> <C-e> :call VimEvalLine()<cr>
-endfunction
-
-augroup myVimEditSettings
-  autocmd!
-  autocmd Filetype vim call MyVimEditSettings()
-augroup END
-
-function! MyVimEditInsertDateLine()
-  return strftime("#### At %Y-%m-%d %H:%M:%S\n")
-endfunction
-
-augroup myMarkdownEditSettings
-  autocmd!
-  autocmd Filetype markdown map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  autocmd Filetype markdown map <buffer> <leader>e\ <A-e>d
-  autocmd Filetype markdown imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
-  autocmd Filetype markdown map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
-augroup END
-
-augroup myHaskellEditSettings
-  autocmd!
-  autocmd FileType haskell setlocal smartcase
-  autocmd Filetype haskell setlocal autoindent
-  autocmd Filetype haskell setlocal expandtab
-  autocmd Filetype haskell setlocal shiftround
-  autocmd Filetype haskell setlocal shiftwidth=4
-  autocmd Filetype haskell setlocal smartindent
-  autocmd Filetype haskell setlocal smarttab
-  autocmd Filetype haskell setlocal softtabstop=4
-  autocmd Filetype haskell setlocal tabstop=8
-augroup END
-
-" Removes trailing spaces
-function! TrimWhiteSpace()
-  %s/\s\+$//e
-endfunction
-
-" Search for selected text, forwards or backwards.
-" http://vim.wikia.com/wiki/Search_for_visually_selected_text
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-
-vmap <A-t> *``
-imap <A-t> <C-c>*``
-nmap <A-t> *``
-
-function! DuplicateLine()
-  " And keep in the same column
-  let l:prevpos = getcurpos()
-  execute "t."
-  let l:curpos = getcurpos()
-  let l:curpos_prev_col = [l:curpos[0], l:curpos[1], l:prevpos[2], l:curpos[3]]
-  call setpos(".", l:curpos_prev_col)
-endfunction
-
-nmap <leader>d :call DuplicateLine()<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Execute something without the prompt
 
 command! -nargs=1 Silent
-\   execute 'silent !' . <q-args>
-\ | execute 'redraw!'
+      \   execute 'silent !' . <q-args>
+      \ | execute 'redraw!'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 
-function! OnF11()
-   execute "ptag " . expand("<cword>")
+function! OnF11() abort
+  execute "ptag " . expand("<cword>")
 endfunction
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
+" Tagbar
 
-map <F10> :Tagbar<cr>
+map <F10> :Tagbar<CR>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"
+" =============================================================================
 " CInsertIncludeForTag
 "
 " Search for the filename containing the prototype of the function or
@@ -979,7 +1074,7 @@ map <F10> :Tagbar<cr>
 " with this prefix, then it is removed before being inserted as 'filename'.
 "
 
-function! CInsertIncludeForTag()
+function! CInsertIncludeForTag() abort
   redir => l:matches
   silent execute (":tselect " . expand("<cword>"))
   redir END
@@ -1003,7 +1098,7 @@ endfunction
 
 command! CInsertIncludeForTag call CInsertIncludeForTag()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Invoking completions
 
 " Completion
@@ -1012,89 +1107,31 @@ command! CInsertIncludeForTag call CInsertIncludeForTag()
 " inoremap <expr><Tab> (pumvisible()?(empty(v:completed_item)?"\<C-n>":"\<C-y>"):"\<Tab>")
 " inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<CR>\<CR>":"\<C-y>"):"\<CR>")
 
-map <C-f> :Files<CR>
-inoremap <C-f> <C-x><C-f>
+map <C-s> :Files<CR>
+inoremap <C-s> <C-x><C-s>
 inoremap <C-d> <C-x><C-d>
 inoremap <C-l> <C-x><C-l>
 inoremap <C-]> <C-x><C-]>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Modern-like selections (moving with shift)
+" =============================================================================
 
-nmap <S-Up> v<Up>
-nmap <S-Down> v<Down>
-nmap <S-Left> v<Left>
-nmap <S-Right> v<Right>
-nmap <S-Home> v<Home>
-nmap <S-End> v<End>
-vmap <S-Up> <Up>
-vmap <S-Down> <Down>
-vmap <S-Left> <Left>
-vmap <S-Right> <Right>
-vmap <S-End> <End>
-vmap <S-Home> <Home>
-
-nmap <C-Space> V
+nnoremap <C-Space> V
 if has('nvim')
-  nmap <C-S-PageUp> V
+  nnoremap <C-S-PageUp> V
 endif
 vmap <Cr> y
-vmap <C-Cr> *``
+vnoremap <C-Cr> *``
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Various mappings for function keys
-nmap <F2> :Buffers<CR>
-map! <F2> <Nop>
-imap <F2> <C-c><F2>
-nmap <C-F2> :CtrlPMRUFiles<cr>
-map! <C-F2> <Nop>
-imap <C-F2> <C-c><C-F2>
-nmap <F3> :NERDTreeFind<cr>
-map! <F3> <Nop>
-imap <F3> <C-c><F3>
-nmap <C-F3> :NERDTreeToggle<cr>
-map! <C-F3> <Nop>
-imap <C-F3> <C-c><F3>
-nmap <C-S-F3> :CtrlP<cr>
-map! <C-S-F3> <Nop>
-imap <C-S-F3> <C-c><F3>
-
-" Navigate location lists
-nmap <F4> :lnext<cr>
-map! <F4> <Nop>
-imap <F4> <C-c><F4>
-nmap <M-F4> :lprev<cr>
-map! <M-F4> <Nop>
-imap <M-F4> <C-c><M-F4>
-nmap <C-S-F4> :lfirst<cr>
-map! <C-S-F4> <Nop>
-imap <C-S-F4> <C-c><C-F4>
-nmap <C-F4> :lopen<cr>
-map! <C-F4> <Nop>
-imap <C-F4> <C-c><C-F4>
-
-" Navigate the quickfix list
-nmap <F5> :cnext<cr>
-map! <F5> <Nop>
-imap <F5> <C-c><F5>
-nmap <M-F5> :cprev<cr>
-map! <M-F5> <Nop>
-imap <M-F5> <C-c><M-F5>
-nmap <C-F5> :cfirst<cr>
-map! <C-F5> <Nop>
-imap <C-F5> <C-c><C-F5>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Syntax highlighting
 
 " Show highlight names at cursor
 
-func! IdentifySyn(...)
+function! IdentifySyn(...) abort
   echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
         \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
         \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"
-endfun
+endfunction
 
 command! IdentifySyn call IdentifySyn()
 
@@ -1133,7 +1170,7 @@ augroup WhitespaceMatch
   autocmd InsertLeave * call s:ToggleWhitespaceMatch('n')
 augroup END
 
-function! s:ToggleWhitespaceMatch(mode)
+function! s:ToggleWhitespaceMatch(mode) abort
   let pattern = (a:mode == 'i') ? '\s\+\%#\@<!$' : '\s\+$'
   if exists('w:whitespace_match_number')
     call matchdelete(w:whitespace_match_number)
@@ -1144,7 +1181,6 @@ function! s:ToggleWhitespaceMatch(mode)
   endif
 endfunction
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting speed
 
 "
@@ -1161,39 +1197,69 @@ set regexpengine=1
 
 " syntax sync minlines=50
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" CTRL P open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
-
-let g:ctrlp_prompt_mappings = {
-      \ 'AcceptSelection("h")': ['<c-x>', '<c-s>'],
-      \ 'AcceptSelection("t")': ['<c-t>', '<c-cr>','<s-cr>'],
-      \ }
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Markdown
 
 let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Rust
+augroup MarkdownEditSettings
+  autocmd!
+  autocmd Filetype markdown map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  autocmd Filetype markdown map <buffer> <leader>e\ <A-e>d
+  autocmd Filetype markdown imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
+  autocmd Filetype markdown map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+augroup END
 
-let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
+" =============================================================================
+" Vim editing
 
-au FileType rust nmap <M-,> <Plug>(rust-def)
-" au FileType rust EchoDocEnable
-" EchoDoc does not support methods well yet.
+function! VimEvalLine() abort
+  execute getline(".")
+  echo 'Line evaluated'
+  execute "normal! gj"
+endfunction
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! MyVimEditSettings() abort
+  setlocal ts=1 sw=2 expandtab
+  noremap <buffer> <C-e> :call VimEvalLine()<CR>
+endfunction
+
+augroup VimEditSettings
+  autocmd!
+  autocmd Filetype vim call MyVimEditSettings()
+augroup END
+
+function! MyVimEditInsertDateLine() abort
+  return strftime("#### At %Y-%m-%d %H:%M:%S\n")
+endfunction
+
+" =============================================================================
+" Haskell
+
+augroup HaskellEditSettings
+  autocmd!
+  autocmd FileType haskell setlocal smartcase
+  autocmd Filetype haskell setlocal autoindent
+  autocmd Filetype haskell setlocal expandtab
+  autocmd Filetype haskell setlocal shiftround
+  autocmd Filetype haskell setlocal shiftwidth=4
+  autocmd Filetype haskell setlocal smartindent
+  autocmd Filetype haskell setlocal smarttab
+  autocmd Filetype haskell setlocal softtabstop=4
+  autocmd Filetype haskell setlocal tabstop=8
+augroup END
+
+" =============================================================================
 " C
 
-" Our special checker which directs to an external program that intellgently
-" picks up on a per-project build system.
-
-let g:syntastic_c_checkers = ['dax']
-let g:syntastic_cpp_checkers = ['dax']
+" Disable vim-linux-coding-style so I can enable it explicitly, i.e call
+" LinuxCodingStyle
 let g:linuxsty_patterns = ['_only_used_per_tree']
+
+" Or use the other standard of indenting with 4 spaces. I mainly put these in
+" a local_vimrc.
 
 func! Indent4Spaces(...)
   setlocal expandtab
@@ -1205,88 +1271,51 @@ endfun
 
 command! Indent4Spaces call Indent4Spaces()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Example: setlocal path=.,subdir/,/usr/include,,"
-let g:local_vimrc = ['.git/vimrc_local.vim']
-
-func! LocalVimrc()
-  exec ":edit .git/vimrc_local.vim"
-endfun
-
-command! -bar LocalVimrc call LocalVimrc()
-" File is not checked-in on purpose:
-
-if filereadable(expand("~/.vim_runtime/project-specific.vim"))
-" examples:
-" call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
-" map <leader><tab>m :tabedit <some-path><cr>
-  source ~/.vim_runtime/project-specific.vim
-endif
-
-nmap <leader><tab>s :call lh#local_vimrc#_open_local_vimrc()<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " sideways.vim
 
-nnoremap <c-x><Left>    :SidewaysLeft<cr>
-nnoremap <c-x><Right>   :SidewaysRight<cr>
-nnoremap <c-a><Left>    :SidewaysJumpLeft<cr>
-nnoremap <c-a><Right>   :SidewaysJumpRight<cr>
+nnoremap <c-x><Left>    :SidewaysLeft<CR>
+nnoremap <c-x><Right>   :SidewaysRight<CR>
+nnoremap <c-a><Left>    :SidewaysJumpLeft<CR>
+nnoremap <c-a><Right>   :SidewaysJumpRight<CR>
 omap aa <Plug>SidewaysArgumentTextobjA
 xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Vim-rooter
 
 let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'Makefile']
 let g:rooter_change_directory_for_non_project_files = 'current'
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Grepper
 
-nmap gs <plug>(GrepperOperator)
-xmap gs <plug>(GrepperOperator)
-nmap <F9> :Grepper -noprompt -cword<cr>
-nmap <C-F9> :Grepper -cword<cr>
+nnoremap <F9> :Grepper -noprompt -cword<CR>
+nnoremap <C-F9> :Grepper -cword<CR>
 
 let g:grepper = {
-        \ 'tools': ['git', 'grep'],
-        \ 'quickfix' : 1,
-        \ 'stop' : 50000,
-        \ }
+      \ 'tools': ['git', 'grep'],
+      \ 'quickfix' : 1,
+      \ 'stop' : 50000,
+      \ }
 
-""""""""""""""""""""""""""""""
-" CTRL-P
-""""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_mruf_max = 400
-let g:ctrlp_mruf_default_order = 1
-let g:ctrlp_map = '<c-f>'
-map <leader>j :CtrlP<cr>
 
-" We use c-c instead of c-b because we run under tmux
-map <c-c> :CtrlPBuffer<cr>
-
-let g:ctrlp_max_height = 20
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Git-related stuff
 
 let g:gitgutter_highlight_lines = 0
 
-nmap <leader>hu :GitGutterUndoHunk<cr>
-nnoremap <C-h><Delete> :GitGutterUndoHunk<cr>:w<cr>
+nmap <leader>hu :GitGutterUndoHunk<CR>
+nnoremap <C-h><Delete> :GitGutterUndoHunk<CR>:w<CR>
 nmap <C-h><Down> <Plug>GitGutterNextHunk
 nmap <C-h><Up> <Plug>GitGutterPrevHunk
-inoremap <C-h><Delete> <C-c>:GitGutterUndoHunk<cr>:w<cr>
+inoremap <C-h><Delete> <C-c>:GitGutterUndoHunk<CR>:w<CR>
 imap <C-h><Down> <C-c><Plug>GitGutterNextHunk
 imap <C-h><Up> <C-c><Plug>GitGutterPrevHunk
 
-func! MyGitRebaseTodoHook(...)
+function! MyGitRebaseTodoHook(...) abort
   call setpos('.', [0, 1, 1, 0])
   nnoremap <buffer> p 0ciwpick<ESC><Down>0
   nnoremap <buffer> r 0ciwreword<ESC><Down>0
@@ -1300,76 +1329,74 @@ func! MyGitRebaseTodoHook(...)
   nmap <buffer> <C-Down> <M-j>
   nmap <buffer> <M-PageUp> <M-k>
   nmap <buffer> <M-PageDown> <M-j>
-endfun
+endfunction
 
-augroup myGitRebaseTodoRebinding
+augroup GitRebaseTodoRebinding
   autocmd!
   autocmd! BufRead git-rebase-todo call MyGitRebaseTodoHook()
 augroup END
 
-func! Gamd()
+function! Gamd() abort
   silent w
   silent exec "Gcommit --amend -a --no-edit"
   echo "File saved, all added and commit amended"
-endfun
+endfunction
 
 command! -bar Gamd call Gamd()
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Emacs migration path:
 
-nnoremap <c-z> :undo<cr>
-inoremap <c-z> <ESC>:undo<cr>i
-nnoremap <silent> <C-x>f :NERDTreeFind<cr>
-nmap <esc>x <Nop>
+nnoremap <C-z> :undo<CR>
+inoremap <C-z> <ESC>:undo<CR>i
+nnoremap <silent> <C-x>f :NERDTreeFind<CR>
+nmap <Esc>x <Nop>
 
 " Saving or quiting from anywhere
+noremap <C-x>s <C-c>:w<CR>
+noremap <C-x><C-s> <C-c>:w<CR>
+noremap! <C-x>s <C-c>:w<CR>
+noremap! <C-x><C-s> <C-c>:w<CR>
+noremap <C-x>q <C-c>:q<CR>
+noremap <C-x><C-q> <C-c>:q<CR>
+noremap! <C-x>q <C-c>:q<CR>
+noremap! <C-x><C-q> <C-c>:q<CR>
 
-noremap <C-x>s <C-c>:w<cr>
-noremap <C-x><C-s> <C-c>:w<cr>
-noremap! <C-x>s <C-c>:w<cr>
-noremap! <C-x><C-s> <C-c>:w<cr>
-noremap <C-x>q <C-c>:q<cr>
-noremap <C-x><C-q> <C-c>:q<cr>
-noremap! <C-x>q <C-c>:q<cr>
-noremap! <C-x><C-q> <C-c>:q<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Language server
 
 let g:deoplete#enable_at_startup = 1
 let g:LanguageClient_serverCommands = {
-     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-     \ }
+      \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+      \ }
 
 let g:LanguageClient_autoStart = 1
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+
+" Stuff I am not using yet:
+
+" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 " nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Config for vim-highlightedyank
 
 let g:highlightedyank_highlight_duration = 200
 
 hi HighlightedyankRegion guibg=#008080 gui=NONE term=NONE
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
 " Misc
 
 let g:qf_auto_resize = 0
 let g:qf_window_bottom = 0
 let g:qf_mapping_ack_style = 1
 
-map <silent> <F8>   :Explore<CR>
-map <silent> <S-F8> :sp +Explore<CR>
+noremap <silent> <F8>   :Explore<CR>
+noremap <silent> <S-F8> :sp +Explore<CR>
 
 " Look for a man page
 map <C-F1> <Plug>(Man)
 
-" Search
-nmap <C-s> /
-nmap <C-S-s> ?
-
 " Goodbye!
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
