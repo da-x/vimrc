@@ -452,6 +452,7 @@ vmap Si S(i_<esc>f)
 vmap ( S)
 vmap [ S]
 vmap { S{
+vmap } S}
 
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
