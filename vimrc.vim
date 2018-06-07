@@ -175,19 +175,6 @@ map! <ESC>[4~ <End>
 set notimeout
 set nottimeout
 
-" Give indication in which mode we are at, using a cursor shape.
-" | for insert
-" _ for replace
-" ■ for normal
-augroup cursorShape
-  " This is in an BufEnter autocmds because for some reason vim-gnupg reverts
-  " to the original behavior.
-  autocmd!
-  autocmd BufEnter * let &t_SI = "\<Esc>[6 q"
-  autocmd BufEnter * let &t_SR = "\<Esc>[4 q"
-  autocmd BufEnter * let &t_EI = "\<Esc>[2 q"
-augroup END
-
 " To be most compatible in a subprocess invocations
 set shell=/bin/bash
 
@@ -206,6 +193,26 @@ endif
 " Fast terminal
 set showcmd
 set lazyredraw
+
+" Give indication in which mode we are at, using a cursor shape.
+" | for insert
+" _ for replace
+" ■ for normal
+augroup CursorShape
+  " This is in an BufEnter autocmds because for some reason vim-gnupg reverts
+  " to the original behavior.
+  autocmd!
+
+  autocmd BufEnter * call LoadCursorShapes()
+augroup END
+
+function! LoadCursorShapes()
+  let &t_SI = "\<Esc>[6 q"
+  let &t_SR = "\<Esc>[4 q"
+  let &t_EI = "\<Esc>[2 q"
+endfunction
+
+call LoadCursorShapes()
 
 " =============================================================================
 " Main settings
@@ -255,12 +262,14 @@ set noshowmode
 set shortmess+=atc
 set scrolloff=3
 
+" Misc
 set history=500
 set magic
 set noequalalways
 set nofoldenable
 set noignorecase
 set switchbuf=useopen
+set matchpairs+=<:>
 
 " Windowing
 set hidden
@@ -471,7 +480,7 @@ noremap <silent> <A-a> "=nr2char(getchar())<CR>P
 " Shift-Enter in insert mode is just Enter
 imap <S-CR> <CR>
 
-" Change-until certain character
+" Change until a certain character
 noremap <leader>_ ct_
 noremap <leader>- ct-
 noremap <leader>' ct'
@@ -627,7 +636,8 @@ vnoremap <silent> # :<C-U>
       \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 " Select the current cursor word and search it in the buffer, without
-" moving, unlike '*' and '#' which move.
+" moving, unlike '*' and '#' which move. If there is a selection, it is
+" used instead.
 vmap <A-t> *``
 imap <A-t> <C-c>*``
 nmap <A-t> *``
@@ -638,7 +648,6 @@ map <C-f> /
 " =============================================================================
 " Shortcuts for quickly opening various config files
 
-nnoremap <leader>eR :source ~/.vimrc<CR>
 nnoremap <leader>ea :e! ~/.config/alacritty/alacritty.yml<CR>
 nnoremap <leader>ee :e! ~/.vim_runtime/vimrc.vim<CR>
 nnoremap <leader>eg :e! ~/.files/gitconfig<CR>
@@ -763,7 +772,7 @@ if filereadable(expand("~/.vim_runtime/project-specific.vim"))
   " examples:
   " call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
   " map <leader><tab>m :tabedit <some-path><CR>
-  source ~/.vim_runtime/project-specific.vim
+  runtime project-specific.vim
 endif
 
 nmap <leader><tab>s :call lh#local_vimrc#_open_local_vimrc()<CR>
@@ -780,7 +789,8 @@ noremap <leader>j :CtrlP<CR>
 " We use C-c instead of C-b because we run under tmux
 noremap <C-c> :CtrlPBuffer<CR>
 
-let g:ctrlp_max_height = 20
+let g:ctrlp_max_height = 19
+let g:ctrlp_path_sort = 1
 let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 
 " Open selection in new tab using <CTRL+ENTER> or <SHIFT+ENTER>
@@ -955,6 +965,7 @@ endfunction
 
 augroup PerBufferActions
   autocmd!
+
   autocmd FileType * call SetPerBufferMappings()
   autocmd BufNewFile * call SetPerBufferMappings()
 augroup END
@@ -1107,7 +1118,6 @@ command! CInsertIncludeForTag call CInsertIncludeForTag()
 " inoremap <expr><Tab> (pumvisible()?(empty(v:completed_item)?"\<C-n>":"\<C-y>"):"\<Tab>")
 " inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<CR>\<CR>":"\<C-y>"):"\<CR>")
 
-map <C-s> :Files<CR>
 inoremap <C-s> <C-x><C-s>
 inoremap <C-d> <C-x><C-d>
 inoremap <C-l> <C-x><C-l>
@@ -1137,49 +1147,38 @@ command! IdentifySyn call IdentifySyn()
 
 set termguicolors
 set background=dark
-colorscheme peaksea-mod
 
-hi cAnsiFunction         guifg=#dddd90   guibg=NONE      gui=NONE
-hi cBraces               guifg=#ffdd80   guibg=NONE      gui=NONE
-hi cDelimiter            guifg=#ffaa80   guibg=NONE      gui=NONE
-hi cNumber               guifg=#ff9999   guibg=NONE      gui=NONE
-hi cUserFunction         guifg=#ffcc90   guibg=NONE      gui=NONE
+function! MyHighlights() abort
+  highlight cAnsiFunction  guifg=#dddd90 guibg=NONE     gui=NONE
+  highlight cBraces        guifg=#ffdd80 guibg=NONE     gui=NONE
+  highlight cDelimiter     guifg=#ffaa80 guibg=NONE     gui=NONE
+  highlight cNumber        guifg=#ff9999 guibg=NONE     gui=NONE
+  highlight cUserFunction  guifg=#ffcc90 guibg=NONE     gui=NONE
 
-hi IncSearch             guifg=#000000   guibg=#ffff00  gui=bold
-hi Search                guifg=#ccffdd   guibg=#006611  gui=bold
+  highlight IncSearch      guifg=#000000 guibg=#ffff00  gui=bold
+  highlight Search         guifg=#ccffdd guibg=#006611  gui=bold
 
-hi TabLineFill           guifg=#ffffff   guibg=#000000
-hi TabLine               guifg=black     guibg=#222222
-hi TabLineSel            guifg=#444444   guibg=#202020   gui=bold
+  highlight TabLineFill    guifg=#ffffff guibg=#000000
+  highlight TabLine        guifg=black   guibg=#222222
+  highlight TabLineSel     guifg=#444444 guibg=#202020  gui=bold
 
-highlight ALEError       guibg=#770000 guifg=#ffffff
-highlight ALEErrorSign   guibg=#770000 guifg=#ff0000
-highlight ALEInfo        guibg=#774400 guifg=#ffffff
-highlight ALEInfoSign    guibg=#774400 guifg=#ff8800
-highlight ALEWarning     guibg=#777700 guifg=#ffffff
-highlight ALEWarningSign guibg=#777700 guifg=#ffff00
+  highlight ALEError       guibg=#770000 guifg=#ffffff
+  highlight ALEErrorSign   guibg=#770000 guifg=#ff0000
+  highlight ALEInfo        guibg=#774400 guifg=#ffffff
+  highlight ALEInfoSign    guibg=#774400 guifg=#ff8800
+  highlight ALEWarning     guibg=#777700 guifg=#ffffff
+  highlight ALEWarningSign guibg=#777700 guifg=#ffff00
 
-highlight ExtraWhitespace ctermbg=red guibg=red
+  highlight ExtraWhitespace ctermbg=red guibg=red
+endfunction
 
-augroup WhitespaceMatch
+augroup MyColors
   autocmd!
 
-  autocmd BufWinEnter * let w:whitespace_match_number =
-        \ matchadd('ExtraWhitespace', '\s\+$')
-  autocmd InsertEnter * call s:ToggleWhitespaceMatch('i')
-  autocmd InsertLeave * call s:ToggleWhitespaceMatch('n')
+  autocmd ColorScheme * call MyHighlights()
 augroup END
 
-function! s:ToggleWhitespaceMatch(mode) abort
-  let pattern = (a:mode == 'i') ? '\s\+\%#\@<!$' : '\s\+$'
-  if exists('w:whitespace_match_number')
-    call matchdelete(w:whitespace_match_number)
-    call matchadd('ExtraWhitespace', pattern, 10, w:whitespace_match_number)
-  else
-    " Something went wrong, try to be graceful.
-    let w:whitespace_match_number =  matchadd('ExtraWhitespace', pattern)
-  endif
-endfunction
+colorscheme peaksea-mod
 
 " Syntax highlighting speed
 
@@ -1215,6 +1214,7 @@ augroup END
 " =============================================================================
 " Vim editing
 
+" Useful when doing small vimrc updates
 function! VimEvalLine() abort
   execute getline(".")
   echo 'Line evaluated'
@@ -1245,7 +1245,6 @@ augroup HaskellEditSettings
   autocmd Filetype haskell setlocal expandtab
   autocmd Filetype haskell setlocal shiftround
   autocmd Filetype haskell setlocal shiftwidth=4
-  autocmd Filetype haskell setlocal smartindent
   autocmd Filetype haskell setlocal smarttab
   autocmd Filetype haskell setlocal softtabstop=4
   autocmd Filetype haskell setlocal tabstop=8
@@ -1306,6 +1305,7 @@ let g:grepper = {
 " Git-related stuff
 
 let g:gitgutter_highlight_lines = 0
+set updatetime=400
 
 nmap <leader>hu :GitGutterUndoHunk<CR>
 nnoremap <C-h><Delete> :GitGutterUndoHunk<CR>:w<CR>
@@ -1335,14 +1335,6 @@ augroup GitRebaseTodoRebinding
   autocmd!
   autocmd! BufRead git-rebase-todo call MyGitRebaseTodoHook()
 augroup END
-
-function! Gamd() abort
-  silent w
-  silent exec "Gcommit --amend -a --no-edit"
-  echo "File saved, all added and commit amended"
-endfunction
-
-command! -bar Gamd call Gamd()
 
 " =============================================================================
 " Emacs migration path:
