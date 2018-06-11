@@ -756,6 +756,20 @@ nnoremap <leader>sa zg
 nnoremap <leader>s? z=
 
 " =============================================================================
+" DiffView
+"
+" From: https://github.com/assaflavie/vim 
+"
+function! s:DiffWithSaved()
+  let filetype=&ft
+  diffthis
+  vnew | r # | normal! 1Gdd
+  diffthis
+  exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
+endfunction
+com! DiffSaved call s:DiffWithSaved()
+
+" =============================================================================
 " local_vimrc.vim
 
 " Example: setlocal path=.,subdir/,/usr/include,,"
