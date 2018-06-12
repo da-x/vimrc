@@ -852,6 +852,10 @@ vmap [ S]
 vmap { S{
 vmap } S}
 
+" Surround with {}, unit with pervious line, fix indentation and edit single statement
+" inside the new {} block.
+nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=i<Cr>
+        
 " =============================================================================
 " ALE (syntax checker)
 
