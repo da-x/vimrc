@@ -854,8 +854,33 @@ vmap } S}
 
 " Surround with {}, unit with pervious line, fix indentation and edit single statement
 " inside the new {} block.
-nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=i<Cr>
-        
+nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<cr>
+vmap e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<cr>
+
+" Surround the two single-line two bodies of an if-else in C with '{}'.
+"
+" if (...)             if (...) {
+"     a;                   a;
+" else          to:    } else {
+"     b;                   b;
+"                      }
+"
+nmap e2{ e{<Down><Down>e{
+
+function! StripString(input_string)
+    return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
+endfunction
+
+function! JoinLinesIfBracketElse() abort
+  let next_line = getline(line(".") + 1)
+  let following_line = getline(line(".") + 2)
+  let pos = getpos(".")
+  if StripString(next_line) == "}" && StripString(following_line) == "else"
+    execute "normal! jJ"
+  endif
+  call setpos(".", pos)
+endfunction
+
 " =============================================================================
 " ALE (syntax checker)
 
