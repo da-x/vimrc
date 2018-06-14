@@ -1369,6 +1369,12 @@ let g:grepper = {
 let g:gitgutter_highlight_lines = 0
 set updatetime=400
 
+nmap <leader>gl :!git log
+nmap <leader>gsh :!git show
+nmap <leader>gst :silent Gstatus<cr>
+nmap <leader>grb- :!git rebase<cr>
+nmap <leader>grbi :!git rebase -i<cr>
+
 nmap <leader>hu :GitGutterUndoHunk<CR>
 nnoremap <C-h><Delete> :GitGutterUndoHunk<CR>:w<CR>
 nmap <C-h><Down> <Plug>GitGutterNextHunk
