@@ -854,8 +854,8 @@ vmap } S}
 
 " Surround with {}, unit with pervious line, fix indentation and edit single statement
 " inside the new {} block.
-nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<cr>
-vmap e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<cr>
+nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
+vmap e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
 
 " Surround the two single-line two bodies of an if-else in C with '{}'.
 "
@@ -1285,7 +1285,7 @@ endfunction
 function! MyVimEditSettings() abort
   setlocal ts=1 sw=2 expandtab
   nnoremap <buffer> <C-e> :call VimEvalLine()<CR>
-  vnoremap <buffer> <C-e> :call VimEvalSelected()<CR>
+  vnoremap <buffer> <C-e> :silent call VimEvalSelected()<CR>
 endfunction
 
 augroup VimEditSettings
@@ -1371,9 +1371,9 @@ set updatetime=400
 
 nmap <leader>gl :!git log
 nmap <leader>gsh :!git show
-nmap <leader>gst :silent Gstatus<cr>
-nmap <leader>grb- :!git rebase<cr>
-nmap <leader>grbi :!git rebase -i<cr>
+nmap <leader>gst :silent Gstatus<CR>
+nmap <leader>grb- :!git rebase<CR>
+nmap <leader>grbi :!git rebase -i<CR>
 
 nmap <leader>hu :GitGutterUndoHunk<CR>
 nnoremap <C-h><Delete> :GitGutterUndoHunk<CR>:w<CR>
