@@ -131,6 +131,7 @@ map <ESC>2 <A-2>
 map <ESC>3 <A-3>
 map <ESC>4 <A-4>
 map <ESC>q <A-q>
+map <ESC>y <A-y>
 map <ESC>e <A-e>
 map <ESC>d <A-d>
 map <ESC>[4~ <End>
@@ -1017,12 +1018,14 @@ augroup END
 " =============================================================================
 " Yanking and pasting
 
-" Copy a string to the system's clipbard
+" Copy a string to all the system's clipbard (Linux has three, and that's a
+" bit confusing).
 function! SetSystemClipboard(string) abort
   let l:display = expand("$DISPLAY")
   if l:display != "" && executable("xsel")
     call system('xsel -i -p', a:string)
     call system('xsel -i -s', a:string)
+    call system('xsel -i -b', a:string)
   endif
 endfunction
 
@@ -1032,13 +1035,21 @@ endfunction
 "   yanked in visual mode (lines or not).
 " * When pasting, put the cursor either at the beginning of the pasted text or
 "   after its end.
+" * Manage a yank stack in g:my_yank_list, and allow to pick and paste from
+"   from it using tlib, and changing the yank register to the picked option.
 "
+let g:my_yank_list = []
 function! SpecialAfterYank() abort
   if @@[strlen(@@) - 1] !=# "\n" || visualmode() ==# 'V'
     " This requires virtualedit=onemore
     execute "normal! l"
   endif
-  call SetSystemClipboard(getreg("\""))
+  let l:text = getreg("\"")
+  call insert(g:my_yank_list, l:text, 0)
+  if len(g:my_yank_list) >= 100
+    call remove(g:my_yank_list, 99)
+  endif
+  call SetSystemClipboard(l:text)
 endfunction
 
 function! PasteBeforeHack() abort
@@ -1048,11 +1059,32 @@ function! PasteBeforeHack() abort
   call cursor(l:line, l:col)
 endfunction
 
+function! SwitchYank(paste) abort
+  let l:x = tlib#input#List('si', 'Select', g:my_yank_list)
+  if l:x > 0
+    let l:text = g:my_yank_list[l:x - 1]
+    call remove(g:my_yank_list, x - 1)
+    call insert(g:my_yank_list, l:text, 0)
+    let @" = l:text
+    if a:paste == 1
+      execute "normal! gP"
+    endif
+    return l:text
+  endif
+endfunction
+
 vnoremap <silent> y y`]:call SpecialAfterYank()<CR>
+vnoremap <silent> d d:call SpecialAfterYank()<CR>
+nnoremap <silent> dd dd:call SpecialAfterYank()<CR>
+nnoremap <silent> <A-y> :call SwitchYank(0)<CR>
+nnoremap <silent> yy yy:call SpecialAfterYank()<CR>
 noremap <silent> <A-p> :call PasteBeforeHack()<CR>
+
 inoremap <silent> <C-A-p> <C-R>"
 inoremap <silent> <A-p> <Nop>
 noremap <C-A-p> gP
+inoremap <C-p> <c-r>=SwitchYank(0)<CR>
+noremap <silent> <C-p> :call SwitchYank(1)<CR>
 
 " =============================================================================
 " Yanking to system clipboard various stuff
@@ -1285,7 +1317,7 @@ endfunction
 function! MyVimEditSettings() abort
   setlocal ts=1 sw=2 expandtab
   nnoremap <buffer> <C-e> :call VimEvalLine()<CR>
-  vnoremap <buffer> <C-e> :silent call VimEvalSelected()<CR>
+  vnoremap <buffer> <C-e> :call VimEvalSelected()<CR>
 endfunction
 
 augroup VimEditSettings
