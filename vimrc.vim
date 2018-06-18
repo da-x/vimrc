@@ -41,7 +41,7 @@ Plug 'honza/vim-snippets'
 
 " Git
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/gv.vim'
+Plug 'da-x/gv.vim'
 Plug 'tpope/vim-fugitive'
 
 " Visual effects
@@ -1401,8 +1401,34 @@ let g:grepper = {
 let g:gitgutter_highlight_lines = 0
 set updatetime=400
 
+function! MySplitGitMode(command) abort
+  let l:path = fugitive#extract_git_dir(expand('%:p'))
+  vertical botright new
+  call FugitiveDetect(l:path)
+  execute a:command
+  wincmd p
+endfunction
+
+function! MyGitShowHead() abort
+  call MySplitGitMode("Gedit @")
+endfunction
+
+command! SplitGitHEAD call MyGitShowHead()
+
+function! MyGitCommitHook() abort
+  nnoremap <buffer> <C-g> :call MyGitShowHead()<CR>
+endfunction
+
+augroup GitCommitRebinding
+  autocmd!
+  autocmd! FileType gitcommit call MyGitCommitHook()
+augroup END
+
+nmap <leader>gdh :call gv#diff('HEAD')<CR>
+nmap <leader>gdc :call gv#diff('--cached', 'HEAD')<CR>
+nmap <leader>gdch :call gv#diff('--cached')<CR>
 nmap <leader>gl :!git log
-nmap <leader>gsh :!git show
+nmap <leader>gh :SplitGitHEAD<CR>
 nmap <leader>gst :silent Gstatus<CR>
 nmap <leader>grb- :!git rebase<CR>
 nmap <leader>grbi :!git rebase -i<CR>
