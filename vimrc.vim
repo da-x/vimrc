@@ -17,7 +17,7 @@ Plug 'vim-scripts/tlib'
 Plug 'roxma/vim-hug-neovim-rpc'
 
 " Settings
-Plug 'da-x/local_vimrc'
+Plug 'LucHermitte/local_vimrc'
 Plug 'airblade/vim-rooter'
 
 " Navigation and other state manipulation
@@ -489,6 +489,10 @@ noremap <leader>" ct"
 noremap <leader>, ct,
 noremap <leader>; ct;
 
+" Delete stuff backwards happens too often
+nnoremap cH xcT<Space>
+nnoremap dH xdF<Space>
+
 " Removes trailing spaces
 function! TrimWhiteSpace() abort
   %s/\s\+$//e
@@ -776,11 +780,11 @@ com! DiffSaved call s:DiffWithSaved()
 " Example: setlocal path=.,subdir/,/usr/include,,"
 let g:local_vimrc = ['.git/vimrc_local.vim']
 
-func! LocalVimrc()
+func! EditLocalVimrc()
   exec ":edit .git/vimrc_local.vim"
 endfun
 
-command! -bar LocalVimrc call LocalVimrc()
+command! -bar EditLocalVimrc call EditLocalVimrc()
 
 " File is not checked-in on purpose:
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
@@ -790,7 +794,7 @@ if filereadable(expand("~/.vim_runtime/project-specific.vim"))
   runtime project-specific.vim
 endif
 
-nmap <leader><tab>s :call lh#local_vimrc#_open_local_vimrc()<CR>
+nmap <leader>eL :EditLocalVimrc<CR>
 
 " =============================================================================
 " CTRL-P
@@ -1344,12 +1348,34 @@ augroup HaskellEditSettings
   autocmd Filetype haskell setlocal tabstop=8
 augroup END
 
+" Python
+" ==============================================================================
+
+augroup PythonEditSettings
+  autocmd!
+  autocmd Filetype python setlocal autoindent
+  autocmd Filetype python setlocal expandtab
+  autocmd Filetype python setlocal shiftround
+  autocmd Filetype python setlocal shiftwidth=4
+  autocmd Filetype python setlocal smarttab
+  autocmd Filetype python setlocal softtabstop=4
+  autocmd Filetype python setlocal tabstop=8
+augroup END
+
 " =============================================================================
 " C
 
 " Disable vim-linux-coding-style so I can enable it explicitly, i.e call
 " LinuxCodingStyle
 let g:linuxsty_patterns = ['_only_used_per_tree']
+
+function! CondLinuxCodingStyle()
+  if &ft == "cpp" || &ft == 'c'
+    LinuxCodingStyle
+  endif
+endfunction
+
+command! CondLinuxCodingStyle call CondLinuxCodingStyle()
 
 " Or use the other standard of indenting with 4 spaces. I mainly put these in
 " a local_vimrc.
