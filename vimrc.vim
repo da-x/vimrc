@@ -70,6 +70,7 @@ Plug 'vivien/vim-linux-coding-style'
 Plug 'rust-lang/rust.vim'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'cespare/vim-toml'
+Plug 'vimoutliner/vimoutliner'
 
 " Language related
 Plug 'autozimu/LanguageClient-neovim', {
