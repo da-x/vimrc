@@ -216,6 +216,20 @@ endfunction
 
 call LoadCursorShapes()
 
+" Reload environment from tmux (useful after attaching, when $DISPLAY changes
+" and you want the X clipboard interaction to work properly across ssh).
+function! ReloadEnvironment() abort
+  let l:env = system("tmux show-environment")
+  for l:line in split(l:env, "\n")
+    if l:line =~ '\V-\(\.\*\)'
+      execute "unlet $".strpart(l:line, 1)
+    else
+      let [l:name, l:value] = split(l:line, "=")
+      execute "let $".l:name." = \"".escape(l:value, '\\/.*$^~[]')."\""
+    endif
+  endfor
+endfunction
+
 " =============================================================================
 " Main settings
 "
@@ -293,7 +307,7 @@ set tags=._TAGS_,./rusty-tags.vi;/
 " =============================================================================
 " Disabling various behaviors using mappings
 
-" Disable ex mode, I keep entering it by mistake
+" Disable ex mode, I keep entering it by mistake, and I never use it.
 map q: <Nop>
 
 " =============================================================================
