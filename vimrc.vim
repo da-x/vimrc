@@ -219,7 +219,7 @@ call LoadCursorShapes()
 " Reload environment from tmux (useful after attaching, when $DISPLAY changes
 " and you want the X clipboard interaction to work properly across ssh).
 function! ReloadEnvironment() abort
-  let l:env = silent system("tmux show-environment")
+  silent let l:env = system("tmux show-environment")
   for l:line in split(l:env, "\n")
     if l:line =~ '\V-\(\.\*\)'
       execute "unlet $".strpart(l:line, 1)
