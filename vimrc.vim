@@ -219,7 +219,7 @@ call LoadCursorShapes()
 " Reload environment from tmux (useful after attaching, when $DISPLAY changes
 " and you want the X clipboard interaction to work properly across ssh).
 function! ReloadEnvironment() abort
-  let l:env = system("tmux show-environment")
+  let l:env = silent system("tmux show-environment")
   for l:line in split(l:env, "\n")
     if l:line =~ '\V-\(\.\*\)'
       execute "unlet $".strpart(l:line, 1)
@@ -1041,10 +1041,15 @@ augroup END
 " bit confusing).
 function! SetSystemClipboard(string) abort
   let l:display = expand("$DISPLAY")
-  if l:display != "" && executable("xsel")
-    call system('xsel -i -p', a:string)
-    call system('xsel -i -s', a:string)
-    call system('xsel -i -b', a:string)
+  if l:display != "" 
+    let l:helper = "$HOME/.vim_runtime/bin/set-all-clipboard.py"
+    if exists(l:helper)
+      silent call system(l:helper, a:string)
+    else
+      silent call system('xsel -i -p', a:string)
+      silent call system('xsel -i -s', a:string)
+      silent call system('xsel -i -b', a:string)
+    endif
   endif
 endfunction
 
