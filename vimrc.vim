@@ -49,7 +49,6 @@ Plug 'machakann/vim-highlightedyank'
 
 " Themes
 Plug 'itchyny/lightline.vim'
-Plug 'da-x/ale'
 
 " Search
 Plug 'mhinz/vim-grepper'
@@ -67,16 +66,20 @@ endif
 " Syntax related
 Plug 'da-x/vim-markdown'
 Plug 'vivien/vim-linux-coding-style'
-Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim' 
+
+", { 'dir': '$HOME/gh/FORKS/rust.vim' }
+
 Plug 'justinmk/vim-syntax-extra'
 Plug 'cespare/vim-toml'
 Plug 'vimoutliner/vimoutliner'
 
-" Language related
+" Language related (checkers and suggest)
 Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
+Plug 'w0rp/ale'
 
 " Other
 Plug 'junegunn/vader.vim'
@@ -902,6 +905,12 @@ function! JoinLinesIfBracketElse() abort
 endfunction
 
 " =============================================================================
+" Rust
+
+let g:rustfmt_autosave = 1
+let g:rustfmt_fail_silently = 1
+
+" =============================================================================
 " ALE (syntax checker)
 
 let g:ale_rust_cargo_use_check = 0
@@ -1339,7 +1348,7 @@ function! VimEvalSelected() abort range
 endfunction
 
 function! MyVimEditSettings() abort
-  setlocal ts=1 sw=2 expandtab
+  setlocal shiftwidth=2 expandtab
   nnoremap <buffer> <C-e> :call VimEvalLine()<CR>
   vnoremap <buffer> <C-e> :call VimEvalSelected()<CR>
 endfunction
