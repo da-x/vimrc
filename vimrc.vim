@@ -14,7 +14,6 @@ call plug#begin('~/.vim_runtime/vim-plugged')
 Plug 'LucHermitte/lh-vim-lib'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'vim-scripts/tlib'
-Plug 'roxma/vim-hug-neovim-rpc'
 
 " Settings
 Plug 'LucHermitte/local_vimrc'
@@ -56,8 +55,13 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " RPC and completions
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'roxma/nvim-yarp'
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 
 if has('nvim')
   Plug 'roxma/nvim-completion-manager'
@@ -66,12 +70,22 @@ endif
 " Syntax related
 Plug 'da-x/vim-markdown'
 Plug 'vivien/vim-linux-coding-style'
-Plug 'rust-lang/rust.vim' 
+Plug 'cespare/vim-toml'
 
-", { 'dir': '$HOME/gh/FORKS/rust.vim' }
+"
+" Allow to override the directory from the command line, sourcing a
+" developemnt tree of rust.vim.
+"
+"    vim --cmd 'let g:my_rust_vim_devel = $HOME."/gh/FORKS/rust.vim"'
+"
+let g:my_rust_vim_devel = get(g:, 'my_rust_vim_devel', '')
+if g:my_rust_vim_devel !=# ''
+  Plug 'rust-lang/rust.vim' , { 'dir': g:my_rust_vim_devel }
+else
+  Plug 'rust-lang/rust.vim'
+endif
 
 Plug 'justinmk/vim-syntax-extra'
-Plug 'cespare/vim-toml'
 Plug 'vimoutliner/vimoutliner'
 
 " Language related (checkers and suggest)
@@ -907,8 +921,7 @@ endfunction
 " =============================================================================
 " Rust
 
-let g:rustfmt_autosave = 1
-let g:rustfmt_fail_silently = 1
+let g:rustfmt_autosave_if_config_present = 1
 
 " =============================================================================
 " ALE (syntax checker)
