@@ -22,7 +22,6 @@ Plug 'airblade/vim-rooter'
 " Navigation and other state manipulation
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-unimpaired'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 
@@ -32,7 +31,7 @@ Plug 'terryma/vim-expand-region'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
-Plug 'vim-scripts/auto-pairs-gentle'
+Plug 'Raimondi/delimitMate'
 
 " Snipppets
 Plug 'garbas/vim-snipmate'
@@ -57,11 +56,11 @@ Plug 'junegunn/fzf.vim'
 " RPC and completions
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
 endif
+
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 
 if has('nvim')
   Plug 'roxma/nvim-completion-manager'
@@ -71,6 +70,7 @@ endif
 Plug 'da-x/vim-markdown'
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
+Plug 'bronson/vim-trailing-whitespace'
 
 "
 " Allow to override the directory from the command line, sourcing a
@@ -84,6 +84,7 @@ if g:my_rust_vim_devel !=# ''
 else
   Plug 'rust-lang/rust.vim'
 endif
+Plug 'rhysd/rust-doc.vim'
 
 Plug 'justinmk/vim-syntax-extra'
 Plug 'vimoutliner/vimoutliner'
@@ -93,7 +94,7 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
-Plug 'w0rp/ale'
+Plug 'da-x/ale'
 
 " Other
 Plug 'junegunn/vader.vim'
@@ -683,6 +684,11 @@ nmap <A-t> *``
 map <C-f> /
 
 " =============================================================================
+" Disable vim-unimpaired for normal mode
+
+let g:nremap = {}
+
+" =============================================================================
 " Shortcuts for quickly opening various config files
 
 nnoremap <leader>ea :e! ~/.config/alacritty/alacritty.yml<CR>
@@ -795,7 +801,7 @@ nnoremap <leader>s? z=
 " =============================================================================
 " DiffView
 "
-" From: https://github.com/assaflavie/vim 
+" From: https://github.com/assaflavie/vim
 "
 function! s:DiffWithSaved()
   let filetype=&ft
@@ -927,6 +933,7 @@ let g:rustfmt_autosave_if_config_present = 1
 " ALE (syntax checker)
 
 let g:ale_rust_cargo_use_check = 0
+let g:ale_rust_ignore_secondary_spans = 1
 let g:ale_change_sign_column_error = 1
 let g:ale_set_highlights = 1
 let g:ale_linters = {}
@@ -991,11 +998,8 @@ augroup ALELintUpdateLightline
 augroup END
 
 " =============================================================================
-" Config for auto-pairs
+" Config for delimitMate
 
-let g:AutoPairsShortcutToggle = ''
-let g:AutoPairsShortcutFastWrap = ''
-let g:AutoPairsCenterLine = ''
 
 " =============================================================================
 " Bash like keys for the command line
@@ -1063,7 +1067,7 @@ augroup END
 " bit confusing).
 function! SetSystemClipboard(string) abort
   let l:display = expand("$DISPLAY")
-  if l:display != "" 
+  if l:display != ""
     let l:helper = "$HOME/.vim_runtime/bin/set-all-clipboard.py"
     if exists(l:helper)
       silent call system(l:helper, a:string)
@@ -1374,6 +1378,15 @@ augroup END
 function! MyVimEditInsertDateLine() abort
   return strftime("#### At %Y-%m-%d %H:%M:%S\n")
 endfunction
+
+" =============================================================================
+" Rust
+
+augroup RustEditSettings
+  autocmd!
+  autocmd FileType rust nnoremap <buffer> > >>
+  autocmd FileType rust nnoremap <buffer> < <<
+augroup END
 
 " =============================================================================
 " Haskell
