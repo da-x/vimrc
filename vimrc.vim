@@ -1167,19 +1167,44 @@ augroup RememberPreviousBufferFilename
 augroup END
 
 function! MyInsertRandom() abort
-  execute "py import vim, random; vim.command('normal i' + str(''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])))"
+  execute "pyx import vim, random; vim.command('normal i' + str(''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])))"
   execute "normal! l"
 endfunction
 
 function! MyInsertRandomInInsertMode() abort
   python import random
-  return pyeval("''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])")
+  return pyxeval("''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])")
 endfunction
 
 imap <A-e>f <c-r>=g:previous_buffer_filename<CR>
 nmap <A-e>f i<c-r>=g:previous_buffer_filename<CR>
 imap <A-e>r  <c-r>=MyInsertRandomInInsertMode()<CR>
 map <A-e>r  :call MyInsertRandom()<CR>
+
+" =============================================================================
+" Execute something without the prompt
+
+function! MyPythonSnippet(...) abort
+  let l:name = a:1
+  let l:filename = g:pymacros_path.'/' . l:name . '.py'
+  echo l:filename
+
+  if !exists('s:pymacros_init')
+    let s:pymacros_init = 1
+    execute 'pyx import sys, os; sys.path.append("'.g:pymacros_path.'")'
+    execute 'pyx import importlib'
+  endif
+
+  if filereadable(l:filename)
+    execute 'pyx import ' . l:name
+    execute 'pyx importlib.reload(' . l:name . ')'
+    execute 'pyx import ' . l:name . ' ; ' . l:name . '.main()'
+  else
+    echom "Pymacro does not exist"
+  endif
+endfunction
+
+command! -nargs=1 PYM call MyPythonSnippet(<q-args>)
 
 " =============================================================================
 " Execute something without the prompt
