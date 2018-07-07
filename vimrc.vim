@@ -1263,9 +1263,11 @@ vnoremap <C-Cr> *``
 " Show highlight names at cursor
 
 function! IdentifySyn(...) abort
-  echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-        \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-        \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"
+  let l:stack = []
+  for l:i in synstack(line('.'), col('.'))
+    call add(l:stack, synIDattr(l:i, 'name') . ', trans: ' . synIDattr(synIDtrans(l:i), 'name'))
+  endfor
+  echo l:stack
 endfunction
 
 command! IdentifySyn call IdentifySyn()
