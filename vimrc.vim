@@ -1187,7 +1187,6 @@ map <A-e>r  :call MyInsertRandom()<CR>
 function! MyPythonSnippet(...) abort
   let l:name = a:1
   let l:filename = g:pymacros_path.'/' . l:name . '.py'
-  echo l:filename
 
   if !exists('s:pymacros_init')
     let s:pymacros_init = 1
@@ -1198,13 +1197,25 @@ function! MyPythonSnippet(...) abort
   if filereadable(l:filename)
     execute 'pyx import ' . l:name
     execute 'pyx importlib.reload(' . l:name . ')'
-    execute 'pyx import ' . l:name . ' ; ' . l:name . '.main()'
+    execute 'pyx import ' . l:name . ' ; ' . l:name . '.main(*list(vim.eval("a:000"))[1:])'
   else
     echom "Pymacro does not exist"
   endif
 endfunction
 
-command! -nargs=1 PYM call MyPythonSnippet(<q-args>)
+function! MyPythonSnippetEdit(...) abort
+  let l:name = a:1
+  let l:filename = g:pymacros_path.'/' . l:name . '.py'
+  execute 'edit ' . l:filename
+endfunction
+
+function! MyPythonSnippetList(...) abort
+  // TODO
+endfunction
+
+command! -nargs=+ Pym call MyPythonSnippet(<f-args>)
+command! -nargs=1 PymList call MyPythonSnippetList()
+command! -nargs=1 PymEdit call MyPythonSnippetEdit(<q-args>)
 
 " =============================================================================
 " Execute something without the prompt
