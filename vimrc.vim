@@ -1137,6 +1137,53 @@ inoremap <C-p> <c-r>=SwitchYank(0)<CR>
 noremap <silent> <C-p> :call SwitchYank(1)<CR>
 
 " =============================================================================
+" Pasting 'hugs'
+"
+" Given a special marker pattern ('<HUGS>'), plus a current content of the
+" default register, plus a visual selection, paste before and after the
+" selection, i.e., hug it.
+"
+" For example:
+"
+"     Register content: Start<HUG>End
+"
+" Before action:
+"
+"     Hello World
+"        ~~
+"        (visually selected)
+"
+" After action:
+"
+"     HelStartloEnd World
+"                  |
+
+let g:hug_marker = '\V<HUG>'
+
+function! PasteHug() abort range
+  let l:text = getreg("")
+  let l:delimiters = split(l:text, g:hug_marker)
+  if len(l:delimiters) != 2
+    return
+  endif
+  let [_, l:line_a, l:col_a, _ ] = getpos("'<")
+  let [_, l:line_b, l:col_b, _ ] = getpos("'>")
+  if l:line_a == l:line_b
+    let l:line = getline(l:line_a)
+    let l:part = strpart(l:line, l:col_a - 1, l:col_b - l:col_a + 1)
+    let [l:start, l:end] = l:delimiters
+    call setline(l:line_a, strpart(l:line, 0, l:col_a - 1) . l:start . l:part . l:end . strpart(l:line, l:col_b))
+    call setpos(".", [0, l:line_a, l:col_b + strlen(l:end) + strlen(l:start) + 1, 0])
+  else
+    " Not implemented
+  endif
+endfunction
+
+command! -range -nargs=* PasteHug :<line1>,<line2>call PasteHug()
+
+vnoremap <silent> <A-e>h :PasteHug<CR>
+
+" =============================================================================
 " Yanking to system clipboard various stuff
 
 "Yank various pathnames relating to the current file into the system's clipboard.
