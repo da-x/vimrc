@@ -1110,7 +1110,11 @@ function! PasteBeforeHack() abort
 endfunction
 
 function! SwitchYank(paste) abort
-  let l:x = tlib#input#List('si', 'Select', g:my_yank_list)
+  let l:repr_list = []
+  for l:i in g:my_yank_list
+    call add(l:repr_list, string(l:i))
+  endfor
+  let l:x = tlib#input#List('si', 'Select', l:repr_list)
   if l:x > 0
     let l:text = g:my_yank_list[l:x - 1]
     call remove(g:my_yank_list, x - 1)
