@@ -41,6 +41,7 @@ Plug 'honza/vim-snippets'
 Plug 'airblade/vim-gitgutter'
 Plug 'da-x/gv.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'lambdalisue/gina.vim'
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
@@ -334,11 +335,9 @@ map q: <Nop>
 " Fast saving
 nnoremap <leader>w :w!<CR>
 
-" Quickly record a macro and execute it
-nnoremap <F6> qm
-nnoremap <C-F6> @m
-imap <F6> <C-c><F6>
-imap <C-F6> <C-c><C-F6>
+" Close buffer
+nnoremap <leader>bd :bd<CR>
+nnoremap <tab>b :bd<CR>
 
 " No need for entering shift when going into command mode
 nnoremap ; :
@@ -392,6 +391,14 @@ imap <M-F5> <C-c><M-F5>
 nmap <C-F5> :cfirst<CR>
 map! <C-F5> <Nop>
 imap <C-F5> <C-c><C-F5>
+
+" Quickly record a macro and execute it
+nnoremap <F6> qm
+nnoremap <C-F6> <C-c>q
+nnoremap <leader><F6> @m
+
+imap <F6> <C-c><F6>
+imap <C-F6> <C-c><C-F6>
 
 " =============================================================================
 " Auto-read
@@ -940,6 +947,7 @@ let g:ale_linters = {}
 let g:ale_set_balloons = 1
 let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
+let g:ale_linters.markdown = []
 
 " =============================================================================
 " lightline with ALE integration
@@ -1597,9 +1605,10 @@ augroup END
 nmap <leader>gdh :call gv#diff('HEAD')<CR>
 nmap <leader>gdc :call gv#diff('--cached', 'HEAD')<CR>
 nmap <leader>gdch :call gv#diff('--cached')<CR>
+nmap <leader>gb :Gina branch<CR>
 nmap <leader>gl :!git log
 nmap <leader>gh :SplitGitHEAD<CR>
-nmap <leader>gst :silent Gstatus<CR>
+nmap <leader>gs :Gina status<CR>
 nmap <leader>grb- :!git rebase<CR>
 nmap <leader>grbi :!git rebase -i<CR>
 
