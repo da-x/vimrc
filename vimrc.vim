@@ -89,6 +89,7 @@ Plug 'rhysd/rust-doc.vim'
 
 Plug 'justinmk/vim-syntax-extra'
 Plug 'vimoutliner/vimoutliner'
+Plug 'Vimjas/vim-python-pep8-indent'
 
 " Language related (checkers and suggest)
 Plug 'autozimu/LanguageClient-neovim', {
