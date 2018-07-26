@@ -470,28 +470,35 @@ augroup PreventInsertModeStalling
   autocmd InsertLeave * let &updatetime=updaterestore
 augroup END
 
-" Search replace the highlight marking, either in the entire buffer or in the
-" currently selected region in visual mode.
-nnoremap <A-h> :%s///g<left><left>
-vnoremap <A-h> :s///g<left><left>
-
-function! InsertSelectionText() abort
+function! InsertSelectionMatch() abort
+  " Return the first match of the current highlight
+  let l:save_pos = getpos('.')
   let l:search_mark = @/
-  let l:n = strlen(l:search_mark)
-  echom strpart(l:search_mark, 0, 1)
-  echom strpart(l:search_mark, l:n - 1, 1)
-  if strpart(l:search_mark, 0, 2) ==# "\\<" && strpart(l:search_mark, l:n - 2, 2) ==# "\\>"
-    let l:search_mark = strpart(l:search_mark, 2, l:n - 4)
+  let l:res = l:search_mark
+  let [l:lnum, l:col] = searchpos(@/, 'cw')
+
+  if l:lnum !=# 0
+    let [l:lnum_end, l:col_end] = searchpos(@/, 'ce')
+    if l:lnum ==# l:lnum_end
+      let l:res = escape(strpart(getline(l:lnum), l:col - 1, l:col_end - l:col + 1), ' /')
+    else
+      " Not supported yet
+    endif
   endif
-  return l:search_mark
+
+  call setpos('.', l:save_pos)
+  return l:res
 endfunction
 
-" Search and replace the current word at cursor, either with an edit or with
-" a new expression.
-nnoremap <A-r> :%s//<C-r>=InsertSelectionText()<CR>/g<left><left>
-vnoremap <A-r> :s//<C-r>=InsertSelectionText()<CR>/g<left><left>
-nnoremap <A-w> :%s/<C-r><C-w>/<C-r><C-w>/g<left><left>
-vnoremap <A-w> :s/<C-r><C-w>/<C-r><C-w>/g<left><left>
+" Search and replace using the current search mark, either in a selection or
+" the entire buffer, and take the closest match as the replacement text to
+" edit.
+nnoremap <A-r> :%s/<C-r>=@/<CR>/<C-r>=InsertSelectionMatch()<CR>/g<left><left>
+vnoremap <A-r> :s/<C-r>=@/<CR>/<C-r>=InsertSelectionMatch()<CR>/g<left><left>
+
+" Same as above, but write a new string for replacement.
+nnoremap <A-h> :%s/<C-r>=@/<CR>//g<left><left>
+vnoremap <A-h> :s/<C-r>=@/<CR>//g<left><left>
 
 " Add a newline and move down
 noremap <silent> <C-J> O<Esc>j
