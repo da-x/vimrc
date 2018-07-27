@@ -5,10 +5,11 @@ setlocal autoindent
 setlocal nolisp
 setlocal nosmartindent
 
-setlocal indentexpr=GitCommitIndentHook(v:lnum)
+setlocal indentexpr=GitRebaseIndentHook(v:lnum)
 
-if exists("*GitCommitIndentHook") | finish | endif
+if exists("*GitRebaseIndentHook") | finish | endif
 
-function GitCommitIndentHook(lnum)
+function GitRebaseIndentHook(lnum)
 	return 0
 endfunction
+
