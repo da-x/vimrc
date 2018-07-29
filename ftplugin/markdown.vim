@@ -6,3 +6,6 @@ nmap <buffer> gx <Plug>Markdown_OpenUrlUnderCursor
 nmap <buffer> <cr> <Plug>Markdown_EditUrlUnderCursor
 
 nnoremap <buffer> <leader>t :Toc<cr>
+
+nnoremap <buffer> > >>
+nnoremap <buffer> < <<

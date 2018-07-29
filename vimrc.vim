@@ -68,7 +68,7 @@ if has('nvim')
 endif
 
 " Syntax related
-Plug 'da-x/vim-markdown'
+Plug 'plasticboy/vim-markdown'
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
 Plug 'bronson/vim-trailing-whitespace'
@@ -1376,6 +1376,7 @@ endfunction
 command! IdentifySyn call IdentifySyn()
 
 set termguicolors
+set cursorline
 set background=dark
 
 function! MyHighlights() abort
@@ -1400,6 +1401,9 @@ function! MyHighlights() abort
   highlight ALEWarningSign guibg=#777700 guifg=#ffff00
 
   highlight ExtraWhitespace ctermbg=red guibg=red
+
+  highlight clear CursorLine
+  highlight CursorLineNR   guifg=#dddddd guibg=#222222
 endfunction
 
 augroup MyColors
@@ -1605,14 +1609,25 @@ function! MyGitCommitHook() abort
   nnoremap <buffer> <C-g> :call MyGitShowHead()<CR>
 endfunction
 
+function! SplitGitCherryPick() abort
+  let content = readfile('.git/CHERRY_PICK_HEAD')
+  call MySplitGitMode('Gedit ' . content[0])
+endfunction
+
 augroup GitCommitRebinding
   autocmd!
   autocmd! FileType gitcommit call MyGitCommitHook()
 augroup END
 
+" All commited or non-comited changes against HEAD
 nmap <leader>gdh :call gv#diff('HEAD')<CR>
-nmap <leader>gdc :call gv#diff('--cached', 'HEAD')<CR>
-nmap <leader>gdch :call gv#diff('--cached')<CR>
+
+" `--cached` is what about to be commited.
+nmap <leader>gdc :call gv#diff('--cached')<CR>
+
+" The commit we are attempting to cherry-pick.
+nmap <leader>gcp :call SplitGitCherryPick()<CR>
+
 nmap <leader>gb :Gina branch<CR>
 nmap <leader>gl :!git log
 nmap <leader>gh :SplitGitHEAD<CR>
