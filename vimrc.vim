@@ -1439,10 +1439,12 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 
 augroup MarkdownEditSettings
   autocmd!
+
   autocmd Filetype markdown map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
   autocmd Filetype markdown map <buffer> <leader>e\ <A-e>d
   autocmd Filetype markdown imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
   autocmd Filetype markdown map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+  autocmd Filetype markdown syntax sync fromstart
 augroup END
 
 " =============================================================================
