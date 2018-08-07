@@ -53,6 +53,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'google/vim-searchindex'
 
 " RPC and completions
 if has('nvim')
@@ -976,7 +977,8 @@ let g:lightline = {
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'relativepath', 'modified'] ],
-      \   'right': [ [ 'lineinfo' ], ['linter_warnings', 'linter_errors', 'linter_ok', 'percent'] ]
+      \   'right': [ [ 'filetype', 'lineinfo'],
+      \              ['linter_warnings', 'linter_errors', 'linter_ok', 'percent'] ]
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
