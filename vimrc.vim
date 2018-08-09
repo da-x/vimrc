@@ -246,7 +246,7 @@ function! ReloadEnvironment() abort
 
   silent let l:env = system('tmux show-environment')
   for l:line in split(l:env, '\n')
-    if l:line =~# '\V-\(\.\*\)'
+    if l:line =~# '\V\^-\(\.\*\)'
       execute 'unlet $'.strpart(l:line, 1)
     else
       let [l:name, l:value] = split(l:line, '=')
