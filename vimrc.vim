@@ -247,7 +247,8 @@ function! ReloadEnvironment() abort
   silent let l:env = system('tmux show-environment')
   for l:line in split(l:env, '\n')
     if l:line =~# '\V\^-\(\.\*\)'
-      execute 'unlet $'.strpart(l:line, 1)
+      " Only possible with 8.0.1832 [ https://github.com/vim/vim/issues/1116 ]
+      silent! execute 'unlet $'.strpart(l:line, 1)
     else
       let [l:name, l:value] = split(l:line, '=')
       execute 'let $'.l:name." = \"".escape(l:value, '\\/.*$^~[]')."\""
