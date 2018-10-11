@@ -15,7 +15,7 @@ Plug 'LucHermitte/lh-vim-lib'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'vim-scripts/tlib'
 
-" Settings
+"" Settings
 Plug 'LucHermitte/local_vimrc'
 Plug 'airblade/vim-rooter'
 
@@ -59,8 +59,8 @@ if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 endif
 
-Plug 'Shougo/deoplete.nvim'
 Plug 'roxma/nvim-yarp'
+Plug 'Shougo/deoplete.nvim'
 Plug 'roxma/vim-hug-neovim-rpc'
 
 if has('nvim')
