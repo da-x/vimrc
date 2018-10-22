@@ -709,7 +709,7 @@ imap <A-t> <C-c>*``
 nmap <A-t> *``
 
 " Be similar to other programs:
-map <C-f> /
+nmap <C-f> /
 
 " =============================================================================
 " Disable vim-unimpaired for normal mode
@@ -868,7 +868,7 @@ nmap <leader>eL :EditLocalVimrc<CR>
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_mruf_max = 400
 let g:ctrlp_mruf_default_order = 1
-let g:ctrlp_map = '<c-f>'
+let g:ctrlp_map = ''
 noremap <leader>j :CtrlP<CR>
 
 " We use C-c instead of C-b because we run under tmux
@@ -1681,11 +1681,26 @@ augroup GitRebaseTodoRebinding
 augroup END
 
 " =============================================================================
+" FZF
+"
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+" Insert mode completion
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
+
+" =============================================================================
 " Emacs migration path:
 
 nnoremap <C-z> :undo<CR>
 inoremap <C-z> <ESC>:undo<CR>i
 nnoremap <silent> <C-x>f :NERDTreeFind<CR>
+nnoremap <silent> <C-x><C-f> :FZF<CR>
 nmap <Esc>x <Nop>
 
 " Saving or quiting from anywhere
