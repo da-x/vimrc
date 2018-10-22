@@ -264,6 +264,7 @@ elseif &background=='dark'
   hi Constant		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi Number		guifg=#e0c060	guibg=NONE	gui=NONE
   hi Identifier		guifg=#f0c0f0	guibg=NONE	gui=NONE
+  hi Keyword		guifg=#c0f8f8	guibg=NONE	gui=NONE
   hi Statement		guifg=#c0d8f8	guibg=NONE	gui=NONE
   hi PreProc		guifg=#ffff00 	guibg=NONE	gui=NONE
   hi cDefine		guifg=#ffcc00   guibg=NONE  gui=NONE

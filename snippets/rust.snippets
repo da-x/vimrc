@@ -65,6 +65,9 @@ snippet unimp
 snippet pan
 	panic!();${0}
 
+snippet alldead
+	#![allow(dead_code, unused_imports)] // REMOVE ME
+
 snippet portablefn
 	#[cfg(target_os = "linux")]
 	pub fn ${1} {
@@ -78,3 +81,56 @@ snippet portablefn
 	#[cfg(target_os = "windows")]
 	pub fn ${1} {
 	}
+
+snippet bigstructopt
+	extern crate structopt;
+	#[macro_use]
+	extern crate structopt_derive;
+
+	use structopt::StructOpt;
+	use structopt::clap::AppSettings;
+
+	#[derive(Debug, StructOpt)]
+	pub struct Server {
+	    #[structopt(name = "server_addr", short="s")]
+	    pub server_addr: Option<String>,
+
+	    #[structopt(name = "server_port", short="p", default_value="3232")]
+	    pub server_port: u16,
+	}
+
+	#[derive(Debug, StructOpt)]
+	pub struct Client {
+	    #[structopt(name = "server_addr")]
+	    pub server_addr: String,
+
+	    #[structopt(name = "server_port", short="p", default_value="3232")]
+	    pub server_port: u16,
+	}
+
+
+	#[derive(Debug, StructOpt)]
+	pub enum Command {
+	    #[structopt(name = "server")]
+	    Server(Server),
+
+	    #[structopt(name = "client")]
+	    Client(Client),
+	}
+
+	#[derive(StructOpt, Debug)]
+	#[structopt(raw(global_settings = "&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]"))]
+	pub struct Opt {
+	    #[structopt(subcommand)]
+	    command: Command,
+	}
+
+	fn main() -> Result<(), ()> {
+	    let opt = Opt::from_args();
+	    // Write me
+	}
+
+snippet commentsep
+	///////////////////////////////////////////////////////////////////////////////
+	// ${0}
+	//

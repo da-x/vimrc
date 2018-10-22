@@ -407,12 +407,12 @@ map! <C-F5> <Nop>
 imap <C-F5> <C-c><C-F5>
 
 " Quickly record a macro and execute it
-nnoremap <F6> qm
-nnoremap <C-F6> <C-c>q
-nnoremap <leader><F6> @m
+nnoremap <F7> qm
+nnoremap <C-F7> <C-c>q
+nnoremap <F6> @m
 
-imap <F6> <C-c><F6>
-imap <C-F6> <C-c><C-F6>
+imap <F7> <C-c><F7>
+imap <C-F7> <C-c><C-F7>
 
 " =============================================================================
 " Auto-read
