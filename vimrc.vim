@@ -53,6 +53,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'google/vim-searchindex'
 
 " RPC and completions
 if has('nvim')
@@ -239,16 +240,28 @@ call LoadCursorShapes()
 " Reload environment from tmux (useful after attaching, when $DISPLAY changes
 " and you want the X clipboard interaction to work properly across ssh).
 function! ReloadEnvironment() abort
-  silent let l:env = system("tmux show-environment")
-  for l:line in split(l:env, "\n")
-    if l:line =~ '\V-\(\.\*\)'
-      execute "unlet $".strpart(l:line, 1)
+  if $TMUX ==# ''
+    return
+  endif
+
+  silent let l:env = system('tmux show-environment')
+  for l:line in split(l:env, '\n')
+    if l:line =~# '\V\^-\(\.\*\)'
+      " Only possible with 8.0.1832 [ https://github.com/vim/vim/issues/1116 ]
+      silent! execute 'unlet $'.strpart(l:line, 1)
     else
-      let [l:name, l:value] = split(l:line, "=")
-      execute "let $".l:name." = \"".escape(l:value, '\\/.*$^~[]')."\""
+      let [l:name, l:value] = split(l:line, '=')
+      execute 'let $'.l:name." = \"".escape(l:value, '\\/.*$^~[]')."\""
     endif
   endfor
 endfunction
+
+func TimerCallback_ReloadEnvironenment(timer)
+  call ReloadEnvironment()
+endfunc
+
+let timer = timer_start(60000,
+      \ 'TimerCallback_ReloadEnvironenment', {'repeat': -1})
 
 " =============================================================================
 " Main settings
@@ -965,7 +978,8 @@ let g:lightline = {
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'relativepath', 'modified'] ],
-      \   'right': [ [ 'lineinfo' ], ['linter_warnings', 'linter_errors', 'linter_ok', 'percent'] ]
+      \   'right': [ [ 'filetype', 'lineinfo'],
+      \              ['linter_warnings', 'linter_errors', 'linter_ok', 'percent'] ]
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
