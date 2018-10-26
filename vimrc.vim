@@ -97,7 +97,7 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
-Plug 'da-x/ale'
+Plug 'w0rp/ale'
 
 " Other
 Plug 'junegunn/vader.vim'
