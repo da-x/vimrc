@@ -769,51 +769,6 @@ function! OnCtrlMinus() abort
   exec "split"
 endfunction
 
-" =============================================================================
-" Tab management (I am not really using tabs, but this is handy)
-
-noremap <C-t><Insert> :tabnew<CR>
-noremap! <C-t><Insert> <C-c><C-t><Insert>
-noremap <C-t><Delete> :tabclose<CR>
-noremap! <C-t><Delete> <C-c><C-t><Delete>
-noremap <C-t><Left> :-tabmove<CR>
-noremap! <C-t><Left> <C-c><C-t><Left>
-noremap <C-t><Right> :+tabmove<CR>
-noremap! <C-t><Right> <C-c><C-t><Right>
-noremap <C-t><Home> :0tabmove<CR>
-noremap! <C-t><Home> <C-c><C-t><Home>
-noremap <C-t><End> :tabmove<CR>
-noremap! <C-t><End> <C-c><C-t><End>
-noremap <C-t>1 :1tabnext<CR>
-noremap <C-t>2 :2tabnext<CR>
-noremap <C-t>3 :3tabnext<CR>
-noremap <C-t>4 :4tabnext<CR>
-noremap <C-t>5 :5tabnext<CR>
-noremap <C-t>6 :6tabnext<CR>
-noremap <C-t>7 :7tabnext<CR>
-noremap <C-t>8 :8tabnext<CR>
-noremap <C-t>9 :9tabnext<CR>
-noremap! <C-t>1 :1tabnext<CR>
-noremap! <C-t>2 :2tabnext<CR>
-noremap! <C-t>3 :3tabnext<CR>
-noremap! <C-t>4 :4tabnext<CR>
-noremap! <C-t>5 :5tabnext<CR>
-noremap! <C-t>6 :6tabnext<CR>
-noremap! <C-t>7 :7tabnext<CR>
-noremap! <C-t>8 :8tabnext<CR>
-noremap! <C-t>9 :9tabnext<CR>
-
-" Let 'tl' toggle between this and the last accessed tab
-let g:lasttab = 1
-nmap <leader>tl :exe "tabn ".g:lasttab<CR>
-nmap <C-t><Cr> <leader>tl
-
-augroup BasicTabLeave
-  autocmd!
-  autocmd TabLeave * let g:lasttab = tabpagenr()
-augroup END
-
-map <leader>te :tabedit <c-r>=expand("%:p:h")<CR>/
 map <leader>cd :cd %:p:h<CR>:pwd<CR>
 
 " =============================================================================
