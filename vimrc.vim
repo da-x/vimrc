@@ -156,6 +156,7 @@ map <ESC>q <A-q>
 map <ESC>y <A-y>
 map <ESC>e <A-e>
 map <ESC>d <A-d>
+map <ESC>g <A-g>
 map <ESC>[4~ <End>
 map! <ESC><Char-0x10> <C-A-p>
 map! <ESC>[11;3~ <A-F1>
@@ -192,6 +193,7 @@ map! <ESC>4 <A-4>
 map! <ESC>q <A-q>
 map! <ESC>e <A-e>
 map! <ESC>d <A-d>
+map! <ESC>g <A-g>
 map! <ESC>[4~ <End>
 
 " Make keystores the most predictable being time-independent:
@@ -1636,18 +1638,29 @@ augroup GitCommitRebinding
 augroup END
 
 " All commited or non-comited changes against HEAD
-nmap <leader>gdh :call gv#diff('HEAD')<CR>
+nmap <leader>gd :call gv#diff('HEAD')<CR>
+nmap <A-g>d <leader>gd
 
 " `--cached` is what about to be commited.
-nmap <leader>gdc :call gv#diff('--cached')<CR>
+nmap <leader>gD :call gv#diff('--cached')<CR>
+nmap <A-g>D <leader>gD
 
 " The commit we are attempting to cherry-pick.
-nmap <leader>gcp :call SplitGitCherryPick()<CR>
+nmap <leader>gp :call SplitGitCherryPick()<CR>
+nmap <A-g>p <leader>gp
 
 nmap <leader>gb :Gina branch<CR>
+nmap <A-g>b <leader>gb
+
 nmap <leader>gl :!git log
+nmap <A-g>l <leader>gl
+
 nmap <leader>gh :SplitGitHEAD<CR>
+nmap <A-g>h <leader>gh
+
 nmap <leader>gs :Gina status<CR>
+nmap <A-g>s <leader>gs
+
 nmap <leader>grb- :!git rebase<CR>
 nmap <leader>grbi :!git rebase -i<CR>
 
