@@ -370,6 +370,7 @@ map <silent> <leader><CR> :noh<CR>
 " =============================================================================
 " Various mappings for function keys
 
+nnoremap <leader><F1> :help vim-runtime<CR>
 nmap <F2> :Buffers<CR>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
@@ -1619,8 +1620,8 @@ nmap <leader>gD :call gv#diff('--cached')<CR>
 nmap <A-g>D <leader>gD
 
 " FZF shortcuts
-nnoremap <C-g><C-t> :GFiles<CR>
-nnoremap <C-g>t     :GFiles<CR>
+nnoremap <C-g><C-f> :GFiles<CR>
+nnoremap <C-g>f     :GFiles<CR>
 nnoremap <C-g><C-s> :GFiles?<CR>
 nnoremap <C-g>s     :GFiles?<CR>
 nnoremap <C-g><C-g> :Commits<CR>
@@ -1630,6 +1631,7 @@ nnoremap <C-g>h     :SplitGitHEAD<CR>
 nnoremap <C-g><CR>  :BCommits<CR>
 nnoremap <C-g><C-t> :GCheckout<CR>
 nnoremap <C-g>t     :GCheckout<CR>
+nnoremap <C-g>c     :call SplitGitCherryPick()<CR>
 nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
 nmap     <C-g><C-r> <C-g>r
 
@@ -1722,7 +1724,7 @@ nnoremap <leader>fM :Maps<CR>
 nnoremap <leader>fw :Windows<CR>
 nnoremap <leader>fh :History<CR>
 nnoremap <leader>f: :History:<CR>
-nnoremap <leader>:   fs:History:<CR>
+nnoremap <leader>:  :History:<CR>
 nnoremap <leader>f/ :History/<CR>
 nnoremap <leader>/  :History/<CR>
 nnoremap <leader>f? :Helptags<CR>
@@ -1751,6 +1753,10 @@ noremap <C-x>q <C-c>:q<CR>
 noremap <C-x><C-q> <C-c>:q<CR>
 noremap! <C-x>q <C-c>:q<CR>
 noremap! <C-x><C-q> <C-c>:q<CR>
+
+" =============================================================================
+
+command! HomeRegenTags :helptags ~/.vim_runtime/doc
 
 " =============================================================================
 " Language server

@@ -1,0 +1,56 @@
+*runtime.txt*   Vim-Runtime
+
+==============================================================================
+VIM-RUNTIME                                                      *vim-runtime*
+
+TBD
+
+==============================================================================
+                                                                     *HomeGit*
+Git shortcuts (prefix <C-g>):
+
+    <C-g>f        List of Git files
+    <C-g>s        List of Git files in status
+    <C-g>g        List of commits
+    <C-g><CR>     List of commits of the current file
+
+    <C-g>h        'git show head'
+    <C-g>d        Git diff from HEAD
+    <C-g>e        Git diff of staged changes
+    <C-g>c        Look at currently cherry-picked diff (useful during rebase)
+
+    <C-g>t        Do a 'Git checkout' to another branch
+
+  Hunks:
+
+    <C-g><Del>    Delete unstaged current hunk
+    <C-g><Down>   Go down to closest unstaged hunk
+    <C-g><Up>     Go up to closest unstaged hunk
+    <C-g><Ins>    Stage current hunk
+    <C-g>r        Unstage current file
+
+==============================================================================
+                                                                     *HomeFZF*
+FZF shortcuts (prefix <C-g>):
+
+    <leader>ff    Files
+    <leader>fg    GFiles
+    <leader>fs    GFiles?
+    <leader>fb    Buffers
+    <leader>fl    BLines
+    <leader>ft    BTags
+    <leader>fL    Lines
+    <leader>fT    Tags
+    <leader>fm    Marks
+    <leader>fM    Maps
+    <leader>fw    Windows
+    <leader>fh    History
+    <leader>f:    History:
+    <leader>:     History:
+    <leader>f/    History/
+    <leader>/     History/
+    <leader>f?    Helptags
+    <leader>?     Helptags
+    <leader>fc    BCommits
+    <leader>fC    Commits
+    <leader>fv    Commands
