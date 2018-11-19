@@ -388,6 +388,9 @@ imap <C-F3> <C-c><F3>
 nmap <C-S-F3> :BCommits<CR>
 map! <C-S-F3> <Nop>
 imap <C-S-F3> <C-c><F3>
+nmap <S-F3> <C-S-F3>
+map! <S-F3> <C-S-F3>
+imap <S-F3> <C-S-F3>
 
 " Navigate location lists
 nmap <F4> :lnext<CR>
@@ -402,6 +405,9 @@ imap <C-S-F4> <C-c><C-F4>
 nmap <C-F4> :lopen<CR>
 map! <C-F4> <Nop>
 imap <C-F4> <C-c><C-F4>
+nmap <S-F4> <C-S-F4>
+map! <S-F4> <C-S-F4>
+imap <S-F4> <C-S-F4>
 
 " Navigate the quickfix list
 nmap <F5> :cnext<CR>
@@ -1585,6 +1591,25 @@ augroup GitCommitRebinding
   autocmd! FileType gitcommit call MyGitCommitHook()
 augroup END
 
+" Based on stuff from https://github.com/junegunn/fzf.vim/issues/603:
+function! s:open_branch_fzf(line)
+  let l:parser = split(a:line)
+  let l:branch = l:parser[0]
+  if l:branch ==? '*'
+    let l:branch = l:parser[1]
+  endif
+  silent execute '!git checkout ' . l:branch
+endfunction
+
+command! -bang -nargs=0 GCheckout
+  \ call fzf#vim#grep(
+  \   'git branch -v', 0,
+  \   {
+  \     'sink': function('s:open_branch_fzf')
+  \   },
+  \   <bang>0
+  \ )
+
 " All commited or non-comited changes against HEAD
 nmap <leader>gd :call gv#diff('HEAD')<CR>
 nmap <A-g>d <leader>gd
@@ -1593,7 +1618,42 @@ nmap <A-g>d <leader>gd
 nmap <leader>gD :call gv#diff('--cached')<CR>
 nmap <A-g>D <leader>gD
 
-" The commit we are attempting to cherry-pick.
+" FZF shortcuts
+nnoremap <C-g><C-t> :GFiles<CR>
+nnoremap <C-g>t     :GFiles<CR>
+nnoremap <C-g><C-s> :GFiles?<CR>
+nnoremap <C-g>s     :GFiles?<CR>
+nnoremap <C-g><C-g> :Commits<CR>
+nnoremap <C-g>g     :Commits<CR>
+nnoremap <C-g><C-h> :SplitGitHEAD<CR>
+nnoremap <C-g>h     :SplitGitHEAD<CR>
+nnoremap <C-g><CR>  :BCommits<CR>
+nnoremap <C-g><C-t> :GCheckout<CR>
+nnoremap <C-g>t     :GCheckout<CR>
+nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
+nmap     <C-g><C-r> <C-g>r
+
+" Other shortcuts
+nmap     <C-g><C-e>     <leader>gD
+nmap     <C-g>e         <leader>gD
+nmap     <C-g><C-d>     <leader>gd
+nmap     <C-g>d         <leader>gd
+
+" Taking care of hunks
+nnoremap <C-g><Delete>  :GitGutterUndoHunk<CR>:w<CR>
+nmap     <C-g><Down>    <Plug>GitGutterNextHunk
+imap     <C-g><Down>    <C-c><Plug>GitGutterNextHunk
+nmap     <C-g><Up>      <Plug>GitGutterPrevHunk
+imap     <C-g><Up>      <C-c><Plug>GitGutterPrevHunk
+nmap     <C-g><Insert>  <Plug>GitGutterStageHunk
+nmap     <C-g><Insert>  <Plug>GitGutterStageHunk
+imap     <C-g><Insert>  <C-c><Plug>GitGutterStageHunk
+inoremap <C-g><Delete>  <C-c>:GitGutterUndoHunk<CR>:w<CR>
+
+" Retain previous functionality via <leader>
+nnoremap <leader><C-g> <C-g>
+
+" Show the commit we are attempting to cherry-pick.
 nmap <leader>gp :call SplitGitCherryPick()<CR>
 nmap <A-g>p <leader>gp
 
@@ -1613,12 +1673,6 @@ nmap <leader>grb- :!git rebase<CR>
 nmap <leader>grbi :!git rebase -i<CR>
 
 nmap <leader>hu :GitGutterUndoHunk<CR>
-nnoremap <C-h><Delete> :GitGutterUndoHunk<CR>:w<CR>
-nmap <C-h><Down> <Plug>GitGutterNextHunk
-nmap <C-h><Up> <Plug>GitGutterPrevHunk
-inoremap <C-h><Delete> <C-c>:GitGutterUndoHunk<CR>:w<CR>
-imap <C-h><Down> <C-c><Plug>GitGutterNextHunk
-imap <C-h><Up> <C-c><Plug>GitGutterPrevHunk
 
 function! MyGitRebaseTodoHook(...) abort
   call setpos('.', [0, 1, 1, 0])
@@ -1658,7 +1712,6 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fg :GFiles<CR>
 nnoremap <leader>fs :GFiles?<CR>
-nnoremap <C-s>      :GFiles?<CR>
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>ft :BTags<CR>
@@ -1677,9 +1730,6 @@ nnoremap <leader>?  :Helptags<CR>
 nnoremap <leader>fc :BCommits<CR>
 nnoremap <leader>fC :Commits<CR>
 nnoremap <leader>fv :Commands<CR>
-nnoremap <C-g><C-g> :Commits<CR>
-nnoremap <C-g><CR>  :BCommits<CR>
-nnoremap <leader><C-g> <C-g>
 nnoremap <F9> :Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <C-F9> :Rg <c-r>=""<CR>
 
@@ -1737,6 +1787,12 @@ noremap <silent> <S-F8> :sp +Explore<CR>
 
 " Look for a man page
 map <C-F1> <Plug>(Man)
+
+" Reload current file
+nnoremap <silent> <C-r><C-r> :e<CR>
+
+" Force-reload current file (losing changes!)
+nnoremap <silent> <C-r>! :e!<CR>
 
 " Goodbye!
 " =============================================================================
