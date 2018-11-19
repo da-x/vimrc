@@ -380,10 +380,10 @@ imap <C-F2> <C-c><C-F2>
 nmap <C-S-F2> :GFiles<CR>
 map! <C-S-F2> <Nop>
 imap <C-S-F2> <C-c><C-F2>
-nmap <F3> :NERDTreeToggle<CR>
+nmap <F3> :NERDTreeFind<CR>
 map! <F3> <Nop>
 imap <F3> <C-c><F3>
-nmap <C-F3> :Commits<CR>
+nmap <C-F3> :NERDTreeToggle<CR>
 map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
 nmap <C-S-F3> :BCommits<CR>
