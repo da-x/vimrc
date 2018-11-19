@@ -50,7 +50,6 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'itchyny/lightline.vim'
 
 " Search
-Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'google/vim-searchindex'
@@ -61,7 +60,9 @@ if has('nvim')
 endif
 
 Plug 'roxma/nvim-yarp'
-Plug 'Shougo/deoplete.nvim'
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim'
+endif
 Plug 'roxma/vim-hug-neovim-rpc'
 
 if has('nvim')
@@ -122,9 +123,11 @@ map <ESC>[11;6~ <C-S-F1>
 map <ESC>[12;3~ <A-F2>
 map <ESC>[12;5~ <C-F2>
 map <ESC>[12;6~ <C-S-F2>
+map <ESC>[1;2Q <C-S-F2>
 map <ESC>[13;3~ <A-F3>
 map <ESC>[13;5~ <C-F3>
 map <ESC>[13;6~ <C-S-F3>
+map <ESC>[1;2R <C-S-F3>
 map <ESC>[14;3~ <A-F4>
 map <ESC>[14;5~ <C-F4>
 map <ESC>[14;6~ <C-S-F4>
@@ -370,16 +373,19 @@ map <silent> <leader><CR> :noh<CR>
 nmap <F2> :Buffers<CR>
 map! <F2> <Nop>
 imap <F2> <C-c><F2>
-nmap <C-F2> :CtrlPMRUFiles<CR>
+nmap <C-F2> :History<CR>
 map! <C-F2> <Nop>
 imap <C-F2> <C-c><C-F2>
-nmap <F3> :NERDTreeFind<CR>
+nmap <C-S-F2> :GFiles<CR>
+map! <C-S-F2> <Nop>
+imap <C-S-F2> <C-c><C-F2>
+nmap <F3> :NERDTreeToggle<CR>
 map! <F3> <Nop>
 imap <F3> <C-c><F3>
-nmap <C-F3> :NERDTreeToggle<CR>
+nmap <C-F3> :Commits<CR>
 map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
-nmap <C-S-F3> :CtrlP<CR>
+nmap <C-S-F3> :BCommits<CR>
 map! <C-S-F3> <Nop>
 imap <C-S-F3> <C-c><F3>
 
@@ -1546,19 +1552,6 @@ let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'Makefile']
 let g:rooter_change_directory_for_non_project_files = 'current'
 
 " =============================================================================
-" Grepper
-
-nnoremap <F9> :Grepper -noprompt -cword<CR>
-nnoremap <C-F9> :Grepper -cword<CR>
-
-let g:grepper = {
-      \ 'tools': ['git', 'grep'],
-      \ 'quickfix' : 1,
-      \ 'stop' : 50000,
-      \ }
-
-
-" =============================================================================
 " Git-related stuff
 
 let g:gitgutter_highlight_lines = 0
@@ -1661,6 +1654,34 @@ imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 imap <c-x><c-l> <plug>(fzf-complete-line)
+
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :GFiles<CR>
+nnoremap <leader>fs :GFiles?<CR>
+nnoremap <C-s>      :GFiles?<CR>
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fl :BLines<CR>
+nnoremap <leader>ft :BTags<CR>
+nnoremap <leader>fL :Lines<CR>
+nnoremap <leader>fT :Tags<CR>
+nnoremap <leader>fm :Marks<CR>
+nnoremap <leader>fM :Maps<CR>
+nnoremap <leader>fw :Windows<CR>
+nnoremap <leader>fh :History<CR>
+nnoremap <leader>f: :History:<CR>
+nnoremap <leader>:   fs:History:<CR>
+nnoremap <leader>f/ :History/<CR>
+nnoremap <leader>/  :History/<CR>
+nnoremap <leader>f? :Helptags<CR>
+nnoremap <leader>?  :Helptags<CR>
+nnoremap <leader>fc :BCommits<CR>
+nnoremap <leader>fC :Commits<CR>
+nnoremap <leader>fv :Commands<CR>
+nnoremap <C-g><C-g> :Commits<CR>
+nnoremap <C-g><CR>  :BCommits<CR>
+nnoremap <leader><C-g> <C-g>
+nnoremap <F9> :Rg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <C-F9> :Rg <c-r>=""<CR>
 
 " =============================================================================
 " Emacs migration path:
