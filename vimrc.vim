@@ -417,9 +417,15 @@ imap <F5> <C-c><F5>
 nmap <M-F5> :cprev<CR>
 map! <M-F5> <Nop>
 imap <M-F5> <C-c><M-F5>
-nmap <C-F5> :cfirst<CR>
+nmap <C-S-F5> :cprev<CR>
+map! <C-S-F5> <Nop>
+imap <c-S-F5> <C-c><M-F5>
+nmap <C-F5> :copen<CR>
 map! <C-F5> <Nop>
 imap <C-F5> <C-c><C-F5>
+nmap <S-F5> <C-S-F5>
+map! <S-F5> <C-S-F5>
+imap <S-F5> <C-S-F5>
 
 " Quickly record a macro and execute it
 nnoremap <F7> qm
