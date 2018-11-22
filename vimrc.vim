@@ -1803,10 +1803,10 @@ noremap <silent> <S-F8> :sp +Explore<CR>
 map <C-F1> <Plug>(Man)
 
 " Reload current file
-nnoremap <silent> <C-r><C-r> :e<CR>
+nnoremap <silent> <leader><C-r><CR> :e<CR>
 
 " Force-reload current file (losing changes!)
-nnoremap <silent> <C-r>! :e!<CR>
+nnoremap <silent> <leader><C-r>! :e!<CR>
 
 " Goodbye!
 " =============================================================================
