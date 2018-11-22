@@ -1746,7 +1746,7 @@ nnoremap <C-F9> :Rg <c-r>=""<CR>
 
 nnoremap <C-z> :undo<CR>
 inoremap <C-z> <ESC>:undo<CR>i
-nnoremap <silent> <C-x>f :NERDTreeFind<CR>
+nnoremap <silent> <C-x>f :FZF<CR>
 nnoremap <silent> <C-x><C-f> :FZF<CR>
 nmap <Esc>x <Nop>
 
