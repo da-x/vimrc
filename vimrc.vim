@@ -1755,6 +1755,8 @@ noremap <C-x>s <C-c>:w<CR>
 noremap <C-x><C-s> <C-c>:w<CR>
 noremap! <C-x>s <C-c>:w<CR>
 noremap! <C-x><C-s> <C-c>:w<CR>
+inoremap <C-x>s <C-c>:w<CR><right>i
+inoremap <C-x><C-s> <C-c>:w<CR><right>i
 noremap <C-x>q <C-c>:q<CR>
 noremap <C-x><C-q> <C-c>:q<CR>
 noremap! <C-x>q <C-c>:q<CR>
