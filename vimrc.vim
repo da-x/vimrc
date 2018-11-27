@@ -1587,6 +1587,10 @@ endfunction
 
 command! SplitGitHEAD call MyGitShowHead()
 
+function! MyGHeadFiles() abort
+  echo "TODO"
+endfunction
+
 function! MyGitCommitHook() abort
   nnoremap <buffer> <C-g> :call MyGitShowHead()<CR>
 endfunction
@@ -1620,35 +1624,37 @@ command! -bang -nargs=0 GCheckout
   \   <bang>0
   \ )
 
-" All commited or non-comited changes against HEAD
-nmap <leader>gd :call gv#diff('HEAD')<CR>
-nmap <A-g>d <leader>gd
-
-" `--cached` is what about to be commited.
-nmap <leader>gD :call gv#diff('--cached')<CR>
-nmap <A-g>D <leader>gD
-
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
 nnoremap <C-g>f     :GFiles<CR>
+nnoremap <C-g><C-h> :MyGHeadFiles<CR>
+nnoremap <C-g>h     :MyGHeadFiles<CR>
 nnoremap <C-g><C-s> :GFiles?<CR>
 nnoremap <C-g>s     :GFiles?<CR>
-nnoremap <C-g><C-g> :Commits<CR>
-nnoremap <C-g>g     :Commits<CR>
-nnoremap <C-g><C-h> :SplitGitHEAD<CR>
-nnoremap <C-g>h     :SplitGitHEAD<CR>
+nnoremap <C-g><C-l> :Commits<CR>
+nnoremap <C-g>l     :Commits<CR>
+nnoremap <C-g><C-o> :SplitGitHEAD<CR>
+nnoremap <C-g>o     :SplitGitHEAD<CR>
 nnoremap <C-g><CR>  :BCommits<CR>
-nnoremap <C-g><C-t> :GCheckout<CR>
-nnoremap <C-g>t     :GCheckout<CR>
-nnoremap <C-g>c     :call SplitGitCherryPick()<CR>
+nnoremap <C-g><C-c> :GCheckout<CR>
+nnoremap <C-g>c     :GCheckout<CR>
+nnoremap <C-g>p     :call SplitGitCherryPick()<CR>
 nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
 nmap     <C-g><C-r> <C-g>r
 
+nmap <leader>gs     :Gina status<CR>
+nnoremap <C-g>xs    <leader>gs
+
 " Other shortcuts
-nmap     <C-g><C-e>     <leader>gD
-nmap     <C-g>e         <leader>gD
+" All commited or non-comited changes against HEAD
+nmap     <leader>gd     :call gv#diff('HEAD')<CR>
 nmap     <C-g><C-d>     <leader>gd
 nmap     <C-g>d         <leader>gd
+
+" `--cached` is what about to be commited.
+nmap     <leader>gD     :call gv#diff('--cached')<CR>
+nmap     <C-g><C-n>     <leader>gD
+nmap     <C-g>n         <leader>gD
 
 " Taking care of hunks
 nnoremap <C-g><Delete>  :GitGutterUndoHunk<CR>:w<CR>
@@ -1666,20 +1672,9 @@ nnoremap <leader><C-g> <C-g>
 
 " Show the commit we are attempting to cherry-pick.
 nmap <leader>gp :call SplitGitCherryPick()<CR>
-nmap <A-g>p <leader>gp
-
 nmap <leader>gb :Gina branch<CR>
-nmap <A-g>b <leader>gb
-
 nmap <leader>gl :!git log
-nmap <A-g>l <leader>gl
-
 nmap <leader>gh :SplitGitHEAD<CR>
-nmap <A-g>h <leader>gh
-
-nmap <leader>gs :Gina status<CR>
-nmap <A-g>s <leader>gs
-
 nmap <leader>grb- :!git rebase<CR>
 nmap <leader>grbi :!git rebase -i<CR>
 

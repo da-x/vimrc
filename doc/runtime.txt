@@ -11,15 +11,16 @@ Git shortcuts (prefix <C-g>):
 
     <C-g>f        List of Git files
     <C-g>s        List of Git files in status
-    <C-g>g        List of commits
+    <C-g>l        List of commits
     <C-g><CR>     List of commits of the current file
 
-    <C-g>h        'git show head'
+    <C-g>h        Edit one of the files modified in HEAD (TODO)
     <C-g>d        Git diff from HEAD
+    <C-g>n        Git diff from HEAD --cached
+    <C-g>o        Show HEAD in split mode
     <C-g>e        Git diff of staged changes
-    <C-g>c        Look at currently cherry-picked diff (useful during rebase)
-
-    <C-g>t        Do a 'Git checkout' to another branch
+    <C-g>p        Look at currently cherry-picked diff (useful during rebase)
+    <C-g>c        Do a 'Git checkout' to another branch
 
   Hunks:
 
