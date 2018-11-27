@@ -99,6 +99,7 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'do': 'bash install.sh',
       \ }
 Plug 'w0rp/ale'
+" Plug 'vim-syntastic/syntastic'
 
 " Other
 Plug 'junegunn/vader.vim'
