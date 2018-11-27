@@ -1605,6 +1605,11 @@ augroup GitCommitRebinding
   autocmd! FileType gitcommit call MyGitCommitHook()
 augroup END
 
+function! MyGitResetBufferToLastCommitChanges()
+  execute ':silent !git reset HEAD~1 --' expand('%')
+  execute ':e'
+endfunction
+
 " Based on stuff from https://github.com/junegunn/fzf.vim/issues/603:
 function! s:open_branch_fzf(line)
   let l:parser = split(a:line)
@@ -1639,8 +1644,9 @@ nnoremap <C-g><CR>  :BCommits<CR>
 nnoremap <C-g><C-c> :GCheckout<CR>
 nnoremap <C-g>c     :GCheckout<CR>
 nnoremap <C-g>p     :call SplitGitCherryPick()<CR>
-nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
 nmap     <C-g><C-r> <C-g>r
+nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
+nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
 
 nmap <leader>gs     :Gina status<CR>
 nnoremap <C-g>xs    <leader>gs
