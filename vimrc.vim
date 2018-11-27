@@ -582,6 +582,21 @@ function! TrimWhiteSpace() abort
 endfunction
 
 " =============================================================================
+
+function! RexSignal(chan) abort
+  let l:helper = "$HOME/.vim_runtime/bin/rex"
+  let l:cmd = l:helper . ' signal' . string(a:chan)
+  if exists(l:helper)
+    execute ":wa"
+    silent call system(l:helper . ' signal ' . string(a:chan), "")
+  endif
+endfunction
+
+nmap <leader>1 :call RexSignal(1)<CR>
+nmap <leader>2 :call RexSignal(2)<CR>
+nmap <leader>3 :call RexSignal(3)<CR>
+
+" =============================================================================
 " MoveTo
 "
 " Hack for moving text from where you are to some place else where is a mark,
