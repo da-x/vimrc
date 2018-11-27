@@ -1192,6 +1192,7 @@ endfunction
 command! -range -nargs=* PasteHug :<line1>,<line2>call PasteHug()
 
 vnoremap <silent> <A-e>h :PasteHug<CR>
+noremap <silent>  <A-e>w viw:PasteHug<CR>
 
 " =============================================================================
 " Yanking to system clipboard various stuff
@@ -1803,10 +1804,10 @@ noremap <silent> <S-F8> :sp +Explore<CR>
 map <C-F1> <Plug>(Man)
 
 " Reload current file
-nnoremap <silent> <leader><C-r><CR> :e<CR>
+nnoremap <silent> <leader>t :e<CR>
 
 " Force-reload current file (losing changes!)
-nnoremap <silent> <leader><C-r>! :e!<CR>
+nnoremap <silent> <leader>!t :e!<CR>
 
 " Goodbye!
 " =============================================================================
