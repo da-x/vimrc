@@ -4,13 +4,19 @@ extern crate structopt_derive;
 extern crate dirs;
 extern crate shell_escape;
 extern crate ansi_term;
+extern crate mio;
+extern crate mio_uds;
+extern crate mio_extras;
 
-use std::os::unix::net::{UnixStream, UnixListener};
+use std::os::unix::net::{UnixStream};
 use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
 use std::io::Write;
+use mio::unix::EventedFd;
+use std::os::unix::io::{FromRawFd};
 use ansi_term::Colour::Yellow;
+use std::io::Read;
 
 mod opts {
     use ::structopt::clap::AppSettings;
@@ -53,6 +59,82 @@ mod opts {
     }
 }
 
+fn wait_child(mut child: std::process::Child, receiver: std::sync::mpsc::Receiver<()>,
+              chan_sender: mio_extras::channel::Sender<()>) {
+    let id = child.id();
+
+    loop {
+        match child.try_wait() {
+            Ok(Some(status)) => {
+                println!("");
+                println!("< {} >", Yellow.paint(format!("{}", status)));
+                chan_sender.send(()).unwrap();
+                sleep(Duration::from_millis(100));
+                break;
+            }
+            Ok(None) => {
+                match receiver.try_recv() {
+                    Ok(()) => {
+                        let _ = child.kill();
+                    }
+                    _ => {}
+                }
+                sleep(Duration::from_millis(10));
+            }
+            Err(err) => {
+                println!("< {} >",
+                         Yellow.paint(format!("error {:?} waiting for pid {}", err, id)));
+                sleep(Duration::from_millis(500));
+            }
+        }
+    }
+}
+
+struct Child {
+    thread: Option<(std::thread::JoinHandle<()>, std::sync::mpsc::Sender<()>)>,
+    params: Vec<String>,
+    chan_sender: mio_extras::channel::Sender<()>,
+}
+
+impl Child {
+    fn banner(&self) {
+        print!("[ ");
+        let mut i = 0;
+        for arg in &self.params {
+            if i != 0 {
+                print!(" ");
+            }
+            i = i + 1;
+            print!("{}",
+                   Yellow.paint(shell_escape::escape(std::borrow::Cow::Borrowed(arg))));
+        }
+        println!(" ]");
+    }
+
+    fn spawn(&mut self) {
+        if let Some((thread, sender)) = self.thread.take() {
+            let _ = sender.send(());
+            thread.join().expect("child thread panicked");
+        }
+
+        println!("< {} >", Yellow.paint(format!("...")));
+
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let params = self.params.clone();
+        let chan_sender = self.chan_sender.clone();
+
+        let joiner = std::thread::spawn(|| {
+            let params = params;
+            let mut command = Command::new(&params[0]);
+            let command = command.args(&params[1..]);
+            let child = command.spawn().unwrap();
+            wait_child(child, receiver, chan_sender);
+        });
+
+        self.thread = Some((joiner, sender));
+    }
+}
+
 fn main() {
     let opts = opts::get_opts();
     let home_dir = dirs::home_dir().unwrap();
@@ -66,55 +148,52 @@ fn main() {
             let path = socket_path(&server.name);
             let _ = std::fs::remove_file(&path);
 
-            let f = || {
-                print!("[ ");
-                let mut i = 0;
-                for arg in &server.params {
-                    if i != 0 {
-                        print!(" ");
-                    }
-                    i = i + 1;
-                    print!("{}",
-                           Yellow.paint(shell_escape::escape(std::borrow::Cow::Borrowed(arg))));
-                }
-                print!(" ]");
-                std::io::stdout().flush().unwrap();
-            };
+            let (chan_sender, chan_receiver) = mio_extras::channel::channel();
+            let mut child = Child { thread : None, params: server.params.clone(),
+            chan_sender };
 
-            f();
+            let listener = mio_uds::UnixListener::bind(path).unwrap();
+            let poll = mio::Poll::new().unwrap();
+            let mut events = mio::Events::with_capacity(32);
+            poll.register(&listener, mio::Token(1), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
-            let listener = UnixListener::bind(path).unwrap();
-            for stream in listener.incoming() {
-                println!();
-                match stream {
-                    Ok(_) => {
-                        println!("< {} >", Yellow.paint(format!("...")));
-                        let mut command = Command::new(&server.params[0]);
-                        let command = command.args(&server.params[1..]);
-                        let status = command.status();
-                        match status {
-                            Ok(status) => {
-                                println!("");
-                                println!("< {} >", Yellow.paint(format!("{}", status)));
-                                if !status.success() {
-                                    sleep(Duration::from_millis(1000));
-                                }
-                            }
-                            Err(_) => {
-                                sleep(Duration::from_millis(1000));
-                            }
+            let mut fd0 : std::fs::File = unsafe { FromRawFd::from_raw_fd(0) };
+            poll.register(&EventedFd(&0), mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+            poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+
+            child.banner();
+
+            loop {
+                let _ = poll.poll(&mut events, None);
+
+                for event in &events {
+                    match event.token() {
+                        mio::Token(1) => {
+                            let _socket = listener.accept();
+                            child.spawn();
+                        }
+                        mio::Token(2) => {
+                            let mut buf = vec![0; 0x1000];
+                            let _ = fd0.read(&mut buf[..]);
+                            child.spawn();
+                        }
+                        mio::Token(3) => {
+                            child.banner();
+                        }
+                        _ => {
                         }
                     }
-                    Err(_) => {
-                        break;
-                    }
                 }
-                f();
             }
-            println!();
         }
         opts::Command::Client(client) => {
-            let _ = UnixStream::connect(socket_path(&client.name));
+            let fd = UnixStream::connect(socket_path(&client.name));
+            match fd {
+                Ok(mut fd) => {
+                    fd.write("restart".as_bytes()).unwrap();
+                },
+                Err(_) => {}
+            }
         }
     }
 }

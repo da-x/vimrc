@@ -1,5 +1,6 @@
 [package]
 name = "rex"
+description = "rex: A utility for process standby re-execution"
 version = "0.1.0"
 authors = ["Dan Aloni <alonid@gmail.com>"]
 
@@ -9,3 +10,6 @@ structopt-derive = "0.2.13"
 dirs = "1.0.4"
 shell-escape = "0.1.4"
 ansi_term = "0.11.0"
+mio = "0.6.16"
+mio-extras = "2.0.5"
+mio-uds = "0.6.7"
