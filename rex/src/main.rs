@@ -24,6 +24,9 @@ mod opts {
 
     #[derive(Debug, StructOpt)]
     pub struct Server {
+        #[structopt(long = "stdin", short = "-i")]
+        pub stdin: bool,
+
         #[structopt(name = "name")]
         pub name: String,
 
@@ -158,7 +161,11 @@ fn main() {
             poll.register(&listener, mio::Token(1), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             let mut fd0 : std::fs::File = unsafe { FromRawFd::from_raw_fd(0) };
-            poll.register(&EventedFd(&0), mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+
+            if server.stdin {
+                poll.register(&EventedFd(&0), mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+            }
+
             poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             child.banner();
