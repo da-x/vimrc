@@ -161,11 +161,9 @@ fn main() {
             poll.register(&listener, mio::Token(1), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             let mut fd0 : std::fs::File = unsafe { FromRawFd::from_raw_fd(0) };
+            let efd = EventedFd(&0);
 
-            if server.stdin {
-                poll.register(&EventedFd(&0), mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
-            }
-
+            poll.register(&efd, mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
             poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             child.banner();
@@ -177,14 +175,27 @@ fn main() {
                     match event.token() {
                         mio::Token(1) => {
                             let _socket = listener.accept();
+                            if !server.stdin {
+                                poll.deregister(&efd).unwrap();
+                            }
                             child.spawn();
                         }
                         mio::Token(2) => {
+                            while let Ok(_) = chan_receiver.try_recv() {
+                            }
+
                             let mut buf = vec![0; 0x1000];
                             let _ = fd0.read(&mut buf[..]);
+                            if !server.stdin {
+                                poll.deregister(&efd).unwrap();
+                            }
                             child.spawn();
                         }
                         mio::Token(3) => {
+                            if !server.stdin {
+                                poll.register(&efd, mio::Token(2),
+                                    mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+                            }
                             child.banner();
                         }
                         _ => {
