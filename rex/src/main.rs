@@ -62,6 +62,35 @@ mod opts {
     }
 }
 
+struct TerminalSettings {
+    settings: String,
+}
+
+impl TerminalSettings {
+    fn save() -> Self {
+        let mut command = std::process::Command::new("stty");
+        let output = command.args(&["-g"])
+                .stdin(std::process::Stdio::inherit())
+                .stderr(std::process::Stdio::inherit());
+        let output = output.output();
+        let stdout = output.expect("stty output").stdout;
+        let string = String::from_utf8_lossy(&stdout[..]);
+        let trimmed = string.trim();
+
+        TerminalSettings {
+            settings: String::from(trimmed),
+        }
+    }
+
+    fn restore(&self) {
+        let mut command = std::process::Command::new("stty");
+        let _ = command.args(&[self.settings.clone()])
+                .stdout(std::process::Stdio::inherit())
+                .stdin(std::process::Stdio::inherit())
+                .stderr(std::process::Stdio::inherit()).status();
+    }
+}
+
 fn wait_child(mut child: std::process::Child, receiver: std::sync::mpsc::Receiver<()>,
               chan_sender: mio_extras::channel::Sender<()>) {
     let id = child.id();
@@ -114,10 +143,24 @@ impl Child {
         println!(" ]");
     }
 
-    fn spawn(&mut self) {
-        if let Some((thread, sender)) = self.thread.take() {
+    fn try_kill(&mut self) -> bool {
+        if let Some((_, sender)) = &self.thread {
             let _ = sender.send(());
+            false
+        } else {
+            true
+        }
+    }
+
+    fn collect(&mut self) {
+        if let Some((thread, _)) = self.thread.take() {
             thread.join().expect("child thread panicked");
+        }
+    }
+
+    fn spawn(&mut self) -> bool {
+        if self.thread.is_some() {
+            panic!("unexpected thread state");
         }
 
         println!("< {} >", Yellow.paint(format!("...")));
@@ -129,12 +172,16 @@ impl Child {
         let joiner = std::thread::spawn(|| {
             let params = params;
             let mut command = Command::new(&params[0]);
-            let command = command.args(&params[1..]);
+            let command = command.args(&params[1..])
+                .stdout(std::process::Stdio::inherit())
+                .stdin(std::process::Stdio::inherit())
+                .stderr(std::process::Stdio::inherit());
             let child = command.spawn().unwrap();
             wait_child(child, receiver, chan_sender);
         });
 
         self.thread = Some((joiner, sender));
+        true
     }
 }
 
@@ -145,6 +192,8 @@ fn main() {
         let name = format!(".rex-{}", name);
         home_dir.join(name)
     };
+
+    let terminal_settings = TerminalSettings::save();
 
     match opts.command {
         opts::Command::Server(server) => {
@@ -161,10 +210,12 @@ fn main() {
             poll.register(&listener, mio::Token(1), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             let mut fd0 : std::fs::File = unsafe { FromRawFd::from_raw_fd(0) };
-            let efd = EventedFd(&0);
-            let mut efs_registered = true;
 
+            let efd = EventedFd(&0);
+            let mut child_kill_pending = false;
+            let mut efs_registered = true;
             poll.register(&efd, mio::Token(2), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+
             poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
             child.banner();
@@ -180,27 +231,54 @@ fn main() {
                                 poll.deregister(&efd).unwrap();
                                 efs_registered = false;
                             }
-                            child.spawn();
+
+                            if child.try_kill() {
+                                child.spawn();
+                            } else {
+                                child_kill_pending = true;
+                            }
                         }
                         mio::Token(2) => {
-                            while let Ok(_) = chan_receiver.try_recv() {
+                            let mut buf = vec![0; 0x1000];
+                            let len = fd0.read(&mut buf[..]).unwrap();
+                            let mut has_newline = false;
+
+                            for i in &buf[0 .. len] {
+                                if *i == 10 {
+                                    has_newline = true;
+                                }
                             }
 
-                            let mut buf = vec![0; 0x1000];
-                            let _ = fd0.read(&mut buf[..]);
-                            if !server.stdin && efs_registered {
-                                poll.deregister(&efd).unwrap();
-                                efs_registered = false;
+                            if has_newline {
+                                if !server.stdin && efs_registered {
+                                    poll.deregister(&efd).unwrap();
+                                    efs_registered = false;
+                                }
+                                if child.try_kill() {
+                                    child.spawn();
+                                } else {
+                                    child_kill_pending = true;
+                                }
                             }
-                            child.spawn();
                         }
                         mio::Token(3) => {
-                            if !server.stdin {
+                            // Child died
+                            while let Ok(_) = chan_receiver.try_recv() {}
+                            child.collect();
+
+                            terminal_settings.restore();
+
+                            if !server.stdin && !efs_registered && !child_kill_pending {
                                 poll.register(&efd, mio::Token(2),
                                     mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
                                 efs_registered = true;
                             }
                             child.banner();
+
+                            if child_kill_pending {
+                                child.spawn();
+                                child_kill_pending = false;
+                            }
                         }
                         _ => {
                         }
