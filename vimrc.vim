@@ -1796,6 +1796,9 @@ let g:LanguageClient_serverCommands = {
 
 let g:LanguageClient_autoStart = 1
 
+" For Rust, using ALE for now
+let g:LanguageClient_diagnosticsSignsMax = 0
+
 " Stuff I am not using yet:
 
 " nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
