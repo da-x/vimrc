@@ -12,23 +12,32 @@ Git shortcuts (prefix <C-g>):
     <C-g>f        List of Git files
     <C-g>s        List of Git files in status
     <C-g>l        List of commits
-    <C-g><CR>     List of commits of the current file
 
     <C-g>h        Edit one of the files modified in HEAD (TODO)
-    <C-g>d        Git diff from HEAD
-    <C-g>n        Git diff from HEAD --cached
+    <C-g>d        Git diff working tree from HEAD
+    <C-g>n        Git diff index from HEAD (git diff --cached ;
+					    or what to be commited)
     <C-g>o        Show HEAD in split mode
-    <C-g>e        Git diff of staged changes
     <C-g>p        Look at currently cherry-picked diff (useful during rebase)
-    <C-g>c        Do a 'Git checkout' to another branch
 
-  Hunks:
+  Operations:
+
+    <C-g>c        Do a 'Git checkout' to another branch
+    <C-g>a        Git commit with -a
+    <C-g>y        Git commit
+    <C-g>k        Reset to previous commit and unstage current commit changes
+
+  Related to current file:
+
+    <C-g><CR>     List of commits affecting the current file
+    <C-g>r        Unstage current file
+
+  Hunk related:
 
     <C-g><Del>    Delete unstaged current hunk
     <C-g><Down>   Go down to closest unstaged hunk
     <C-g><Up>     Go up to closest unstaged hunk
     <C-g><Ins>    Stage current hunk
-    <C-g>r        Unstage current file
 
 ==============================================================================
                                                                      *HomeFZF*

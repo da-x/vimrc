@@ -1608,7 +1608,14 @@ function! MyGHeadFiles() abort
 endfunction
 
 function! MyGitCommitHook() abort
-  nnoremap <buffer> <C-g> :call MyGitShowHead()<CR>
+  " Override 'h' shortcut to show what we are commiting
+  nnoremap <buffer> <C-g>h :call MyGitShowHead()<CR>
+
+  " Quick save commit message and return
+  nnoremap <buffer> <C-g><CR> :w \| bd<CR>
+  nnoremap <buffer> <M-PageUp> :w \| bd<CR>
+  imap <buffer> <C-g><CR> <C-c><C-g><CR>
+  imap <buffer> <M-PageUp> <C-c><C-g><CR>
 endfunction
 
 function! SplitGitCherryPick() abort
@@ -1616,14 +1623,46 @@ function! SplitGitCherryPick() abort
   call MySplitGitMode('Gedit ' . content[0])
 endfunction
 
-augroup GitCommitRebinding
+function! MyCommitMessageEndHook() abort
+  if &filetype ==# 'gitcommit'
+    silent GitGutterAll
+  endif
+endfunction
+
+function! MyGitUnstageCurrentFile() abort
+  silent execute '!git reset HEAD '.expand('%')
+  GitGutter
+endfunction
+
+augroup GitCommitAutocmds
   autocmd!
   autocmd! FileType gitcommit call MyGitCommitHook()
+  autocmd! BufDelete,BufWipeout * call MyCommitMessageEndHook()
 augroup END
 
 function! MyGitResetBufferToLastCommitChanges()
   execute ':silent !git reset HEAD~1 --' expand('%')
-  execute ':e'
+  e
+endfunction
+
+function! MyGitAntiCommitAndUnstage() abort
+  execute ':silent !git reset --soft HEAD~1'
+  execute ':silent !git reset'
+  silent GitGutterAll
+  let a:current = system('git --no-pager log -1 --oneline')
+  echom 'HEAD commit rewinded back, pointing to '.a:current
+endfunction
+
+function! MyGitCommitAll() abort
+  Gcommit -a
+endfunction
+
+function! MyGitCommit() abort
+  Gcommit
+endfunction
+
+function! MyGitAddAllAmend() abort
+  Gcommit -a --amend
 endfunction
 
 " Based on stuff from https://github.com/junegunn/fzf.vim/issues/603:
@@ -1659,9 +1698,15 @@ nnoremap <C-g>o     :SplitGitHEAD<CR>
 nnoremap <C-g><CR>  :BCommits<CR>
 nnoremap <C-g><C-c> :GCheckout<CR>
 nnoremap <C-g>c     :GCheckout<CR>
+nnoremap <C-g>a     :call MyGitCommitAll()<CR>
+nnoremap <C-g>y     :call MyGitCommit()<CR>
 nnoremap <C-g>p     :call SplitGitCherryPick()<CR>
+
 nmap     <C-g><C-r> <C-g>r
-nnoremap <C-g>r     :silent !git reset HEAD <C-R>=expand('%')<CR><CR>
+nnoremap <C-g>r     :call MyGitUnstageCurrentFile()<CR>
+
+nnoremap <C-g>k     :call MyGitAntiCommitAndUnstage()<CR>
+nnoremap <C-g>AA    :call MyGitAddAllAmend()<CR>
 nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
 
 nmap <leader>gs     :Gina status<CR>
