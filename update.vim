@@ -1,4 +1,3 @@
-#!/usr/bin/nvim -S
+#!/bin/bash
 
-PlugUpdate
-PlugSnapshot! snapshot.vim
+exec nvim -c 'PlugUpdate | PlugSnapshot! snapshot.vim'
