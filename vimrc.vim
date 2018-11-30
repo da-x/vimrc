@@ -38,7 +38,7 @@ Plug 'garbas/vim-snipmate'
 Plug 'honza/vim-snippets'
 
 " Git
-Plug 'airblade/vim-gitgutter'
+Plug 'da-x/vim-gitgutter' , { 'branch': 'allow-clobber' }
 Plug 'da-x/gv.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'lambdalisue/gina.vim'
@@ -1586,6 +1586,7 @@ let g:rooter_silent_chdir = 1
 " Git-related stuff
 
 let g:gitgutter_highlight_lines = 0
+let g:gitgutter_sign_allow_clobber = 1
 set updatetime=400
 
 function! MySplitGitMode(command) abort
