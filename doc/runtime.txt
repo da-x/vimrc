@@ -23,7 +23,8 @@ Git shortcuts (prefix <C-g>):
   Operations:
 
     <C-g>c        Do a 'Git checkout' to another branch
-    <C-g>a        Git commit with -a
+    <C-g>a        Git commit -a
+    <C-g>AA       Git commit --amend -a
     <C-g>y        Git commit
     <C-g>k        Reset to previous commit and unstage current commit changes
 

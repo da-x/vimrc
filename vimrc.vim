@@ -8,6 +8,11 @@
 " # PLUGINS
 " =============================================================================
 
+" File is not checked-in on purpose:
+if filereadable(expand('~/.vim_runtime/project-specific-premable.vim'))
+  runtime project-specific-premable.vim
+endif
+
 call plug#begin('~/.vim_runtime/vim-plugged')
 
 " Libs
@@ -1089,14 +1094,35 @@ augroup END
 " bit confusing).
 function! SetSystemClipboard(string) abort
   let l:display = expand("$DISPLAY")
-  if l:display != ""
-    let l:helper = "$HOME/.vim_runtime/bin/set-all-clipboard.py"
+  if l:display != ''
+    let l:helper = '$HOME/.vim_runtime/bin/set-all-clipboard.py'
     if exists(l:helper)
-      silent call system(l:helper, a:string)
+      if has('nvim')
+        " Send it to the background, because it may take some time due to
+        " a remote tmux session.
+        let l:id = jobstart(l:helper, {'on_exit': function('s:BackgroundSetClip_JobEnd')})
+        let s:clip_jobstart_time = reltimefloat(reltime())
+        call chansend(l:id, a:string)
+        call chanclose(l:id, 'stdin')
+      else
+        silent call system(l:helper, a:string)
+      endif
     else
       silent call system('xsel -i -p', a:string)
       silent call system('xsel -i -s', a:string)
       silent call system('xsel -i -b', a:string)
+    endif
+  endif
+endfunction
+
+function! s:BackgroundSetClip_JobEnd(job_id, exit_code, event_type) abort
+  let l:clip_job_end_time = reltimefloat(reltime())
+  let l:duration = l:clip_job_end_time - s:clip_jobstart_time
+  if a:exit_code != 0
+    echo '<ERROR copying to system clipboard: '.string(a:exit_code).'>'
+  else
+    if l:duration > 0.2
+      echo '<copied to system clipboard (jobid='.string(a:job_id).')>'
     endif
   endif
 endfunction
