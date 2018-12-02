@@ -48,6 +48,7 @@ Plug 'da-x/gv.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'lambdalisue/gina.vim'
 Plug 'jreybert/vimagit'
+Plug 'da-x/conflict-marker.vim'
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
