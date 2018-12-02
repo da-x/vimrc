@@ -1,3 +1,4 @@
 .temp_dirs/undodir/*
 project-specific.vim
+project-specific-premable.vim
 tags
