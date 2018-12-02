@@ -1634,7 +1634,26 @@ endfunction
 command! SplitGitHEAD call MyGitShowHead()
 
 function! MyGHeadFiles() abort
-  echo "TODO"
+  let l:matches = []
+  let l:filename = ''
+
+  for l:line in systemlist("git show HEAD | grep -E '^(diff|@@)'")
+    let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
+    if len(l:m) != 0
+      let l:filename = l:m[2]
+      continue
+    endif
+    let l:m = matchlist(l:line, '\V\^@@ -\[^ ]\+ +\(\[0-9]\+\)\[^ ]\+ @@\(\.\*\)')
+    if len(l:m) != 0
+      let l:line_num = l:m[1]
+      let l:title = l:m[2]
+      call add(l:matches, {'filename': l:filename, 'lnum': l:line_num, 'text': l:title})
+    endif
+  endfor
+
+  call setqflist(l:matches)
+  execute 'copen'
+  execute 'cfirst'
 endfunction
 
 function! MyGitCommitHook() abort
