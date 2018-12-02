@@ -9,15 +9,14 @@ TBD
                                                                      *HomeGit*
 Git shortcuts (prefix <C-g>):
 
-    <C-g>f        List of Git files
-    <C-g>s        List of Git files in status
-    <C-g>l        List of commits
-
-    <C-g>h        Edit one of the files modified in HEAD (TODO)
-    <C-g>d        Git diff working tree from HEAD
-    <C-g>n        Git diff index from HEAD (git diff --cached ;
-					    or what to be commited)
-    <C-g>o        Show HEAD in split mode
+    <C-g>f        List of Git files using FZF
+    <C-g>s        List of Git files in status using FZF
+    <C-g>l        List of commits using FZF
+    <C-g>h        Open a QuickFix list for the diff HEAD chunks
+    <C-g>d        Split view of Git diff working tree from HEAD
+    <C-g>n        Split view of Git diff index from HEAD (git diff --cached ;
+  		       or what to be commited)
+    <C-g>o        Split view of Show HEAD in split mode
     <C-g>p        Look at currently cherry-picked diff (useful during rebase)
     <C-g>Q        Open up the list of conflicts in a QuickFix list
 
