@@ -39,6 +39,15 @@ Git shortcuts (prefix <C-g>):
     <C-g><Down>   Go down to closest unstaged hunk
     <C-g><Up>     Go up to closest unstaged hunk
     <C-g><Ins>    Stage current hunk
+    <C-g>b        Go to previous conflict hunk
+    <C-g>t        Go to next conflict hunk
+
+  Conflict hunk related:
+
+    <C-g>q<Del>   Take non of the changes
+    <C-g>q<Up>    Take the upper one
+    <C-g>q<Down>  Take the lower one
+    <C-g>q<CR>    Take both of them
 
 ==============================================================================
                                                                      *HomeFZF*

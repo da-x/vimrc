@@ -1613,6 +1613,7 @@ let g:rooter_silent_chdir = 1
 " =============================================================================
 " Git-related stuff
 
+let g:conflict_marker_enable_mappings = 0
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_sign_allow_clobber = 1
 set updatetime=400
@@ -1736,6 +1737,13 @@ nnoremap <C-g>r     :call MyGitUnstageCurrentFile()<CR>
 nnoremap <C-g>k     :call MyGitAntiCommitAndUnstage()<CR>
 nnoremap <C-g>AA    :call MyGitAddAllAmend()<CR>
 nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
+
+nmap     <C-g>b         <Plug>(conflict-marker-next-hunk)
+nmap     <C-g>t         <Plug>(conflict-marker-prev-hunk)
+nmap     <C-g>q<Delete> <Plug>(conflict-marker-none)
+nmap     <C-g>q<Down>   <Plug>(conflict-marker-themselves)
+nmap     <C-g>q<Up>     <Plug>(conflict-marker-ourselves)
+nmap     <C-g>q<CR>     <Plug>(conflict-marker-both)
 
 nmap <leader>gs     :Gina status<CR>
 nnoremap <C-g>xs    <leader>gs
