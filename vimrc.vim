@@ -49,6 +49,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'lambdalisue/gina.vim'
 Plug 'jreybert/vimagit'
 Plug 'da-x/conflict-marker.vim'
+Plug 'da-x/vim-git-conflict-edit'
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
@@ -1740,6 +1741,7 @@ nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
 
 nmap     <C-g>b         <Plug>(conflict-marker-next-hunk)
 nmap     <C-g>t         <Plug>(conflict-marker-prev-hunk)
+nnoremap <C-g>Q         :call EditConflictFiles()<CR>
 nmap     <C-g>q<Delete> <Plug>(conflict-marker-none)
 nmap     <C-g>q<Down>   <Plug>(conflict-marker-themselves)
 nmap     <C-g>q<Up>     <Plug>(conflict-marker-ourselves)

@@ -19,6 +19,7 @@ Git shortcuts (prefix <C-g>):
 					    or what to be commited)
     <C-g>o        Show HEAD in split mode
     <C-g>p        Look at currently cherry-picked diff (useful during rebase)
+    <C-g>Q        Open up the list of conflicts in a QuickFix list
 
   Operations:
 
