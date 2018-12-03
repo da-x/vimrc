@@ -1665,6 +1665,8 @@ function! MyGitCommitHook() abort
   nnoremap <buffer> <M-PageUp> :w \| bd<CR>
   imap <buffer> <C-g><CR> <C-c><C-g><CR>
   imap <buffer> <M-PageUp> <C-c><C-g><CR>
+
+  startinsert
 endfunction
 
 function! SplitGitCherryPick() abort
