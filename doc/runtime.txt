@@ -9,40 +9,46 @@ TBD
                                                                      *HomeGit*
 Git shortcuts (prefix <C-g>):
 
-    <C-g>f        List of Git files using FZF
-    <C-g>s        List of Git files in status using FZF
-    <C-g>l        List of commits using FZF
-    <C-g>h        Open a QuickFix list for the diff HEAD chunks
-    <C-g>d        Split view of Git diff working tree from HEAD
-    <C-g>n        Split view of Git diff index from HEAD (git diff --cached ;
-  		       or what to be commited)
-    <C-g>o        Split view of Show HEAD in split mode
-    <C-g>p        Look at currently cherry-picked diff (useful during rebase)
-    <C-g>Q        Open up the list of conflicts in a QuickFix list
+    <C-g>f        Show a list of all Git commited files (git ls-files) using FZF
+    <C-g>s        Show a list of all files mentioned in `git status` using FZF
+    <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
+    <C-g>h        Open a QuickFix list for all the hunks in the diff from HEAD,
+                  (i.e `git diff HEAD`)
+    <C-g>d        Split view of `git diff HEAD`
+    <C-g>n        Split view of `git diff HEAD --cached` or what to be commited)
+    <C-g>o        Split view of `git show HEAD`
+    <C-g>p        Split view of the commit currently being cherry-picked
+                  (useful during conflict resolution in rebases)
+    <C-g>Q        Open up the list of unmerged conflicts in a QuickFix list
 
-  Operations:
+  Various operations:
 
-    <C-g>c        Do a 'Git checkout' to another branch
-    <C-g>a        Git commit -a
-    <C-g>AA       Git commit --amend -a
-    <C-g>y        Git commit
+    <C-g>c        Do a 'git checkout' to another branch
+    <C-g>a        Do `git commit -a` using vim-fugitive
+    <C-g>AA       Do `git commit --amend -a` using vim-fugitive
+    <C-g>y        Do `git commit` using vim-fugitive
     <C-g>k        Reset to previous commit and unstage current commit changes
+                  (the reversal of `git commit`)
 
   Related to current file:
 
-    <C-g><CR>     List of commits affecting the current file
-    <C-g>r        Unstage current file
+    <C-g><CR>     Show a list of commits (`git log`) for the current file using
+                  FZF
+    <C-g>r        Unstage current file (equivalent to a `git reset` on the file)
 
   Hunk related:
 
-    <C-g><Del>    Delete unstaged current hunk
     <C-g><Down>   Go down to closest unstaged hunk
     <C-g><Up>     Go up to closest unstaged hunk
-    <C-g><Ins>    Stage current hunk
     <C-g>b        Go to previous conflict hunk
     <C-g>t        Go to next conflict hunk
 
-  Conflict hunk related:
+    Opertions:
+
+    <C-g><Del>    Delete unstaged current hunk
+    <C-g><Ins>    Stage current hunk
+
+  Conflict hunk related Operations:
 
     <C-g>q<Del>   Take non of the changes
     <C-g>q<Up>    Take the upper one

@@ -1736,8 +1736,8 @@ command! -bang -nargs=0 GCheckout
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
 nnoremap <C-g>f     :GFiles<CR>
-nnoremap <C-g><C-h> :MyGHeadFiles<CR>
-nnoremap <C-g>h     :MyGHeadFiles<CR>
+nnoremap <C-g><C-h> :call MyGHeadFiles()<CR>
+nnoremap <C-g>h     :call MyGHeadFiles()<CR>
 nnoremap <C-g><C-s> :GFiles?<CR>
 nnoremap <C-g>s     :GFiles?<CR>
 nnoremap <C-g><C-l> :Commits<CR>
