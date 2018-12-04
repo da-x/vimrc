@@ -1767,6 +1767,7 @@ nnoremap <C-g>r     :call MyGitUnstageCurrentFile()<CR>
 
 nnoremap <C-g>k     :call MyGitAntiCommitAndUnstage()<CR>
 nnoremap <C-g>AA    :call MyGitAddAllAmend()<CR>
+nnoremap <C-g>PP    :Gpush<CR>
 nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
 
 nmap     <C-g>b         <Plug>(conflict-marker-next-hunk)
