@@ -1637,7 +1637,7 @@ function! MyGHeadFiles() abort
   let l:matches = []
   let l:filename = ''
 
-  for l:line in systemlist("git show HEAD | grep -E '^(diff|@@)'")
+  for l:line in systemlist("git diff HEAD | grep -E '^(diff|@@)'")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
