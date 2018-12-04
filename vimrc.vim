@@ -852,6 +852,15 @@ endfun
 
 command! -bar EditLocalVimrc call EditLocalVimrc()
 
+func! MyHelpAutoCmds()
+  command! -bar Edit execute "set filetype=txt modifiable" | w!
+endfunc
+
+augroup HelpAutocmds
+  autocmd!
+  autocmd! FileType help call MyHelpAutoCmds()
+augroup END
+
 " File is not checked-in on purpose:
 if filereadable(expand("~/.vim_runtime/project-specific.vim"))
   " examples:
