@@ -3,7 +3,8 @@
 ==============================================================================
 VIM-RUNTIME                                                      *vim-runtime*
 
-TBD
+A quick reference for some of the shortcuts that I've have installed for various
+operations in my Vim configuration.
 
 ==============================================================================
                                                                      *HomeGit*
