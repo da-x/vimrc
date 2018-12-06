@@ -1484,15 +1484,68 @@ set regexpengine=1
 let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
+let g:vim_markdown_auto_insert_bullets = 0
+
+" This 'Compose' mode enables automatic reparagraphing, that is also properly
+" sensitive to bullet lists. However it needs to be enabled explicitly
+" otherwise it would mess other aspects of markdown syntax such as titles
+" and code.
+
+function! MyMarkdownToggleComposeMode()
+  if !get(b:, 'myvim_markdown_compose_mode', 0)
+    " Limit line endings, so that we get nice readable ASCII
+    setl textwidth=80
+
+    " Autoformat for end-of-line wrap
+    setl formatoptions+=a
+
+    " Don't mess with bullet lists, and not even ones arranged in a tree with
+    " indentation.
+    setl formatoptions+=n
+    let b:myvim_markdown_compose_mode = 1
+    echom 'vim-markdown: compose mode enabled'
+  else
+    set textwidth&
+    set formatoptions-=a
+    set formatoptions-=n
+    let b:myvim_markdown_compose_mode = 0
+    echom 'vim-markdown: compose mode disabled'
+  endif
+endfunction
+
+function! MyMarkdownSettings()
+  map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  map <buffer> <leader>e\ <A-e>d
+  imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
+  map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+  noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
+  inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
+  inoremap <buffer> <M-PageUp> <C-c>:call MyMarkdownBulletInsertion()<CR>
+  nnoremap <buffer> <M-PageUp> :call MyMarkdownBulletInsertion()<CR>
+
+  setl formatlistpat+=\\\|^\\s*\\*\\s*
+
+  syntax sync fromstart
+endfunction
+
+function! MyMarkdownBulletInsertion()
+  if get(b:, 'myvim_markdown_compose_mode', 0)
+    setl formatoptions-=a
+  endif
+  let l:prefix = repeat(' ', (indent('.') / &shiftwidth) * &shiftwidth)
+  call append('.', l:prefix.'* ')
+  normal! j$
+  startinsert
+  normal! l
+  if get(b:, 'myvim_markdown_compose_mode', 0)
+    setl formatoptions+=a
+  endif
+endfunction
 
 augroup MarkdownEditSettings
   autocmd!
 
-  autocmd Filetype markdown map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  autocmd Filetype markdown map <buffer> <leader>e\ <A-e>d
-  autocmd Filetype markdown imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
-  autocmd Filetype markdown map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
-  autocmd Filetype markdown syntax sync fromstart
+  autocmd FileType markdown call MyMarkdownSettings()
 augroup END
 
 " =============================================================================
