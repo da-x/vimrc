@@ -62,6 +62,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'google/vim-searchindex'
+Plug 'justinmk/vim-sneak'
 
 " RPC and completions
 if has('nvim')
