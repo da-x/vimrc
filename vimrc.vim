@@ -1700,11 +1700,11 @@ endfunction
 
 command! SplitGitHEAD call MyGitShowHead()
 
-function! MyGHeadFiles() abort
+function! MyGQuickfixDiff(cmd) abort
   let l:matches = []
   let l:filename = ''
 
-  for l:line in systemlist("git diff HEAD | grep -E '^(diff|@@)'")
+  for l:line in systemlist(a:cmd . " -U0 | grep -E '^(diff|@@)'")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
@@ -1721,6 +1721,23 @@ function! MyGHeadFiles() abort
   call setqflist(l:matches)
   execute 'copen'
   execute 'cfirst'
+endfunction
+
+function! MyGitCheckoutHeadDiffHunk() abort
+  let l:diff_command = 'git diff HEAD~1 -U0 -R'
+  let l:lines = line('.') . '-' . line('.')
+  let l:filterdiff_command = 'filterdiff -i b/'.expand('%').' --lines='.l:lines
+  let l:command = l:diff_command . ' | ' . l:filterdiff_command . ' | patch -p1'
+  silent call system(l:command)
+  normal! :edit<CR>
+endfunction
+
+function! MyGDiffHeadQuickfixHunks() abort
+  call MyGQuickfixDiff('git diff HEAD')
+endfunction
+
+function! MyGShowHeadQuickfixHunks() abort
+  call MyGQuickfixDiff('git diff HEAD~1')
 endfunction
 
 function! MyGitCommitHook() abort
@@ -1805,8 +1822,9 @@ command! -bang -nargs=0 GCheckout
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
 nnoremap <C-g>f     :GFiles<CR>
-nnoremap <C-g><C-h> :call MyGHeadFiles()<CR>
-nnoremap <C-g>h     :call MyGHeadFiles()<CR>
+nnoremap <C-g><C-h> :call MyGDiffHeadQuickfixHunks()<CR>
+nnoremap <C-g>h     :call MyGDiffHeadQuickfixHunks()<CR>
+nnoremap <C-g>j     :call MyGShowHeadQuickfixHunks()<CR>
 nnoremap <C-g><C-s> :GFiles?<CR>
 nnoremap <C-g>s     :GFiles?<CR>
 nnoremap <C-g><C-l> :Commits<CR>
@@ -1856,7 +1874,7 @@ nmap     <C-g><Down>    <Plug>GitGutterNextHunk
 imap     <C-g><Down>    <C-c><Plug>GitGutterNextHunk
 nmap     <C-g><Up>      <Plug>GitGutterPrevHunk
 imap     <C-g><Up>      <C-c><Plug>GitGutterPrevHunk
-nmap     <C-g><Insert>  <Plug>GitGutterStageHunk
+nmap     <C-g><Backspace> :call MyGitCheckoutHeadDiffHunk()<CR>
 nmap     <C-g><Insert>  <Plug>GitGutterStageHunk
 imap     <C-g><Insert>  <C-c><Plug>GitGutterStageHunk
 inoremap <C-g><Delete>  <C-c>:GitGutterUndoHunk<CR>:w<CR>

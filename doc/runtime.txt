@@ -15,6 +15,8 @@ Git shortcuts (prefix <C-g>):
     <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
     <C-g>h        Open a QuickFix list for all the hunks in the diff from HEAD,
                   (i.e `git diff HEAD`)
+    <C-g>j        Open a QuickFix list for all the hunks in the diff from HEAD~1,
+                  (i.e `git diff HEAD~1`)
     <C-g>d        Split view of `git diff HEAD`
     <C-g>n        Split view of `git diff HEAD --cached` or what to be commited)
     <C-g>o        Split view of `git show HEAD`
@@ -47,8 +49,12 @@ Git shortcuts (prefix <C-g>):
 
     Opertions:
 
-    <C-g><Del>    Delete unstaged current hunk
-    <C-g><Ins>    Stage current hunk
+    <C-g><Backspace>  Equivalent to a `checkout -p` of the hunk related
+                      to the cursor position and `git diff HEAD~1`. Effectively,
+                      a revert of a specific change from `git diff HEAD~1`. Handy
+		      after using `<C-g>j`.
+    <C-g><Del>        Delete unstaged current hunk
+    <C-g><Ins>        Stage current hunk
 
   Conflict hunk related Operations:
 
