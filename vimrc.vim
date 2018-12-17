@@ -29,6 +29,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
+Plug 'tpope/vim-obsession'
 
 " Text manipulation
 Plug 'AndrewRadev/sideways.vim'
@@ -100,6 +101,7 @@ Plug 'rhysd/rust-doc.vim'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'vimoutliner/vimoutliner'
 Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'editorconfig/editorconfig-vim'
 
 " Language related (checkers and suggest)
 Plug 'autozimu/LanguageClient-neovim', {
