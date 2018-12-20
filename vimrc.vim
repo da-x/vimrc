@@ -1955,6 +1955,7 @@ function! MyGitGrep(arg) abort
   call fzf#vim#grep('git grep --line-number --color '.s:string, 0,
       \ { 'dir': systemlist('git rev-parse --show-toplevel')[0] },
       \ 0)
+  call histadd(':', 'Gg '.s:string)
 endfunction
 
 command! -nargs=+ Gg call MyGitGrep(<q-args>)
