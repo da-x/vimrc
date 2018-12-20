@@ -1949,8 +1949,20 @@ nnoremap <leader>?  :Helptags<CR>
 nnoremap <leader>fc :BCommits<CR>
 nnoremap <leader>fC :Commits<CR>
 nnoremap <leader>fv :Commands<CR>
-nnoremap <F9> :Rg <c-r>=expand("<cword>")<CR><CR>
-nnoremap <C-F9> :Rg <c-r>=""<CR>
+
+function! MyGitGrep(arg) abort
+  let s:string = shellescape(a:arg)
+  call fzf#vim#grep('git grep --line-number --color '.s:string, 0,
+      \ { 'dir': systemlist('git rev-parse --show-toplevel')[0] },
+      \ 0)
+endfunction
+
+command! -nargs=+ Gg call MyGitGrep(<q-args>)
+
+nnoremap <F9> :Gg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <C-F9> :Gg <c-r>=""<CR>
+nnoremap <tab><F9> :Rg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <tab><C-F9> :Rg <c-r>=""<CR>
 
 " =============================================================================
 " Emacs migration path:
