@@ -526,7 +526,7 @@ function! InsertSelectionMatch() abort
   if l:lnum !=# 0
     let [l:lnum_end, l:col_end] = searchpos(@/, 'ce')
     if l:lnum ==# l:lnum_end
-      let l:res = escape(strpart(getline(l:lnum), l:col - 1, l:col_end - l:col + 1), ' /')
+      let l:res = escape(strpart(getline(l:lnum), l:col - 1, l:col_end - l:col + 1), ' /&')
     else
       " Not supported yet
     endif
