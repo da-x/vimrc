@@ -415,7 +415,7 @@ imap <M-F4> <C-c><M-F4>
 nmap <C-S-F4> :lprev<CR>
 map! <C-S-F4> <Nop>
 imap <C-S-F4> <C-c><C-F4>
-nmap <C-F4> :lopen<CR>
+nmap <C-F4> :lfirst\|lopen<CR>
 map! <C-F4> <Nop>
 imap <C-F4> <C-c><C-F4>
 nmap <S-F4> <C-S-F4>
@@ -432,7 +432,7 @@ imap <M-F5> <C-c><M-F5>
 nmap <C-S-F5> :cprev<CR>
 map! <C-S-F5> <Nop>
 imap <c-S-F5> <C-c><M-F5>
-nmap <C-F5> :copen<CR>
+nmap <C-F5> :cfirst\|copen<CR>
 map! <C-F5> <Nop>
 imap <C-F5> <C-c><C-F5>
 nmap <S-F5> <C-S-F5>
