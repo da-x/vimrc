@@ -69,9 +69,6 @@ if has('nvim')
 endif
 
 Plug 'roxma/nvim-yarp'
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim'
-endif
 Plug 'roxma/vim-hug-neovim-rpc'
 
 if has('nvim')
@@ -907,6 +904,9 @@ let g:UltiSnipsExpandTrigger = '<c-q>'
 let g:UltiSnipsListSnippets = '<c-j>'
 let g:UltiSnipsJumpForwardTrigger = '<c-k>'
 let g:UltiSnipsJumpBackwardTrigger = '<c-l>'
+let g:UltiSnipsRemoveSelectModeMappings = 0
+inoremap <silent> <c-u> <c-r>=cm#sources#ultisnips#trigger_or_popup("\<Plug>(ultisnips_expand)")<cr>
+map <leader>sm :UltiSnipsEdit<cr>
 
 " =============================================================================
 " Commentary
