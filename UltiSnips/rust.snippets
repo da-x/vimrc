@@ -1,139 +1,158 @@
 snippet userc
-	use std::cell::RefCell;
-	use std::rc::Rc;
-	${0}
+use std::cell::RefCell;
+use std::rc::Rc;
+${0}
+endsnippet
 
 snippet usefs
-	use std::fs;
-	${0}
+use std::fs;
+${0}
+endsnippet
 
 snippet ifls
-	if let Some(${1}) = ${2} {
-	    ${0}
-	}
+if let Some(${1}) = ${2} {
+    ${0}
+}
+endsnippet
 
 snippet disable
-	#[cfg(disable)]
+#[cfg(disable)]
+endsnippet
 
 snippet struct
-	struct ${1} {
+struct ${1} {
+}
+impl ${2} {
+    fn new() -> Self {
+	Self {
+	    ${0}
 	}
-	impl ${2} {
-	    fn new() -> Self {
-	        Self {
-	            ${0}
-	        }
-	    }
-	}
+    }
+}
+endsnippet
 
 snippet ifrom
-	impl From<${1}> for ${2} {
-	    fn from(v: ${1}) -> Self { ${2}::${3}(v) }
-	}
+impl From<${1}> for ${2} {
+    fn from(v: ${1}) -> Self { ${2}::${3}(v) }
+}
+endsnippet
 
 snippet fnms
-	fn ${1}(&mut self) {
-	    ${0}
-	}
+fn ${1}(&mut self) {
+    ${0}
+}
+endsnippet
 
 snippet fns
-	fn ${1}(&self) {
-	    ${0}
-	}
+fn ${1}(&self) {
+    ${0}
+}
+endsnippet
 
 snippet dernum
-	#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]${0}
+#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]${0}
+endsnippet
 
 snippet script
-	#!/usr/bin/env run-cargo-script
+#!/usr/bin/env run-cargo-script
 
-	fn main() {
-	    ${0}
-	}
+fn main() {
+    ${0}
+}
+endsnippet
 
 snippet fnS
-	fn ${1}(self) {
-	    ${0}
-	}
+fn ${1}(self) {
+    ${0}
+}
+endsnippet
 
 snippet unimp
-	#![allow(unused_imports)]
+#![allow(unused_imports)]
+endsnippet
 
 snippet unused
-	#[allow(unused)]
+#[allow(unused)]
+endsnippet
 
 snippet unimp
-	unimplemented!();${0}
+unimplemented!();${0}
+endsnippet
 
 snippet pan
-	panic!();${0}
+panic!();${0}
+endsnippet
 
 snippet alldead
-	#![allow(dead_code, unused_imports)] // REMOVE ME
+#![allow(dead_code, unused_imports)] // REMOVE ME
+endsnippet
 
 snippet portablefn
-	#[cfg(target_os = "linux")]
-	pub fn ${1} {
-	    ${0}
-	}
+#[cfg(target_os = "linux")]
+pub fn ${1} {
+    ${0}
+}
 
-	#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-	pub fn ${1} {
-	}
+#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
+pub fn ${1} {
+}
 
-	#[cfg(target_os = "windows")]
-	pub fn ${1} {
-	}
+#[cfg(target_os = "windows")]
+pub fn ${1} {
+}
+endsnippet
 
 snippet bigstructopt
-	extern crate structopt;
-	#[macro_use]
-	extern crate structopt_derive;
+extern crate structopt;
+#[macro_use]
+extern crate structopt_derive;
 
-	use structopt::StructOpt;
-	use structopt::clap::AppSettings;
+use structopt::StructOpt;
+use structopt::clap::AppSettings;
 
-	#[derive(Debug, StructOpt)]
-	pub struct Server {
-	    #[structopt(name = "server_addr", short="s")]
-	    pub server_addr: Option<String>,
+#[derive(Debug, StructOpt)]
+pub struct Server {
+    #[structopt(name = "server_addr", short="s")]
+    pub server_addr: Option<String>,
 
-	    #[structopt(name = "server_port", short="p", default_value="3232")]
-	    pub server_port: u16,
-	}
+    #[structopt(name = "server_port", short="p", default_value="3232")]
+    pub server_port: u16,
+}
 
-	#[derive(Debug, StructOpt)]
-	pub struct Client {
-	    #[structopt(name = "server_addr")]
-	    pub server_addr: String,
+#[derive(Debug, StructOpt)]
+pub struct Client {
+    #[structopt(name = "server_addr")]
+    pub server_addr: String,
 
-	    #[structopt(name = "server_port", short="p", default_value="3232")]
-	    pub server_port: u16,
-	}
+    #[structopt(name = "server_port", short="p", default_value="3232")]
+    pub server_port: u16,
+}
 
 
-	#[derive(Debug, StructOpt)]
-	pub enum Command {
-	    #[structopt(name = "server")]
-	    Server(Server),
+#[derive(Debug, StructOpt)]
+pub enum Command {
+    #[structopt(name = "server")]
+    Server(Server),
 
-	    #[structopt(name = "client")]
-	    Client(Client),
-	}
+    #[structopt(name = "client")]
+    Client(Client),
+}
 
-	#[derive(StructOpt, Debug)]
-	#[structopt(raw(global_settings = "&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]"))]
-	pub struct Opt {
-	    #[structopt(subcommand)]
-	    command: Command,
-	}
+#[derive(StructOpt, Debug)]
+#[structopt(raw(global_settings = "&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]"))]
+pub struct Opt {
+    #[structopt(subcommand)]
+    command: Command,
+}
 
-	fn main() -> Result<(), ()> {
-	    let opt = Opt::from_args();
-	    // Write me
-	}
+fn main() -> Result<(), ()> {
+    let opt = Opt::from_args();
+    // Write me
+}
+endsnippet
 
 snippet commentsep
-	///////////////////////////////////////////////////////////////////////////////
-	// ${0}
-	//
+///////////////////////////////////////////////////////////////////////////////
+// ${0}
+//
+endsnippet
