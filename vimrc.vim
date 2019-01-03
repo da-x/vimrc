@@ -40,8 +40,7 @@ Plug 'tpope/vim-commentary'
 Plug 'Raimondi/delimitMate'
 
 " Snipppets
-Plug 'garbas/vim-snipmate'
-Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
 
 " Git
 Plug 'da-x/vim-gitgutter' , { 'branch': 'allow-clobber' }
@@ -482,6 +481,8 @@ nnoremap <leader>d :call DuplicateLine()<CR>
 
 " Remap Ctrl-D to a single line removal, not affecting the register
 nnoremap <C-d> "_dd
+" And in select mode, affect selection
+vnoremap <C-d> "_d
 
 " Use the delete key without affecting the register
 nnoremap <Delete> "_x
@@ -900,13 +901,12 @@ let g:ctrlp_prompt_mappings = {
       \ }
 
 " =============================================================================
-" Snipmate
+" UltiSnip
 
-imap <C-q> <Plug>snipMateNextOrTrigger
-smap <C-q> <Plug>snipMateNextOrTrigger
-imap <C-j> <Plug>snipMateNextOrTrigger
-smap <C-j> <Plug>snipMateNextOrTrigger
-nnoremap <leader>sm :SnipMateOpenSnippetFiles<CR>
+let g:UltiSnipsExpandTrigger = '<c-q>'
+let g:UltiSnipsListSnippets = '<c-j>'
+let g:UltiSnipsJumpForwardTrigger = '<c-k>'
+let g:UltiSnipsJumpBackwardTrigger = '<c-l>'
 
 " =============================================================================
 " Commentary
@@ -937,6 +937,8 @@ vmap ( S)
 vmap [ S]
 vmap { S{
 vmap } S}
+vmap :< S<
+vmap :> S>
 
 " Surround with {}, unit with pervious line, fix indentation and edit single statement
 " inside the new {} block.
