@@ -31,6 +31,15 @@ impl $2 {
 }
 endsnippet
 
+snippet fnew
+fn new() -> Self {
+    Self {
+        $0
+    }
+}
+endsnippet
+
+
 snippet ifrom
 impl From<$1> for $2 {
     fn from(v: $1) -> Self { $2::$3(v) }
