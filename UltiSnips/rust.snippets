@@ -10,60 +10,61 @@ ${0}
 endsnippet
 
 snippet ifls
-if let Some(${1}) = ${2} {
-    ${0}
+if let Some($1) = $2 {
+    $0
 }
 endsnippet
 
-snippet disable
+snippet dis
 #[cfg(disable)]
 endsnippet
 
 snippet struct
-struct ${1} {
+struct $1 {
 }
-impl ${2} {
+impl $2 {
     fn new() -> Self {
-	Self {
-	    ${0}
-	}
+        Self {
+	    $0
+        }
     }
 }
 endsnippet
 
 snippet ifrom
-impl From<${1}> for ${2} {
-    fn from(v: ${1}) -> Self { ${2}::${3}(v) }
+impl From<$1> for $2 {
+    fn from(v: $1) -> Self { $2::$3(v) }
 }
 endsnippet
 
 snippet fnms
-fn ${1}(&mut self) {
-    ${0}
+fn $1(&mut self) {
+    $0
 }
 endsnippet
 
 snippet fns
-fn ${1}(&self) {
-    ${0}
+fn $1(&self) {
+    $0
 }
 endsnippet
 
 snippet dernum
-#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]${0}
+#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
+$0
 endsnippet
 
 snippet script
 #!/usr/bin/env run-cargo-script
 
 fn main() {
-    ${0}
+    $0
 }
 endsnippet
 
 snippet fnS
-fn ${1}(self) {
-    ${0}
+fn $1(self) {
+    $0
 }
 endsnippet
 
@@ -76,11 +77,13 @@ snippet unused
 endsnippet
 
 snippet unimp
-unimplemented!();${0}
+unimplemented!();
+$0
 endsnippet
 
 snippet pan
-panic!();${0}
+panic!();
+$0
 endsnippet
 
 snippet alldead
@@ -89,16 +92,16 @@ endsnippet
 
 snippet portablefn
 #[cfg(target_os = "linux")]
-pub fn ${1} {
-    ${0}
+pub fn $1 {
+    $0
 }
 
 #[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-pub fn ${1} {
+pub fn $1 {
 }
 
 #[cfg(target_os = "windows")]
-pub fn ${1} {
+pub fn $1 {
 }
 endsnippet
 
@@ -151,8 +154,10 @@ fn main() -> Result<(), ()> {
 }
 endsnippet
 
-snippet commentsep
+snippet sep
+
 ///////////////////////////////////////////////////////////////////////////////
-// ${0}
+// $0
 //
+
 endsnippet
