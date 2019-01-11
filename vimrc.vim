@@ -230,6 +230,11 @@ endif
 set showcmd
 set lazyredraw
 
+" Sign column
+try
+  silent! set signcolumn=auto:4
+endtry
+
 " Give indication in which mode we are at, using a cursor shape.
 " | for insert
 " _ for replace
