@@ -2049,6 +2049,19 @@ hi HighlightedyankRegion guibg=#008080 gui=NONE term=NONE
 " =============================================================================
 " Misc
 
+function! MyVimLeave() abort
+  if has('nvim')
+    if get(g:, 'vim_leave_sahda', 0)
+      wshada
+    endif
+  endif
+endfunction
+
+augroup MyVimLeaveAutoGroup 
+  " force write shada on leaving nvim
+  autocmd VimLeave * call MyVimLeave()
+augroup END
+
 let g:qf_auto_resize = 0
 let g:qf_window_bottom = 0
 let g:qf_mapping_ack_style = 1
