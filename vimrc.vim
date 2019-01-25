@@ -103,7 +103,7 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'do': 'bash install.sh',
       \ }
 Plug 'w0rp/ale'
-" Plug 'vim-syntastic/syntastic'
+Plug 'vim-syntastic/syntastic'
 
 " Other
 Plug 'junegunn/vader.vim'
@@ -975,6 +975,17 @@ endfunction
 " Rust
 
 let g:rustfmt_autosave_if_config_present = 1
+
+" =============================================================================
+" Syntastic
+
+" Disable it by default because we are using ALE
+augroup MyVimEnterForSyntastic
+  autocmd!
+  autocmd VimEnter * SyntasticToggleMode
+augroup END
+
+let g:syntastic_auto_loc_list = 1
 
 " =============================================================================
 " ALE (syntax checker)
