@@ -70,10 +70,7 @@ Plug 'justinmk/vim-sneak'
 
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-
-if has('nvim')
-  Plug 'roxma/nvim-completion-manager'
-endif
+Plug 'ncm2/ncm2'
 
 " Syntax related
 Plug 'plasticboy/vim-markdown'
