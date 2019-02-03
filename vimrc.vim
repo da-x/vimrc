@@ -982,7 +982,7 @@ let g:rustfmt_autosave_if_config_present = 1
 " Disable it by default because we are using ALE
 augroup MyVimEnterForSyntastic
   autocmd!
-  autocmd VimEnter * SyntasticToggleMode
+  autocmd VimEnter * silent SyntasticToggleMode
 augroup END
 
 let g:syntastic_auto_loc_list = 1
