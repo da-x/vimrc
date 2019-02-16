@@ -30,6 +30,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-abolish'
 
 " Text manipulation
 Plug 'AndrewRadev/sideways.vim'
@@ -2062,7 +2063,15 @@ let g:LanguageClient_diagnosticsSignsMax = 0
 
 " nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
 " nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+noremap <leader>r<CR> :call LanguageClient#textDocument_rename()<CR>
+noremap <leader>rc :call LanguageClient#textDocument_rename(
+      \ {'newName': Abolish.camelcase(expand('<cword>'))})<CR>
+" Rename - rs => rename snake_case
+noremap <leader>rs :call LanguageClient#textDocument_rename(
+      \ {'newName': Abolish.snakecase(expand('<cword>'))})<CR>
+" Rename - ru => rename UPPERCASE
+noremap <leader>ru :call LanguageClient#textDocument_rename(
+      \ {'newName': Abolish.uppercase(expand('<cword>'))})<CR>
 
 " =============================================================================
 " Config for vim-highlightedyank
