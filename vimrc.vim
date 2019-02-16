@@ -102,7 +102,12 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
-Plug 'w0rp/ale'
+let g:my_ale_devel = get(g:, 'my_ale_devel', '')
+if g:my_ale_devel !=# ''
+  Plug 'w0rp/ale' , { 'dir': g:my_ale_devel }
+else
+  Plug 'w0rp/ale'
+endif
 Plug 'vim-syntastic/syntastic'
 
 " Other
