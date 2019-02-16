@@ -1006,12 +1006,10 @@ let g:syntastic_auto_loc_list = 1
 " =============================================================================
 " ALE (syntax checker)
 
-let g:ale_rust_cargo_use_check = 0
 let g:ale_rust_ignore_secondary_spans = 1
-let g:ale_change_sign_column_error = 1
 let g:ale_set_highlights = 1
-let g:ale_linters = {}
 let g:ale_set_balloons = 1
+let g:ale_linters = {}
 let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
