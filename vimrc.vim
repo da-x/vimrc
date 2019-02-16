@@ -608,6 +608,11 @@ nmap <leader>2 :call RexSignal(2)<CR>
 nmap <leader>3 :call RexSignal(3)<CR>
 
 " =============================================================================
+" NEDTRee
+
+let NERDTreeIgnore = ['\.pyc$', '\.o$']
+
+" =============================================================================
 " MoveTo
 "
 " Hack for moving text from where you are to some place else where is a mark,
@@ -908,7 +913,13 @@ let g:UltiSnipsJumpForwardTrigger = '<c-e>'
 let g:UltiSnipsJumpBackwardTrigger = '<c-f>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 inoremap <silent> <c-u> <c-r>=cm#sources#ultisnips#trigger_or_popup("\<Plug>(ultisnips_expand)")<cr>
-map <leader>sm :UltiSnipsEdit<cr>
+
+function! MyEditUltiSnips()
+  let l:filename = '~/.vim_runtime/UltiSnips/'.&filetype.'.snippets'
+  execute 'edit ' . l:filename
+endfunction
+
+map <leader>sm :call MyEditUltiSnips()<cr>
 
 " =============================================================================
 " Commentary
@@ -1126,8 +1137,11 @@ augroup END
 " Copy a string to all the system's clipbard (Linux has three, and that's a
 " bit confusing).
 function! SetSystemClipboard(string) abort
-  let l:display = expand("$DISPLAY")
-  if l:display != ''
+  let l:display = system('echo $DISPLAY')
+  " For some reason expand("$DISPLAY") does not work only from a markdown
+  " buffer (WTF?).
+
+  if l:display !=# ''
     let l:helper = '$HOME/.vim_runtime/bin/set-all-clipboard.py'
     if exists(l:helper)
       if has('nvim')
