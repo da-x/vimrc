@@ -2093,6 +2093,7 @@ let g:LanguageClient_autoStart = 1
 
 " For Rust, using ALE for now
 let g:LanguageClient_diagnosticsSignsMax = 0
+let g:LanguageClient_diagnosticsEnable = 1
 
 " Stuff I am not using yet:
 

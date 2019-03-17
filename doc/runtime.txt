@@ -91,3 +91,15 @@ FZF shortcuts (prefix <C-g>):
     <leader>fc    BCommits
     <leader>fC    Commits
     <leader>fv    Commands
+
+In FZF:
+
+    Tab - select and move cursor down
+    Shift-tab - select and move cursor up (for some reason,
+	neovim doesn't support the key)
+    <C-a> / <A-a> - select all
+    <C-d> / <A-d> - deselect all
+    <Return> - open selected entries
+    <C-x> - horizontal splits
+    <C-v> - vertical splits
+    <C-t> - tags splits
