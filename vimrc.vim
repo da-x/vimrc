@@ -1010,6 +1010,7 @@ let g:syntastic_auto_loc_list = 1
 let g:ale_rust_ignore_secondary_spans = 1
 let g:ale_set_highlights = 1
 let g:ale_set_balloons = 1
+let g:ale_virtualtext_cursor = 1
 let g:ale_linters = {}
 let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
@@ -1541,6 +1542,11 @@ function! MyHighlights() abort
   highlight ALEInfoSign    guibg=#774400 guifg=#ff8800
   highlight ALEWarning     guibg=#777700 guifg=#ffffff
   highlight ALEWarningSign guibg=#777700 guifg=#ffff00
+  highlight ALEVirtualTextError         guibg=#200000 guifg=#600000
+  highlight ALEVirtualTextInfo          guibg=#002000 guifg=#006000
+  highlight ALEVirtualTextWarning       guibg=#202000 guifg=#606000
+  highlight ALEVirtualTextStyleError    guibg=#200000 guifg=#600000
+  highlight ALEVirtualTextStyleWarning  guibg=#202000 guifg=#606000
 
   highlight ExtraWhitespace ctermbg=red guibg=red
 
@@ -2094,6 +2100,8 @@ let g:LanguageClient_autoStart = 1
 " For Rust, using ALE for now
 let g:LanguageClient_diagnosticsSignsMax = 0
 let g:LanguageClient_diagnosticsEnable = 1
+let g:LanguageClient_diagnosticsList = "Quickfix"
+let g:LanguageClient_useVirtualText = 0
 
 " Stuff I am not using yet:
 
