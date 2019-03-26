@@ -2099,8 +2099,7 @@ let g:LanguageClient_autoStart = 1
 
 " For Rust, using ALE for now
 let g:LanguageClient_diagnosticsSignsMax = 0
-let g:LanguageClient_diagnosticsEnable = 1
-let g:LanguageClient_diagnosticsList = "Quickfix"
+" let g:LanguageClient_diagnosticsList = "Quickfix"
 let g:LanguageClient_useVirtualText = 0
 
 " Stuff I am not using yet:
