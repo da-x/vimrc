@@ -991,7 +991,7 @@ endfunction
 " =============================================================================
 " Rust
 
-let g:rustfmt_autosave_if_config_present = 1
+" let g:rustfmt_autosave_if_config_present = 1
 
 " =============================================================================
 " Syntastic
