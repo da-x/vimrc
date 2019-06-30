@@ -826,6 +826,15 @@ function! OnCtrlMinus() abort
   exec "split"
 endfunction
 
+function! OnVimResized() abort
+  wincmd =
+endfunction
+
+augroup VimResizeAU
+  autocmd!
+  autocmd VimResized * call OnVimResized()
+augroup END
+
 map <leader>cd :cd %:p:h<CR>:pwd<CR>
 
 " =============================================================================
