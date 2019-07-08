@@ -1236,6 +1236,11 @@ function! SwitchYank(paste) abort
   endif
 endfunction
 
+augroup WorkaroundNeovimIssue7994
+  autocmd!
+  autocmd InsertLeave * set nopaste
+augroup END
+
 vnoremap <silent> y y`]:call SpecialAfterYank()<CR>
 vnoremap <silent> d d:call SpecialAfterYank()<CR>
 nnoremap <silent> dd dd:call SpecialAfterYank()<CR>
