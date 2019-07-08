@@ -1392,6 +1392,26 @@ command! -nargs=1 Silent
 
 " =============================================================================
 
+function! CatQF(cmd) abort
+  let l:matches = []
+
+  for l:line in systemlist(a:cmd)
+    let l:m = matchlist(l:line, '\V\^\(\.\*\):\(\[0-9]\+\): \(\.\*\)')
+    let l:filename = l:m[1]
+    let l:line_num = l:m[2]
+    let l:title = l:m[3]
+    call add(l:matches, {'filename': l:filename, 'lnum': l:line_num, 'text': l:title})
+  endfor
+
+  call setqflist(l:matches)
+  execute 'copen'
+  execute 'cfirst'
+endfunction
+
+command! -nargs=1 CatQF call CatQF(<q-args>)
+
+" =============================================================================
+
 function! OnF11() abort
   execute "ptag " . expand("<cword>")
 endfunction
