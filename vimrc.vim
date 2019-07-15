@@ -782,10 +782,17 @@ nnoremap <leader>ea :e! ~/.config/alacritty/alacritty.yml<CR>
 nnoremap <leader>ee :e! ~/.vim_runtime/vimrc.vim<CR>
 nnoremap <leader>eg :e! ~/.files/gitconfig<CR>
 nnoremap <leader>et :e! ~/.tmux.conf<CR>
-nnoremap <leader>ex :e! ~/.Xdefaults<CR>
 nnoremap <leader>ez :e! ~/.zsh/zshrc.sh<CR>
 nnoremap <leader>e_ :e! ~/.vim_runtime/project-specific.vim<CR>
-nnoremap <leader>ed :e! .git/todo.md<CR>
+
+function! OpenFromRoot(pathname)
+  let l:root = MyGitRoot()
+  silent execute 'e! ' . l:root . '/' . a:pathname
+endfunction
+
+nnoremap <leader>ed :silent call OpenFromRoot(".git/todo.md")<CR>
+nnoremap <leader>ev :silent call OpenFromRoot(".git/design.md")<CR>
+nnoremap <leader>el :silent call OpenFromRoot(".git/log.md")<CR>
 
 " =============================================================================
 " Behaviors to have when opening buffers
@@ -2081,10 +2088,21 @@ nnoremap <leader>fc :BCommits<CR>
 nnoremap <leader>fC :Commits<CR>
 nnoremap <leader>fv :Commands<CR>
 
+function! MyGitRoot() abort
+  let l:dir = systemlist('git rev-parse --show-toplevel')
+  if len(l:dir) != 0
+    return l:dir[0]
+  endif
+  let l:dir = systemlist('git rev-parse --git-dir')
+  if len(l:dir) != 0
+     return fnamemodify(l:dir[0], ":p:h:h")
+  else
+endfunction
+
 function! MyGitGrep(arg) abort
   let s:string = shellescape(a:arg)
   call fzf#vim#grep('git grep --line-number --color '.s:string, 0,
-      \ { 'dir': systemlist('git rev-parse --show-toplevel')[0] },
+      \ { 'dir': MyGitRoot() },
       \ 0)
   call histadd(':', 'Gg '.a:arg)
 endfunction
