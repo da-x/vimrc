@@ -15,6 +15,14 @@ if let Some($1) = $2 {
 }
 endsnippet
 
+snippet msome
+match $1 {
+    None => {},
+    Some(v) => {
+    }
+}
+endsnippet
+
 snippet dis
 #[cfg(disable)]
 endsnippet
@@ -38,7 +46,6 @@ fn new() -> Self {
     }
 }
 endsnippet
-
 
 snippet ifrom
 impl From<$1> for $2 {
@@ -77,7 +84,7 @@ fn $1(self) {
 }
 endsnippet
 
-snippet unimp
+snippet unsimport
 #![allow(unused_imports)]
 endsnippet
 
@@ -85,7 +92,7 @@ snippet unused
 #[allow(unused)] // TODO
 endsnippet
 
-snippet unimp
+snippet unimpl
 unimplemented!();
 $0
 endsnippet
@@ -113,6 +120,23 @@ pub fn $1 {
 pub fn $1 {
 }
 endsnippet
+
+snippet hashmap_entry
+use std::collections::hash_map;
+let mut item = match $1.entry($2) {
+    hash_map::Entry::Vacant(v) => v.insert($3),
+    hash_map::Entry::Occupied(o) => o.into_mut(),
+};
+endsnippet
+
+snippet btreemap_entry
+use std::collections::btree_map;
+let mut item = match $1.entry($2) {
+    btree_map::Entry::Vacant(v) => v.insert($3),
+    btree_map::Entry::Occupied(o) => o.into_mut(),
+};
+endsnippet
+
 
 snippet bigstructopt
 extern crate structopt;
