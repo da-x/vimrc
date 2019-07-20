@@ -2101,13 +2101,28 @@ endfunction
 
 function! MyGitGrep(arg) abort
   let s:string = shellescape(a:arg)
-  call fzf#vim#grep('git grep --line-number --color '.s:string, 0,
+  let l:recursive = ""
+  if get(g:, 'gg_recursive', 1)
+     let l:recursive = "--recurse-submodules"
+  endif
+  call fzf#vim#grep('git grep '.l:recursive.' --line-number --color '.s:string, 0,
       \ { 'dir': MyGitRoot() },
       \ 0)
   call histadd(':', 'Gg '.a:arg)
 endfunction
 
+function! MyGitGrepToggleRecursive() abort
+  if get(g:, 'gg_recursive', 1)
+    let g:gg_recursive = 0
+    echom "GitGrep: Non recursive by default"
+  else
+    let g:gg_recursive = 1
+    echom "GitGrep: Recursive by default"
+  endif
+endfunction
+
 command! -nargs=+ Gg call MyGitGrep(<q-args>)
+command! GgToggleRecursive call MyGitGrepToggleRecursive()
 
 nnoremap <F9> :Gg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <C-F9> :Gg <c-r>=""<CR>
