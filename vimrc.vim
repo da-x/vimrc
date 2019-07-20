@@ -1626,6 +1626,7 @@ let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
 let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_follow_anchor = 1
 
 " This 'Compose' mode enables automatic reparagraphing, that is also properly
 " sensitive to bullet lists. However it needs to be enabled explicitly
