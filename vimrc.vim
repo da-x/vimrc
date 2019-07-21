@@ -790,9 +790,9 @@ function! OpenFromRoot(pathname)
   silent execute 'e! ' . l:root . '/' . a:pathname
 endfunction
 
-nnoremap <leader>ed :silent call OpenFromRoot(".git/todo.md")<CR>
-nnoremap <leader>ev :silent call OpenFromRoot(".git/design.md")<CR>
-nnoremap <leader>el :silent call OpenFromRoot(".git/log.md")<CR>
+nnoremap <leader>ed :silent call OpenFromRoot(".git/meta/todo.md")<CR>
+nnoremap <leader>ev :silent call OpenFromRoot(".git/meta/design.md")<CR>
+nnoremap <leader>el :silent call OpenFromRoot(".git/meta/log.md")<CR>
 
 " =============================================================================
 " Behaviors to have when opening buffers
