@@ -1730,7 +1730,7 @@ augroup VimEditSettings
 augroup END
 
 function! MyVimEditInsertDateLine() abort
-  return strftime("#### At %Y-%m-%d %H:%M:%S\n")
+  return strftime("# At %Y-%m-%d %H:%M:%S\n")
 endfunction
 
 " =============================================================================
