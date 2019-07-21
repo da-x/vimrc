@@ -1656,9 +1656,9 @@ function! MyMarkdownToggleComposeMode()
 endfunction
 
 function! MyMarkdownSettings()
-  map <buffer> <A-e>d  G$<right>i<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  map <buffer> <leader>e\ <A-e>d
-  imap <buffer> <A-e>d  <C-R>=MyVimEditInsertDateLine()<CR>
+  noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  noremap <buffer> <leader>e\ <A-e>d
+  imap <buffer> <A-e>d  <C-c><A-e>d
   map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
