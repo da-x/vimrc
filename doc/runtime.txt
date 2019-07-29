@@ -13,6 +13,7 @@ Git shortcuts (prefix <C-g>):
     <C-g>f        Show a list of all Git commited files (git ls-files) using FZF
     <C-g>s        Show a list of all files mentioned in `git status` using FZF
     <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
+    <C-g><CR>     Open vimagit
     <C-g>h        Open a QuickFix list for all the hunks in the diff from HEAD,
                   (i.e `git diff HEAD`)
     <C-g>j        Open a QuickFix list for all the hunks in the diff from HEAD~1,
@@ -36,9 +37,11 @@ Git shortcuts (prefix <C-g>):
 
   Related to current file:
 
-    <C-g><CR>     Show a list of commits (`git log`) for the current file using
+    <C-g>L        Show a list of commits (`git log`) for the current file using
                   FZF
     <C-g>r        Unstage current file (equivalent to a `git reset` on the file)
+    <C-g><CR>     Show a list of commits (`git log`) for the current file using
+                  FZF
 
   Hunk related:
 

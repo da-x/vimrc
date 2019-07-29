@@ -1972,7 +1972,8 @@ nnoremap <C-g><C-l> :Commits<CR>
 nnoremap <C-g>l     :Commits<CR>
 nnoremap <C-g><C-o> :SplitGitHEAD<CR>
 nnoremap <C-g>o     :SplitGitHEAD<CR>
-nnoremap <C-g><CR>  :BCommits<CR>
+nnoremap <C-g>L     :BCommits<CR>
+nnoremap <C-g><cr>  :Magit<CR>
 nnoremap <C-g><C-c> :GCheckout<CR>
 nnoremap <C-g>c     :GCheckout<CR>
 nnoremap <C-g>a     :call MyGitCommitAll()<CR>
