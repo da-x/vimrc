@@ -1010,6 +1010,10 @@ endfunction
 
 " let g:rustfmt_autosave_if_config_present = 1
 
+let g:rustfmt_autosave = 0
+let g:rustfmt_autosave_if_config_present = 0
+let g:rustfmt_autosave_because_of_config = 0
+
 " =============================================================================
 " Syntastic
 

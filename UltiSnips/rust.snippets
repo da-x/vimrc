@@ -30,7 +30,8 @@ endsnippet
 snippet struct
 struct $1 {
 }
-impl $2 {
+
+impl $1 {
     fn new() -> Self {
         Self {
 	    $0
@@ -84,6 +85,18 @@ fn $1(self) {
 }
 endsnippet
 
+snippet testmod "" m
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn main() {
+        $0
+    }
+}
+endsnippet
+
 snippet unsimport
 #![allow(unused_imports)]
 endsnippet
@@ -92,12 +105,13 @@ snippet unused
 #[allow(unused)] // TODO
 endsnippet
 
-snippet unimpl
-unimplemented!();
+snippet unimpl "" m
 $0
+
+unimplemented!();
 endsnippet
 
-snippet pan
+snippet pan "" m
 panic!();
 $0
 endsnippet
@@ -106,7 +120,7 @@ snippet alldead
 #![allow(dead_code, unused_imports)] // REMOVE ME
 endsnippet
 
-snippet portablefn
+snippet portablefn "" m
 #[cfg(target_os = "linux")]
 pub fn $1 {
     $0
