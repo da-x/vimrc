@@ -259,7 +259,7 @@ elseif &background=='dark'
   " for background=dark {{{2
   " DARK COLOR DEFINE START
 
-  hi Normal		guifg=#e5e5e5	guibg=#000000	gui=NONE
+  hi Normal		guifg=#e5e5e5	guibg=#000014	gui=NONE
   hi Comment		guifg=#d0d090	guibg=NONE	gui=NONE
   hi Constant		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi Number		guifg=#e0c060	guibg=NONE	gui=NONE
@@ -292,7 +292,7 @@ elseif &background=='dark'
   hi ModeMsg		guifg=fg	guibg=#000080	gui=NONE
   hi VisualNOS		guifg=fg	guibg=#000080	gui=NONE
   hi SpecialKey		guifg=#b0d0f0	guibg=NONE	gui=NONE
-  hi NonText		guifg=#000000	guibg=#000000	gui=NONE
+  hi NonText		guifg=#000000	guibg=#000014	gui=NONE
   hi Directory		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi ErrorMsg		guifg=#d0d090	guibg=#800000	gui=NONE
   hi MoreMsg		guifg=#c0e080	guibg=NONE	gui=NONE
