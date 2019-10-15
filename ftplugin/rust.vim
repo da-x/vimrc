@@ -65,3 +65,4 @@ endfun
 
 nnoremap eim :call RustConvertIfLetToMatch()<CR>
 
+hi rustStringDelimiter 	guifg=#3080d0   guibg=NONE  gui=NONE
