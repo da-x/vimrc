@@ -100,10 +100,14 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'editorconfig/editorconfig-vim'
 
 " Language related (checkers and suggest)
-Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ 'do': 'bash install.sh',
-      \ }
+
+if system("uname -m") != "aarch64"
+  Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+endif
+
 let g:my_ale_devel = get(g:, 'my_ale_devel', '')
 if g:my_ale_devel !=# ''
   Plug 'w0rp/ale' , { 'dir': g:my_ale_devel }
