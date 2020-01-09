@@ -983,8 +983,8 @@ vmap :> S>
 
 " Surround with {}, unit with pervious line, fix indentation and edit single statement
 " inside the new {} block.
-nmap e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
-vmap e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
+nmap <leader>e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
+vmap <leader>e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
 
 " Surround the two single-line two bodies of an if-else in C with '{}'.
 "
@@ -994,7 +994,7 @@ vmap e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<C
 "     b;                   b;
 "                      }
 "
-nmap e2{ e{<Down><Down>e{
+nmap <leader>e2{ e{<Down><Down>e{
 
 function! StripString(input_string)
     return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
@@ -1636,6 +1636,7 @@ let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
 let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_follow_anchor = 1
 
 " This 'Compose' mode enables automatic reparagraphing, that is also properly
@@ -1643,39 +1644,90 @@ let g:vim_markdown_follow_anchor = 1
 " otherwise it would mess other aspects of markdown syntax such as titles
 " and code.
 
+function! MyMarkdownToggleComposeModeDisable()
+  set textwidth&
+  set formatoptions-=a
+  set formatoptions-=n
+  let b:myvim_markdown_compose_mode = 0
+endfunction
+
+function! MyMarkdownToggleComposeModeEnable()
+  " Limit line endings, so that we get nice readable ASCII
+  setl textwidth=80
+
+  " Autoformat for end-of-line wrap
+  setl formatoptions+=a
+
+  " Don't mess with bullet lists, and not even ones arranged in a tree with
+  " indentation.
+  setl formatoptions+=n
+  let b:myvim_markdown_compose_mode = 1
+endfunction
+
 function! MyMarkdownToggleComposeMode()
   if !get(b:, 'myvim_markdown_compose_mode', 0)
-    " Limit line endings, so that we get nice readable ASCII
-    setl textwidth=80
-
-    " Autoformat for end-of-line wrap
-    setl formatoptions+=a
-
-    " Don't mess with bullet lists, and not even ones arranged in a tree with
-    " indentation.
-    setl formatoptions+=n
-    let b:myvim_markdown_compose_mode = 1
+    call MyMarkdownToggleComposeModeEnable()
     echom 'vim-markdown: compose mode enabled'
   else
-    set textwidth&
-    set formatoptions-=a
-    set formatoptions-=n
-    let b:myvim_markdown_compose_mode = 0
+    call MyMarkdownToggleComposeModeDisable()
     echom 'vim-markdown: compose mode disabled'
   endif
 endfunction
 
+function! MyMarkdownSetComposeMode(mode)
+  let b:myvim_markdown_compose_mode = a:mode
+  if b:myvim_markdown_compose_mode == 1
+    call MyMarkdownToggleComposeModeEnable()
+  else
+    call MyMarkdownToggleComposeModeDisable()
+  endif
+endfunction
+
+function! MyMarkdownFindPreviousBulletIndent()
+
+endfunction
+
+function! MyMarkdownInsertBullet()
+  let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
+  call MyMarkdownSetComposeMode(0)
+  let l:prefix = repeat(' ', (indent('.') / &shiftwidth) * &shiftwidth)
+  call append('.', l:prefix.'* ')
+  normal! j$
+  startinsert
+  normal! l
+  call MyMarkdownSetComposeMode(l:mode)
+  startinsert!
+endfunction
+
+function! MyMarkdownInsertSubBullet()
+  let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
+  call MyMarkdownSetComposeMode(0)
+  let l:prefix = repeat(' ', (1 + (indent('.') / &shiftwidth)) * &shiftwidth)
+  call append('.', l:prefix.'* ')
+  normal! j$
+  startinsert
+  normal! l
+  call MyMarkdownSetComposeMode(l:mode)
+  startinsert!
+endfunction
+
 function! MyMarkdownSettings()
   noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  noremap <buffer> <leader>e\ <A-e>d
+  map <buffer> <leader>e\ <A-e>d
   imap <buffer> <A-e>d  <C-c><A-e>d
+  noremap <buffer> <silent> <A-e><CR> :call MyMarkdownInsertBullet()<CR>
+  noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
+  imap <buffer> <A-e><CR> <C-c><A-e><CR>
+  imap <buffer> <A-e><Right> <C-c><A-e><Right>
   map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
-  inoremap <buffer> <M-PageUp> <C-c>:call MyMarkdownBulletInsertion()<CR>
-  nnoremap <buffer> <M-PageUp> :call MyMarkdownBulletInsertion()<CR>
 
+  call MyMarkdownToggleComposeModeDisable()
+  Indent4Spaces
   setl formatlistpat+=\\\|^\\s*\\*\\s*
+  setl comments=fb:>,fb:*,fb:+,fb:-
+  setl formatoptions-=q
 
   syntax sync fromstart
 endfunction
