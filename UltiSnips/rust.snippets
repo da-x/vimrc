@@ -54,6 +54,14 @@ impl From<$1> for $2 {
 }
 endsnippet
 
+snippet idebug
+impl std::fmt::Debug for $1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "$1 {{ }}")
+    }
+}
+endsnippet
+
 snippet fnms
 fn $1(&mut self) {
     $0

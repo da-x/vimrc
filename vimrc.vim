@@ -75,6 +75,7 @@ Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'ncm2/ncm2'
 
 " Syntax related
+Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
