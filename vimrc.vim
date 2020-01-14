@@ -1712,6 +1712,7 @@ function! MyMarkdownInsertSubBullet()
 endfunction
 
 function! MyMarkdownSettings()
+  setlocal spell
   noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
   map <buffer> <leader>e\ <A-e>d
   imap <buffer> <A-e>d  <C-c><A-e>d
@@ -1943,6 +1944,8 @@ function! MyGShowHeadQuickfixHunks() abort
 endfunction
 
 function! MyGitCommitHook() abort
+  setlocal spell
+
   " Override 'h' shortcut to show what we are commiting
   nnoremap <buffer> <C-g>h :call MyGitShowHead()<CR>
 
