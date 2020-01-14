@@ -2253,6 +2253,7 @@ noremap <leader>ru :call LanguageClient#textDocument_rename(
 let g:highlightedyank_highlight_duration = 200
 
 hi HighlightedyankRegion guibg=#008080 gui=NONE term=NONE
+hi SpellBad guibg=#500000 gui=underline term=underline
 
 " =============================================================================
 " Misc
