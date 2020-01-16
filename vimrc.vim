@@ -557,6 +557,7 @@ vnoremap <A-r> :s/<C-r>=@/<CR>/<C-r>=InsertSelectionMatch()<CR>/g<left><left>
 " Same as above, but write a new string for replacement.
 nnoremap <A-h> :%s/<C-r>=@/<CR>//g<left><left>
 vnoremap <A-h> :s/<C-r>=@/<CR>//g<left><left>
+nnoremap <leader>x :/<C-r>=@/<CR>
 
 " Add a newline and move down
 noremap <silent> <C-J> O<Esc>j
@@ -603,6 +604,8 @@ nnoremap dH xdF<Space>
 function! TrimWhiteSpace() abort
   %s/\s\+$//e
 endfunction
+
+command! TrimWhiteSpace call TrimWhiteSpace()
 
 " =============================================================================
 
