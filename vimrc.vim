@@ -1743,9 +1743,9 @@ function! MyMarkdownSettings()
   map <buffer> <leader>e\ <A-e>d
   imap <buffer> <A-e>d  <C-c><A-e>d
   noremap <buffer> <silent> <A-e><CR> :call MyMarkdownInsertBullet()<CR>
+  noremap <buffer> <silent> <leader><CR> :call MyMarkdownInsertBullet()<CR>
   noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
-  imap <buffer> <A-e><CR> <C-c><A-e><CR>
-  imap <buffer> <A-e><Right> <C-c><A-e><Right>
+  noremap <buffer> <silent> <leader><Down> :call MyMarkdownInsertSubBullet()<CR>
   map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
