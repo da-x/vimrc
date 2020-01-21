@@ -450,11 +450,18 @@ map! <S-F5> <C-S-F5>
 imap <S-F5> <C-S-F5>
 
 " Quickly record a macro and execute it
-nnoremap <F7> qm
-nnoremap <C-F7> <C-c>q
-nnoremap <F6> @m
 
-imap <F7> <C-c><F7>
+function! OnOffRecord() abort
+  if reg_recording() == ""
+    normal qm
+  else
+    normal q
+  endif
+endfunction
+
+nnoremap <silent> <C-F7> :call OnOffRecord()<CR>
+nnoremap <silent> <F7> @m
+
 imap <C-F7> <C-c><C-F7>
 
 " =============================================================================
