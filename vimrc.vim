@@ -1737,10 +1737,18 @@ function! MyMarkdownInsertSubBullet()
   startinsert!
 endfunction
 
+function! MyMarkdownGQ()
+  let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
+  call MyMarkdownSetComposeMode(1)
+  normal! gvgq
+  call MyMarkdownSetComposeMode(l:mode)
+endfunction
+
 function! MyMarkdownSettings()
   setlocal spell
   noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
   map <buffer> <leader>e\ <A-e>d
+  noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
   imap <buffer> <A-e>d  <C-c><A-e>d
   noremap <buffer> <silent> <A-e><CR> :call MyMarkdownInsertBullet()<CR>
   noremap <buffer> <silent> <leader><CR> :call MyMarkdownInsertBullet()<CR>
