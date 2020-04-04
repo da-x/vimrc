@@ -93,6 +93,7 @@ if g:my_rust_vim_devel !=# ''
 else
   Plug 'rust-lang/rust.vim'
 endif
+
 Plug 'rhysd/rust-doc.vim'
 
 Plug 'justinmk/vim-syntax-extra'
@@ -1044,6 +1045,7 @@ endfunction
 let g:rustfmt_autosave = 0
 let g:rustfmt_autosave_if_config_present = 0
 let g:rustfmt_autosave_because_of_config = 0
+let g:rust_doc#downloaded_rust_doc_dir = '~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
 
 " =============================================================================
 " Syntastic
@@ -1739,7 +1741,7 @@ endfunction
 
 function! MyMarkdownGQ()
   let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
-  call MyMarkdownSetComposeMode(1)
+  call MyMarkdownSetComposeMode(0)
   normal! gvgq
   call MyMarkdownSetComposeMode(l:mode)
 endfunction
@@ -2072,6 +2074,7 @@ nnoremap <C-g><C-o> :SplitGitHEAD<CR>
 nnoremap <C-g>o     :SplitGitHEAD<CR>
 nnoremap <C-g>L     :BCommits<CR>
 nnoremap <C-g><cr>  :Magit<CR>
+nnoremap <C-g><C-CR>  :Magit<CR>
 nnoremap <C-g><C-c> :GCheckout<CR>
 nnoremap <C-g>c     :GCheckout<CR>
 nnoremap <C-g>a     :call MyGitCommitAll()<CR>
@@ -2240,16 +2243,20 @@ nnoremap <silent> <C-x><C-f> :FZF<CR>
 nmap <Esc>x <Nop>
 
 " Saving or quiting from anywhere
-noremap <C-x>s <C-c>:w<CR>
-noremap <C-x><C-s> <C-c>:w<CR>
-noremap! <C-x>s <C-c>:w<CR>
+noremap  <C-x>s     <C-c>:w<CR>
+noremap  <C-x><C-s> <C-c>:w<CR>
+noremap! <C-x>s     <C-c>:w<CR>
 noremap! <C-x><C-s> <C-c>:w<CR>
-inoremap <C-x>s <C-c>:w<CR><right>i
+inoremap <C-x>s     <C-c>:w<CR><right>i
 inoremap <C-x><C-s> <C-c>:w<CR><right>i
-noremap <C-x>q <C-c>:q<CR>
-noremap <C-x><C-q> <C-c>:q<CR>
-noremap! <C-x>q <C-c>:q<CR>
+noremap  <C-x>q     <C-c>:q<CR>
+noremap  <C-x><C-q> <C-c>:q<CR>
+noremap! <C-x>q     <C-c>:q<CR>
 noremap! <C-x><C-q> <C-c>:q<CR>
+noremap  <C-x>x     <C-c>:x \| bd<CR>
+noremap  <C-x><C-x> <C-c>:x \| bd<CR>
+noremap! <C-x>x     <C-c>:x \| bd<CR>
+noremap! <C-x><C-x> <C-c>:x \| bd<CR>
 
 " =============================================================================
 
