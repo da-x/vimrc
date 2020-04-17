@@ -77,9 +77,11 @@ Plug 'ncm2/ncm2'
 " Syntax related
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
+" Markdown navigation
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
 Plug 'bronson/vim-trailing-whitespace'
+Plug 'chmp/mdnav'
 
 "
 " Allow to override the directory from the command line, sourcing a
@@ -818,14 +820,24 @@ nnoremap <leader>et :e! ~/.tmux.conf<CR>
 nnoremap <leader>ez :e! ~/.zsh/zshrc.sh<CR>
 nnoremap <leader>e_ :e! ~/.vim_runtime/project-specific.vim<CR>
 
-function! OpenFromRoot(pathname)
-  let l:root = MyGitRoot()
-  silent execute 'e! ' . l:root . '/' . a:pathname
+function! AdjacentOrMetaOpen(file) abort
+  let l:adjacent = expand('%:p:h')."/".a:file
+  if filereadable(l:adjacent)
+    execute 'e! ' . l:adjacent
+  else
+    let l:metadir = MyGitRoot() . "/.git/meta"
+    if isdirectory(l:metadir)
+      let l:metafile = l:metadir."/".a:file
+      execute 'e! ' . l:metafile
+    else
+      echom "Meta directory ".l:metadir." does not exist"
+    endif
+  endif
 endfunction
 
-nnoremap <leader>ed :silent call OpenFromRoot(".git/meta/todo.md")<CR>
-nnoremap <leader>ev :silent call OpenFromRoot(".git/meta/design.md")<CR>
-nnoremap <leader>el :silent call OpenFromRoot(".git/meta/log.md")<CR>
+nnoremap <silent> <leader>ed :call AdjacentOrMetaOpen("todo.md")<CR>
+nnoremap <silent> <leader>ev :call AdjacentOrMetaOpen("design.md")<CR>
+nnoremap <silent> <leader>el :call AdjacentOrMetaOpen("log.md")<CR>
 
 " =============================================================================
 " Behaviors to have when opening buffers
@@ -1756,7 +1768,9 @@ function! MyMarkdownSettings()
   noremap <buffer> <silent> <leader><CR> :call MyMarkdownInsertBullet()<CR>
   noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
   noremap <buffer> <silent> <leader><Down> :call MyMarkdownInsertSubBullet()<CR>
-  map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+  "" map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
+  nnoremap <buffer> <CR> :MDNavExec<CR>
+  nnoremap <buffer> <C-CR> :MDNavExec<CR>
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
 
@@ -1831,6 +1845,21 @@ augroup END
 function! MyVimEditInsertDateLine() abort
   return strftime("# At %Y-%m-%d %H:%M:%S\n")
 endfunction
+
+function! MyVimEditInsertDateLineWithTags() abort
+  call append(line('$'), [
+      \ "",
+      \ "",
+      \ substitute(MyVimEditInsertDateLine(), '\n', '', ''),
+      \ "",
+      \ "Tags: "
+      \ ])
+  call setpos('.', [0, line("#") + 4])
+  exec "normal! G\<End>"
+  startinsert
+  exec "normal! \<Right>"
+endfunction
+
 
 " =============================================================================
 " Rust
@@ -1926,7 +1955,7 @@ let g:gitgutter_sign_allow_clobber = 1
 set updatetime=400
 
 function! MySplitGitMode(command) abort
-  let l:path = fugitive#extract_git_dir(expand('%:p'))
+  let l:path = FugitiveExtractGitDir(expand('%:p'))
   vertical botright new
   call FugitiveDetect(l:path)
   execute a:command
