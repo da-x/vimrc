@@ -130,93 +130,110 @@ call plug#end()
 " Terminal fixups
 
 " Various missing ansi code mappings, plus special mappings that are intrinsic
-" to how I configure Alacritty.
+" to how I configure Alacritty. Some bindings are for Vim, others for NeoVim.
 
 map <Char-0x0c> :call OnF11()<CR>
 map <Char-0x1c> :call OnCtrlBar()<CR>
 map <Char-0x1f> :call OnCtrlMinus()<CR>
 
 map <ESC><Char-0x10> <C-A-p>
+map! <ESC><Char-0x10> <C-A-p>
+
 map <ESC>[11;3~ <A-F1>
+map! <ESC>[11;3~ <A-F1>
 map <ESC>[11;5~ <C-F1>
-map <ESC>[11;6~ <C-S-F1>
-map <ESC>[12;3~ <A-F2>
-map <ESC>[12;5~ <C-F2>
-map <ESC>[12;6~ <C-S-F2>
-map <ESC>[1;2Q <C-S-F2>
-map <ESC>[13;3~ <A-F3>
-map <ESC>[13;5~ <C-F3>
-map <ESC>[13;6~ <C-S-F3>
-map <ESC>[1;2R <C-S-F3>
-map <ESC>[14;3~ <A-F4>
-map <ESC>[14;5~ <C-F4>
-map <ESC>[14;6~ <C-S-F4>
+map! <ESC>[11;5~ <C-F1>
 map <ESC>[1;5P <C-F1>
-map <ESC>[1;5Q <C-F2>
-map <ESC>[1;5R <C-F3>
+map! <ESC>[1;5P <C-F1>
+map <ESC>[11;6~ <C-S-F1>
+map! <ESC>[11;6~ <C-S-F1>
+map <F25> <C-F1>
+map! <F25> <C-F1>
+
+map <ESC>[12;3~ <A-F2>
+map! <ESC>[12;3~ <A-F2>
+map <ESC>[1;5Q  <C-F2>
+map! <ESC>[1;5Q <C-F2>
+map <ESC>[12;5~ <C-F2>
+map! <ESC>[12;5~ <C-F2>
+map <ESC>[12;6~ <C-S-F2>
+map <ESC>[1;2Q  <C-S-F2>
+map! <ESC>[12;6~ <C-S-F2>
+map <F26> <C-F2>
+map! <F26> <C-F2>
+
+map <ESC>[13;3~ <A-F3>
+map! <ESC>[13;3~ <A-F3>
+map <ESC>[13;5~ <C-F3>
+map! <ESC>[13;5~ <C-F3>
+map <ESC>[1;5R  <C-F3>
+map! <ESC>[1;5R <C-F3>
+map <ESC>[13;6~ <C-S-F3>
+map <ESC>[1;2R  <C-S-F3>
+map! <ESC>[13;6~ <C-S-F3>
+map <F27> <C-F3>
+map! <F27> <C-F3>
+
+map <ESC>[14;3~ <A-F4>
+map! <ESC>[14;3~ <A-F4>
+map <ESC>[14;5~ <C-F4>
+map! <ESC>[14;5~ <C-F4>
 map <ESC>[1;5S <C-F4>
+map! <ESC>[1;5S <C-F4>
+map <ESC>[14;6~ <C-S-F4>
+map! <ESC>[14;6~ <C-S-F4>
+map <F28> <C-F4>
+map! <F28> <C-F4>
+
 map <ESC>[3;5~ <C-Delete>
+map! <ESC>[3;5~ <C-Delete>
+
 map <ESC>[5;30001~ <S-CR>
+map! <ESC>[5;30001~ <S-CR>
 map <ESC>[5;30002~ <A-CR>
+map! <ESC>[5;30002~ <A-CR>
 map <ESC>[5;30003~ <C-CR>
+map! <ESC>[5;30003~ <C-CR>
 map <ESC>[5;30004~ <C-S-s>
+map! <ESC>[5;30004~ <C-S-s>
 map <ESC>[5;30005~ <C-A-CR>
+map! <ESC>[5;30005~ <C-A-CR>
 map <ESC>[5;30014~ <C-Space>
+map! <ESC>[5;30014~ <C-Space>
+
 map <ESC>[Z <S-tab>
 map <ESC>a <A-a>
 map <ESC>h <A-h>
 map <ESC>r <A-r>
 map <ESC>w <A-w>
+
 map <ESC>j <M-j>
+map! <ESC>j <M-j>
 map <ESC>k <M-k>
+map! <ESC>k <M-k>
 map <ESC>p <A-p>
+map! <ESC>p <A-p>
 map <ESC>t <A-t>
 map <ESC>1 <A-1>
-map <ESC>2 <A-2>
-map <ESC>3 <A-3>
-map <ESC>4 <A-4>
-map <ESC>q <A-q>
-map <ESC>y <A-y>
-map <ESC>e <A-e>
-map <ESC>d <A-d>
-map <ESC>g <A-g>
-map <ESC>[4~ <End>
-map! <ESC><Char-0x10> <C-A-p>
-map! <ESC>[11;3~ <A-F1>
-map! <ESC>[11;5~ <C-F1>
-map! <ESC>[11;6~ <C-S-F1>
-map! <ESC>[12;3~ <A-F2>
-map! <ESC>[12;5~ <C-F2>
-map! <ESC>[12;6~ <C-S-F2>
-map! <ESC>[13;3~ <A-F3>
-map! <ESC>[13;5~ <C-F3>
-map! <ESC>[13;6~ <C-S-F3>
-map! <ESC>[14;3~ <A-F4>
-map! <ESC>[14;5~ <C-F4>
-map! <ESC>[14;6~ <C-S-F4>
-map! <ESC>[1;5P <C-F1>
-map! <ESC>[1;5Q <C-F2>
-map! <ESC>[1;5R <C-F3>
-map! <ESC>[1;5S <C-F4>
-map! <ESC>[3;5~ <C-Delete>
-map! <ESC>[5;30001~ <S-CR>
-map! <ESC>[5;30002~ <A-CR>
-map! <ESC>[5;30003~ <C-CR>
-map! <ESC>[5;30004~ <C-S-s>
-map! <ESC>[5;30005~ <C-A-CR>
-map! <ESC>[5;30014~ <C-Space>
-map! <ESC>j <M-j>
-map! <ESC>k <M-k>
-map! <ESC>p <A-p>
-map! <ESC>t <A-t>
 map! <ESC>1 <A-1>
+map <ESC>2 <A-2>
 map! <ESC>2 <A-2>
+map <ESC>3 <A-3>
 map! <ESC>3 <A-3>
+map <ESC>4 <A-4>
 map! <ESC>4 <A-4>
+map <ESC>q <A-q>
 map! <ESC>q <A-q>
+map <ESC>y <A-y>
+map! <ESC>y <A-y>
+map <ESC>e <A-e>
 map! <ESC>e <A-e>
+map <ESC>d <A-d>
 map! <ESC>d <A-d>
+map <ESC>g <A-g>
 map! <ESC>g <A-g>
+
+map <ESC>[4~ <End>
 map! <ESC>[4~ <End>
 
 " Make keystores the most predictable being time-independent:
