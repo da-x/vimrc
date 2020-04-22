@@ -1749,9 +1749,9 @@ function! MyMarkdownInsertBullet()
   call MyMarkdownSetComposeMode(0)
   let l:prefix = repeat(' ', (indent('.') / &shiftwidth) * &shiftwidth)
   call append('.', l:prefix.'* ')
-  normal! j$
+  keepjumps normal! j$
   startinsert
-  normal! l
+  keepjumps normal! l
   call MyMarkdownSetComposeMode(l:mode)
   startinsert!
 endfunction
@@ -1761,9 +1761,9 @@ function! MyMarkdownInsertSubBullet()
   call MyMarkdownSetComposeMode(0)
   let l:prefix = repeat(' ', (1 + (indent('.') / &shiftwidth)) * &shiftwidth)
   call append('.', l:prefix.'* ')
-  normal! j$
+  keepjumps normal! j$
   startinsert
-  normal! l
+  keepjumps normal! l
   call MyMarkdownSetComposeMode(l:mode)
   startinsert!
 endfunction
@@ -1771,8 +1771,22 @@ endfunction
 function! MyMarkdownGQ()
   let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
   call MyMarkdownSetComposeMode(0)
-  normal! gvgq
+  keepjumps normal! gvgq
   call MyMarkdownSetComposeMode(l:mode)
+endfunction
+
+function! MyMarkdownCodeBlockSelection() range
+  let l:mode = get(b:, 'myvim_markdown_compose_mode', 0)
+  call MyMarkdownSetComposeMode(0)
+
+  let [l:line_start] = getpos("'<")[1:1]
+  let [l:line_end] = getpos("'>")[1:1]
+
+  call append(l:line_start-1, "```")
+  call append(l:line_end + 1, "```")
+  call MyMarkdownSetComposeMode(l:mode)
+
+  call setpos('.', [0, l:line_start, 4, 0])
 endfunction
 
 function! MyMarkdownSettings()
@@ -1790,6 +1804,7 @@ function! MyMarkdownSettings()
   nnoremap <buffer> <C-CR> :MDNavExec<CR>
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
+  vnoremap <buffer> <silent> <leader>` :call MyMarkdownCodeBlockSelection()<CR>
 
   call MyMarkdownToggleComposeModeDisable()
   Indent4Spaces
@@ -1806,9 +1821,9 @@ function! MyMarkdownBulletInsertion()
   endif
   let l:prefix = repeat(' ', (indent('.') / &shiftwidth) * &shiftwidth)
   call append('.', l:prefix.'* ')
-  normal! j$
+  keepjumps normal! j$
   startinsert
-  normal! l
+  keepjumps normal! l
   if get(b:, 'myvim_markdown_compose_mode', 0)
     setl formatoptions+=a
   endif
