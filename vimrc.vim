@@ -2129,14 +2129,30 @@ command! -bang -nargs=0 GCheckout
   \   <bang>0
   \ )
 
+function! s:my_gitfiles_head(line)
+  silent execute 'edit ' . a:line
+endfunction
+
+command! -bang -nargs=0 GFilesHead
+  \ call fzf#vim#grep(
+  \   "git show HEAD --name-status --pretty='' | cut -f2", 0,
+  \   {
+  \     'sink': function('s:my_gitfiles_head')
+  \   },
+  \   <bang>0
+  \ )
+
+
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
 nnoremap <C-g>f     :GFiles<CR>
-nnoremap <C-g><C-h> :call MyGDiffHeadQuickfixHunks()<CR>
-nnoremap <C-g>h     :call MyGDiffHeadQuickfixHunks()<CR>
 nnoremap <C-g>j     :call MyGShowHeadQuickfixHunks()<CR>
-nnoremap <C-g><C-s> :GFiles?<CR>
-nnoremap <C-g>s     :GFiles?<CR>
+nnoremap <C-g>b     :call MyGDiffHeadQuickfixHunks()<CR>
+nnoremap <C-g><C-b> :call MyGDiffHeadQuickfixHunks()<CR>
+nnoremap <C-g><C-h> :silent GFilesHead<CR>
+nnoremap <C-g>h     :silent GFilesHead<CR>
+nnoremap <C-g><C-e> :GFiles?<CR>
+nnoremap <C-g>e     :GFiles?<CR>
 nnoremap <C-g><C-l> :Commits<CR>
 nnoremap <C-g>l     :Commits<CR>
 nnoremap <C-g><C-o> :SplitGitHEAD<CR>
