@@ -933,6 +933,12 @@ endfunction
 com! DiffSaved call s:DiffWithSaved()
 
 " =============================================================================
+" Tabs
+
+map <leader><right> :tabn<cr>
+map <leader><left> :tabp<cr>
+
+" =============================================================================
 " local_vimrc.vim
 
 " Example: setlocal path=.,subdir/,/usr/include,,"
@@ -1015,8 +1021,10 @@ xmap <C-r> gc
 
 let g:NERDTreeWinPos = "right"
 let g:NERDTreeWinSize=35
-let NERDTreeShowHidden=0
-let NERDTreeQuitOnOpen=1
+let g:NERDTreeShowHidden=0
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeCustomOpenArgs =
+      \ {'file': {'reuse': 'all', 'where': 'p', 'keepopen':0, 'stay':0}}
 
 nnoremap <leader>nn :NERDTreeToggle<CR>
 nnoremap <leader>nb :NERDTreeFromBookmark<Space>
