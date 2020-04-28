@@ -40,6 +40,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'Raimondi/delimitMate'
+Plug 'FooSoft/vim-argwrap'
 
 " Snipppets
 Plug 'SirVer/ultisnips'
@@ -727,6 +728,11 @@ let g:expand_region_text_objects = {
       \ }
 
 " =============================================================================
+
+nnoremap <leader>sq :ArgWrap<CR>
+let g:argwrap_tail_comma = 1
+
+" =============================================================================
 " Settings and maps for movement
 
 set linebreak
@@ -1047,8 +1053,8 @@ vmap :> S>
 
 " Surround with {}, unit with pervious line, fix indentation and edit single statement
 " inside the new {} block.
-nmap <leader>e{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
-vmap <leader>e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
+nmap <leader>s{ <C-Space>{<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
+vmap <leader>s{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracketElse()<CR>
 
 " Surround the two single-line two bodies of an if-else in C with '{}'.
 "
@@ -1058,7 +1064,7 @@ vmap <leader>e{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracket
 "     b;                   b;
 "                      }
 "
-nmap <leader>e2{ e{<Down><Down>e{
+nmap <leader>s2{ e{<Down><Down>e{
 
 function! StripString(input_string)
     return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
@@ -1165,10 +1171,6 @@ augroup ALELintUpdateLightline
 augroup END
 
 " =============================================================================
-" Config for delimitMate
-
-
-" =============================================================================
 " Bash like keys for the command line
 cnoremap <C-A>	<Home>
 cnoremap <C-E>	<End>
@@ -1179,12 +1181,6 @@ cnoremap <C-N> <Down>
 
 " =============================================================================
 " Shortcuts for adding pairs of parenthesis/bracket
-vnoremap <A-1> <Esc>`>a)<Esc>`<i(<Esc>
-vnoremap <A-2> <Esc>`>a]<Esc>`<i[<Esc>
-vnoremap <A-3> <Esc>`>a}<Esc>`<i{<Esc>
-vnoremap <A-4> <Esc>`>a"<Esc>`<i"<Esc>
-vnoremap <A-q> <Esc>`>a'<Esc>`<i'<Esc>
-vnoremap <A-e> <Esc>`>a"<Esc>`<i"<Esc>
 
 " Map auto complete of (, ", ', [
 inoremap <A-1> ()<Esc>i
@@ -1193,14 +1189,6 @@ inoremap <A-3> {}<Esc>i
 inoremap <A-4> {<Esc>o}<Esc>O
 inoremap <A-q> ''<Esc>i
 inoremap <A-d> ""<Esc>i
-
-" Map auto complete of (, ", ', [
-nnoremap <A-1> i()<Esc>i
-nnoremap <A-2> i[]<Esc>i
-nnoremap <A-3> i{}<Esc>i
-nnoremap <A-4> i{<Esc>o}<Esc>O
-nnoremap <A-q> i''<Esc>i
-nnoremap <A-d> i""<Esc>i
 
 " =============================================================================
 " Various Per-Buffeer mapping overrides
@@ -1904,11 +1892,64 @@ endfunction
 " =============================================================================
 " Rust
 
+function! EditNearestCargo() abort
+  exec "edit ".cargo#nearestCargo(0)
+endfunction
+
 augroup RustEditSettings
   autocmd!
+  autocmd FileType rust nnoremap <buffer> <leader>qc :call EditNearestCargo()<CR>
+  autocmd FileType rust let b:delimitMate_matchpairs = "(:),[:],{:}"
   autocmd FileType rust nnoremap <buffer> > >>
   autocmd FileType rust nnoremap <buffer> < <<
 augroup END
+
+" =============================================================================
+" Editing helper for languages with {} blocks.
+"
+" Open curly braces is almost always a block. This adds '{' and the the
+" enclosing '}' in the next line and puts the cursor in a new line inside the
+" new block. This also takes care going to the end of the line and placing
+" a space character before '{' if it is missing. It also detects if we are
+" inside a string and disables for that scenario.
+
+function! MyInsertBrace() abort
+  if getline(line('.')) !~ ' $'
+    let l:add_space = "\<Space>"
+  else
+    let l:add_space = ''
+  endif
+
+  let l:in_string = v:false
+
+  for l:i in synstack(line('.'), col('.'))
+    if synIDattr(l:i, 'name') == 'rustString'
+      let l:in_string = v:true
+      break
+    endif
+    if synIDattr(l:i, 'name') == 'rustStringDelimiter'
+      let l:in_string = v:true
+      break
+    endif
+  endfor
+
+  if !l:in_string
+    call feedkeys("\<End>".l:add_space."{\<CR>}\<Up>\<End>\<CR>", "n")
+  else
+    call feedkeys('{', 'n')
+  endif
+endfunction
+
+augroup CurlyLanguages
+  autocmd!
+  autocmd FileType rust\|c\|cpp inoremap <silent> <buffer>
+      \ { <C-\><C-O>:call MyInsertBrace()<CR>
+
+  " Fallback to regular { in case we need it, with <A-[>
+  autocmd FileType rust\|c\|cpp inoremap <silent> <buffer>
+      \ <A-[> {
+augroup END
+
 
 " =============================================================================
 " Haskell
@@ -2395,7 +2436,7 @@ function! MyVimLeave() abort
   endif
 endfunction
 
-augroup MyVimLeaveAutoGroup 
+augroup MyVimLeaveAutoGroup
   " force write shada on leaving nvim
   autocmd VimLeave * call MyVimLeave()
 augroup END
