@@ -1,13 +1,3 @@
-extern crate structopt;
-#[macro_use]
-extern crate structopt_derive;
-extern crate dirs;
-extern crate shell_escape;
-extern crate ansi_term;
-extern crate mio;
-extern crate mio_uds;
-extern crate mio_extras;
-
 use std::os::unix::net::{UnixStream};
 use std::process::Command;
 use std::thread::sleep;
@@ -26,6 +16,9 @@ mod opts {
     pub struct Server {
         #[structopt(long = "stdin", short = "-i")]
         pub stdin: bool,
+
+        #[structopt(long = "clear-before-exec", short = "-c")]
+        pub clear_before_exec: bool,
 
         #[structopt(name = "name")]
         pub name: String,
@@ -126,11 +119,12 @@ struct Child {
     thread: Option<(std::thread::JoinHandle<()>, std::sync::mpsc::Sender<()>)>,
     params: Vec<String>,
     chan_sender: mio_extras::channel::Sender<()>,
+    clear_before_exec: bool,
 }
 
 impl Child {
-    fn banner(&self) {
-        print!("[ ");
+    fn banner(&self, title: &str) {
+        print!("[ {}: `", title);
         let mut i = 0;
         for arg in &self.params {
             if i != 0 {
@@ -140,7 +134,7 @@ impl Child {
             print!("{}",
                    Yellow.paint(shell_escape::escape(std::borrow::Cow::Borrowed(arg))));
         }
-        println!(" ]");
+        println!("` ]");
     }
 
     fn try_kill(&mut self) -> bool {
@@ -163,7 +157,16 @@ impl Child {
             panic!("unexpected thread state");
         }
 
-        println!("< {} >", Yellow.paint(format!("...")));
+        if self.clear_before_exec {
+            let _ = crossterm::execute!(
+                std::io::stdout(),
+                crossterm::terminal::Clear(crossterm::terminal::ClearType::All),
+                crossterm::cursor::MoveTo(0, 0),
+            );
+            self.banner("executing");
+        } else {
+            println!("< {} >", Yellow.paint(format!("...")));
+        }
 
         let (sender, receiver) = std::sync::mpsc::channel();
         let params = self.params.clone();
@@ -201,8 +204,10 @@ fn main() {
             let _ = std::fs::remove_file(&path);
 
             let (chan_sender, chan_receiver) = mio_extras::channel::channel();
-            let mut child = Child { thread : None, params: server.params.clone(),
-            chan_sender };
+            let mut child = Child {
+                thread : None, params: server.params.clone(), chan_sender,
+                clear_before_exec: server.clear_before_exec,
+            };
 
             let listener = mio_uds::UnixListener::bind(path).unwrap();
             let poll = mio::Poll::new().unwrap();
@@ -218,7 +223,7 @@ fn main() {
 
             poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
-            child.banner();
+            child.banner("waiting on");
 
             loop {
                 let _ = poll.poll(&mut events, None);
@@ -273,7 +278,7 @@ fn main() {
                                     mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
                                 efs_registered = true;
                             }
-                            child.banner();
+                            child.banner("waiting on");
 
                             if child_kill_pending {
                                 child.spawn();

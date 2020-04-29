@@ -3,6 +3,7 @@ name = "rex"
 description = "rex: A utility for process standby re-execution"
 version = "0.1.0"
 authors = ["Dan Aloni <alonid@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 structopt = "0.2.13"
@@ -13,3 +14,4 @@ ansi_term = "0.11.0"
 mio = "0.6.16"
 mio-extras = "2.0.5"
 mio-uds = "0.6.7"
+crossterm = "0.17"
