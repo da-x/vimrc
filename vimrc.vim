@@ -1914,7 +1914,16 @@ augroup END
 " inside a string and disables for that scenario.
 
 function! MyInsertBrace() abort
-  if getline(line('.')) !~ ' $'
+  let l:line = getline(line('.'))
+
+  if l:line =~ '\V\^\(\.\*\); \*\$'
+    let l:m = matchlist(l:line, '\V\^\(\.\*\); \*\$')
+    call setline(line('.'), l:m[1])
+    echo l:m[1]
+    let l:line = l:m[1]
+  endif
+
+  if l:line !~ ' $'
     let l:add_space = "\<Space>"
   else
     let l:add_space = ''
