@@ -1044,6 +1044,9 @@ map <leader>i- ysiw-
 map <leader>i' ysiw'
 map <leader>i" ysiw"
 
+vmap <A-'> S'
+vmap <A-,> S>
+vmap " S"
 vmap ( S)
 vmap [ S]
 vmap { S{
