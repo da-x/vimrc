@@ -2045,6 +2045,12 @@ let g:rooter_silent_chdir = 1
 let g:conflict_marker_enable_mappings = 0
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_sign_allow_clobber = 1
+
+augroup MyGitGutterAutoCmds
+  autocmd!
+  autocmd BufWritePost * GitGutter
+augroup END
+
 set updatetime=400
 
 function! MySplitGitMode(command) abort
