@@ -1917,8 +1917,15 @@ augroup END
 " inside a string and disables for that scenario.
 
 function! MyInsertBrace() abort
-  let l:line = getline(line('.'))
+  " Only work if we were at the end of the line
+  if col(".") != col("$")
+    call feedkeys("{", "n")
+    return
+  endif
 
+  " Removal of ';' from the end of line if it exists, for extending
+  " prototypes.
+  let l:line = getline(line('.'))
   if l:line =~ '\V\^\(\.\*\); \*\$'
     let l:m = matchlist(l:line, '\V\^\(\.\*\); \*\$')
     call setline(line('.'), l:m[1])
@@ -1926,30 +1933,14 @@ function! MyInsertBrace() abort
     let l:line = l:m[1]
   endif
 
+  " Add a space character before the '{' if needed
   if l:line !~ ' $'
     let l:add_space = "\<Space>"
   else
     let l:add_space = ''
   endif
 
-  let l:in_string = v:false
-
-  for l:i in synstack(line('.'), col('.'))
-    if synIDattr(l:i, 'name') == 'rustString'
-      let l:in_string = v:true
-      break
-    endif
-    if synIDattr(l:i, 'name') == 'rustStringDelimiter'
-      let l:in_string = v:true
-      break
-    endif
-  endfor
-
-  if !l:in_string
-    call feedkeys("\<End>".l:add_space."{\<CR>}\<Up>\<End>\<CR>", "n")
-  else
-    call feedkeys('{', 'n')
-  endif
+  call feedkeys(l:add_space."{\<CR>}\<Up>\<End>\<CR>", "n")
 endfunction
 
 augroup CurlyLanguages
