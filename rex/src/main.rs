@@ -1,27 +1,34 @@
+use std::io::Read;
+use std::io::Write;
+use std::os::unix::io::AsRawFd;
+use std::os::unix::io::{FromRawFd};
 use std::os::unix::net::{UnixStream};
+use std::path::PathBuf;
 use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
-use std::io::Write;
-use mio::unix::EventedFd;
-use std::os::unix::io::{FromRawFd};
+
 use ansi_term::Colour::Yellow;
-use std::io::Read;
+use mio::unix::EventedFd;
+
 
 mod opts {
-    use ::structopt::clap::AppSettings;
-    use ::structopt::StructOpt;
+    use structopt::StructOpt;
+    use std::path::PathBuf;
 
     #[derive(Debug, StructOpt)]
     pub struct Server {
-        #[structopt(long = "stdin", short = "-i")]
+        #[structopt(long = "stdin", short = "i")]
         pub stdin: bool,
 
-        #[structopt(long = "clear-before-exec", short = "-c")]
-        pub clear_before_exec: bool,
+        #[structopt(long = "name", short = "n")]
+        pub name: Option<String>,
 
-        #[structopt(name = "name")]
-        pub name: String,
+        #[structopt(long = "git", short = "g")]
+        pub git_path: Option<PathBuf>,
+
+        #[structopt(long = "clear-before-exec", short = "c")]
+        pub clear_before_exec: bool,
 
         pub params: Vec<String>,
     }
@@ -42,9 +49,6 @@ mod opts {
     }
 
     #[derive(StructOpt, Debug)]
-    #[structopt(raw(
-        global_settings = "&[AppSettings::ColoredHelp]"
-    ))]
     pub struct Opt {
         #[structopt(subcommand)]
         pub command: Command,
@@ -123,13 +127,29 @@ struct Child {
 }
 
 impl Child {
-    fn banner(&self, title: &str) {
-        print!("[ {}: `", title);
+    fn banner(
+        &self,
+        title: &str,
+        git_path: &Option<PathBuf>,
+        name: &Option<String>,
+    ) {
+        print!("[ {}:", title);
+
+        if let Some(name) = name {
+            print!(" channel {}", name);
+        }
+
+        if let Some(git_path) = git_path {
+            print!(" git path `{}`", git_path.to_str().unwrap());
+        }
+
+        print!(" to execute `");
         let mut i = 0;
         for arg in &self.params {
             if i != 0 {
                 print!(" ");
             }
+
             i = i + 1;
             print!("{}",
                    Yellow.paint(shell_escape::escape(std::borrow::Cow::Borrowed(arg))));
@@ -163,7 +183,7 @@ impl Child {
                 crossterm::terminal::Clear(crossterm::terminal::ClearType::All),
                 crossterm::cursor::MoveTo(0, 0),
             );
-            self.banner("executing");
+            self.banner("executing", &None, &None);
         } else {
             println!("< {} >", Yellow.paint(format!("...")));
         }
@@ -188,6 +208,71 @@ impl Child {
     }
 }
 
+fn create_inotify(
+    path: &PathBuf,
+) -> inotify::Inotify {
+    use inotify::WatchMask;
+
+    let mut vec = Vec::new();
+
+    vec.push(String::from(path.to_str().unwrap()));
+
+    for command in &["git ls-files", "git ls-untracked"] {
+        let shell =
+            format!("cd {} && {}", path.to_str().unwrap(), command);
+        let output = Command::new("bash")
+            .args(&["-c", &shell]).output().unwrap();
+        let lines = String::from_utf8(output.stdout).unwrap();
+        for line in lines.split("\n").into_iter() {
+            vec.push(String::from(line));
+        }
+    }
+
+    let mut inotify = inotify::Inotify::init().expect("inotify");
+
+    for h in vec.into_iter() {
+        if h.len() > 0 {
+            let path = path.join(h);
+
+            inotify.add_watch(path,
+                WatchMask::MODIFY |
+                WatchMask::DELETE_SELF |
+                WatchMask::CREATE |
+                WatchMask::MOVE_SELF |
+                WatchMask::MOVED_FROM |
+                WatchMask::MOVED_TO
+                ).expect("Failed to add file watch");
+        }
+    }
+
+    inotify
+}
+
+fn update_inotify(
+    poll: &mio::Poll,
+    path: &Option<PathBuf>,
+    inotify: &mut Option<inotify::Inotify>,
+) {
+    if let Some(path) = &path {
+        if let Some(notify) = inotify {
+            poll.deregister(
+                &EventedFd(&notify.as_raw_fd()),
+            ).unwrap();
+        }
+
+        let notify = create_inotify(path);
+
+        poll.register(
+            &EventedFd(&notify.as_raw_fd()),
+            mio::Token(4),
+            mio::Ready::readable(),
+            mio::PollOpt::edge(),
+        ).unwrap();
+
+        *inotify = Some(notify);
+    }
+}
+
 fn main() {
     let opts = opts::get_opts();
     let home_dir = dirs::home_dir().unwrap();
@@ -200,8 +285,19 @@ fn main() {
 
     match opts.command {
         opts::Command::Server(server) => {
-            let path = socket_path(&server.name);
-            let _ = std::fs::remove_file(&path);
+            if server.params.len() <= 1 {
+                eprintln!("Command not specified");
+                return;
+            }
+
+            let listener = if let Some(path) = &server.name {
+                let path = socket_path(path);
+                let _ = std::fs::remove_file(&path);
+                let listener = mio_uds::UnixListener::bind(path).unwrap();
+                Some(listener)
+            } else {
+                None
+            };
 
             let (chan_sender, chan_receiver) = mio_extras::channel::channel();
             let mut child = Child {
@@ -209,10 +305,17 @@ fn main() {
                 clear_before_exec: server.clear_before_exec,
             };
 
-            let listener = mio_uds::UnixListener::bind(path).unwrap();
             let poll = mio::Poll::new().unwrap();
             let mut events = mio::Events::with_capacity(32);
-            poll.register(&listener, mio::Token(1), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
+
+            if let Some(listener) = &listener {
+                poll.register(
+                    listener,
+                    mio::Token(1),
+                    mio::Ready::readable(),
+                    mio::PollOpt::edge(),
+                ).unwrap();
+            }
 
             let mut fd0 : std::fs::File = unsafe { FromRawFd::from_raw_fd(0) };
 
@@ -223,25 +326,23 @@ fn main() {
 
             poll.register(&chan_receiver, mio::Token(3), mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
 
-            child.banner("waiting on");
+            child.banner("waiting on", &server.git_path, &server.name);
+
+            let mut inotify = None;
+            update_inotify(&poll, &server.git_path, &mut inotify);
 
             loop {
                 let _ = poll.poll(&mut events, None);
+                let mut respawn = false;
 
                 for event in &events {
                     match event.token() {
                         mio::Token(1) => {
-                            let _socket = listener.accept();
-                            if !server.stdin && efs_registered {
-                                poll.deregister(&efd).unwrap();
-                                efs_registered = false;
+                            if let Some(listener) = &listener {
+                                let _socket = listener.accept();
                             }
 
-                            if child.try_kill() {
-                                child.spawn();
-                            } else {
-                                child_kill_pending = true;
-                            }
+                            respawn = true;
                         }
                         mio::Token(2) => {
                             let mut buf = vec![0; 0x1000];
@@ -255,15 +356,7 @@ fn main() {
                             }
 
                             if has_newline {
-                                if !server.stdin && efs_registered {
-                                    poll.deregister(&efd).unwrap();
-                                    efs_registered = false;
-                                }
-                                if child.try_kill() {
-                                    child.spawn();
-                                } else {
-                                    child_kill_pending = true;
-                                }
+                                respawn = true;
                             }
                         }
                         mio::Token(3) => {
@@ -278,15 +371,32 @@ fn main() {
                                     mio::Ready::readable(), mio::PollOpt::edge()).unwrap();
                                 efs_registered = true;
                             }
-                            child.banner("waiting on");
+
+                            child.banner("waiting on", &server.git_path, &server.name);
 
                             if child_kill_pending {
                                 child.spawn();
                                 child_kill_pending = false;
                             }
                         }
-                        _ => {
+                        mio::Token(4) => {
+                            respawn = true;
+                            update_inotify(&poll, &server.git_path, &mut inotify);
                         }
+                        _ => {}
+                    }
+                }
+
+                if respawn {
+                    if !server.stdin && efs_registered {
+                        poll.deregister(&efd).unwrap();
+                        efs_registered = false;
+                    }
+
+                    if child.try_kill() {
+                        child.spawn();
+                    } else {
+                        child_kill_pending = true;
                     }
                 }
             }
