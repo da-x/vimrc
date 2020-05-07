@@ -285,7 +285,7 @@ fn main() {
 
     match opts.command {
         opts::Command::Server(server) => {
-            if server.params.len() <= 1 {
+            if server.params.is_empty() {
                 eprintln!("Command not specified");
                 return;
             }
