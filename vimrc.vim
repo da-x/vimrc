@@ -1805,13 +1805,15 @@ function! MyMarkdownSettings()
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
   imap <buffer> <A-e>d  <C-c><A-e>d
-  noremap <buffer> <silent> <A-e><CR> :call MyMarkdownInsertBullet()<CR>
-  noremap <buffer> <silent> <leader><CR> :call MyMarkdownInsertBullet()<CR>
+
+  noremap <buffer> <silent> <A-e><CR>      :call MyMarkdownInsertBullet()<CR>
+  noremap <buffer> <silent> <C-CR>         :call MyMarkdownInsertBullet()<CR>
+  noremap <buffer> <silent> <leader><Down> :call MyMarkdownInsertBullet()<CR>
+
   noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
-  noremap <buffer> <silent> <leader><Down> :call MyMarkdownInsertSubBullet()<CR>
+  noremap <buffer> <silent> <leader><Right> :call MyMarkdownInsertSubBullet()<CR>
   "" map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
   nnoremap <buffer> <CR> :MDNavExec<CR>
-  nnoremap <buffer> <C-CR> :MDNavExec<CR>
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
   vnoremap <buffer> <silent> <leader>` :call MyMarkdownCodeBlockSelection()<CR>
