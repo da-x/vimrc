@@ -1069,8 +1069,19 @@ vmap <leader>s{ {<Up>J<End><C-Space><Down><Down>=<Down>0:call JoinLinesIfBracket
 "
 nmap <leader>s2{ e{<Down><Down>e{
 
+function! NewCurlyGroupFromWord() abort
+  normal +}
+  let [_, l:line_a, l:col_a, _ ] = getpos(".")
+  call setpos(".", [_, l:line_a, l:col_a + 1])
+  execute "normal! i,\<Space>"
+  call setpos(".", [_, l:line_a, l:col_a + 1])
+  startinsert
+endfunction
+
+nmap <silent> <leader>s+ :call NewCurlyGroupFromWord()<CR>
+
 function! StripString(input_string)
-    return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
+  return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
 endfunction
 
 function! JoinLinesIfBracketElse() abort
