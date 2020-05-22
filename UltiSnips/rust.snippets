@@ -49,6 +49,12 @@ impl $1 {
 }
 endsnippet
 
+snippet global_mutex
+lazy_static::lazy_static! {
+    static ref GLOBAL: Arc<Mutex<$1>> = Arc::new(Mutex::new($2));
+}
+endsnippet
+
 snippet fnew
 fn new() -> Self {
     Self {
