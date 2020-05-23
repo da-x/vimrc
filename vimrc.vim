@@ -41,6 +41,15 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'Raimondi/delimitMate'
 Plug 'FooSoft/vim-argwrap'
+Plug 'kana/vim-textobj-user'
+Plug 'sgur/vim-textobj-parameter'
+
+let g:my_name_assign_devel = get(g:, 'my_name_assign_devel', '')
+if g:my_name_assign_devel !=# ''
+  Plug 'da-x/name-assign.vim' , { 'dir': g:my_name_assign_devel }
+else
+  Plug 'da-x/name-assign.vim'
+endif
 
 " Snipppets
 Plug 'SirVer/ultisnips'
@@ -1016,6 +1025,13 @@ function! MyEditUltiSnips()
 endfunction
 
 map <leader>sm :call MyEditUltiSnips()<cr>
+
+" =============================================================================
+" NameAssign + vim-textobj-parameter
+
+" Quickly extrcat a parameter of a function to an assignment
+
+nmap <A-=> vi,<A-=>
 
 " =============================================================================
 " Commentary
