@@ -965,14 +965,6 @@ endfun
 
 command! -bar EditLocalVimrc call EditLocalVimrc()
 
-" File is not checked-in on purpose:
-if filereadable(expand("~/.vim_runtime/project-specific.vim"))
-  " examples:
-  " call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
-  " map <leader><tab>m :tabedit <some-path><CR>
-  runtime project-specific.vim
-endif
-
 nmap <leader>eL :EditLocalVimrc<CR>
 
 " =============================================================================
@@ -2433,19 +2425,11 @@ let g:deoplete#enable_at_startup = 1
 let g:LanguageClient_serverCommands = {
       \ 'rust': ['rustup', 'run', 'stable', 'rls'],
       \ }
+let g:LanguageClient_autoStart = 0
 
-let g:LanguageClient_autoStart = 1
-
-" For Rust, using ALE for now
-let g:LanguageClient_diagnosticsSignsMax = 0
-" let g:LanguageClient_diagnosticsList = "Quickfix"
-let g:LanguageClient_useVirtualText = 0
-
-" Stuff I am not using yet:
-
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 noremap <leader>r<CR> :call LanguageClient#textDocument_rename()<CR>
+nnoremap <leader>k :call LanguageClient#textDocument_hover()<CR>
 noremap <leader>rc :call LanguageClient#textDocument_rename(
       \ {'newName': Abolish.camelcase(expand('<cword>'))})<CR>
 " Rename - rs => rename snake_case
@@ -2454,6 +2438,13 @@ noremap <leader>rs :call LanguageClient#textDocument_rename(
 " Rename - ru => rename UPPERCASE
 noremap <leader>ru :call LanguageClient#textDocument_rename(
       \ {'newName': Abolish.uppercase(expand('<cword>'))})<CR>
+
+" =============================================================================
+
+if get(g:, 'my_rust_use_LC', v:false)
+    let g:ale_linters.rust = []
+    let g:LanguageClient_autoStart = 1
+endif
 
 " =============================================================================
 " Config for vim-highlightedyank
@@ -2494,6 +2485,16 @@ nnoremap <silent> <leader>t :e<CR>
 
 " Force-reload current file (losing changes!)
 nnoremap <silent> <leader>!t :e!<CR>
+
+" =============================================================================
+" File is not checked-in on purpose, it is for experimental per-environment overrides.
+
+if filereadable(expand("~/.vim_runtime/project-specific.vim"))
+  " examples:
+  " call lh#local_vimrc#munge('whitelist', $HOME.'<some-path>')
+  " map <leader><tab>m :tabedit <some-path><CR>
+  runtime project-specific.vim
+endif
 
 " Goodbye!
 " =============================================================================
