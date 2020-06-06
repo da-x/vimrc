@@ -86,12 +86,12 @@ Plug 'ncm2/ncm2'
 
 " Syntax related
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
-" Markdown navigation
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
 Plug 'bronson/vim-trailing-whitespace'
-Plug 'chmp/mdnav'
+
+" Markdown management
+Plug 'da-x/vim-markdown'
 
 "
 " Allow to override the directory from the command line, sourcing a
@@ -1820,8 +1820,7 @@ function! MyMarkdownSettings()
 
   noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
   noremap <buffer> <silent> <leader><Right> :call MyMarkdownInsertSubBullet()<CR>
-  "" map <buffer> <C-cr> <Plug>Markdown_EditUrlUnderCursor()
-  nnoremap <buffer> <CR> :MDNavExec<CR>
+  map <buffer> <CR> <Plug>Markdown_OpenAnyUnderCursor()
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
   vnoremap <buffer> <silent> <leader>` :call MyMarkdownCodeBlockSelection()<CR>
