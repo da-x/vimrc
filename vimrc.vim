@@ -8,12 +8,12 @@
 " # PLUGINS
 " =============================================================================
 
+call plug#begin('~/.vim_runtime/vim-plugged')
+
 " File is not checked-in on purpose:
 if filereadable(expand('~/.vim_runtime/project-specific-premable.vim'))
   runtime project-specific-premable.vim
 endif
-
-call plug#begin('~/.vim_runtime/vim-plugged')
 
 " Libs
 Plug 'LucHermitte/lh-vim-lib'
