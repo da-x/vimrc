@@ -407,8 +407,7 @@ map q: <Nop>
 nnoremap <leader>w :w!<CR>
 
 " Close buffer
-nnoremap <leader>bd :bd<CR>
-nnoremap <tab>b :bd<CR>
+nnoremap <tab>r :bd<CR>
 
 " No need for entering shift when going into command mode
 nnoremap ; :
@@ -2252,8 +2251,7 @@ nmap     <C-g>q<Down>   <Plug>(conflict-marker-themselves)
 nmap     <C-g>q<Up>     <Plug>(conflict-marker-ourselves)
 nmap     <C-g>q<CR>     <Plug>(conflict-marker-both)
 
-nmap <leader>gs     :Gina status<CR>
-nnoremap <C-g>xs    <leader>gs
+nnoremap <C-g>x         :Gina status -s<CR>
 
 " Other shortcuts
 " All commited or non-comited changes against HEAD
