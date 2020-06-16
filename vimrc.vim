@@ -2114,6 +2114,10 @@ function! MyFZFDiffHunks(cmd) abort
     endif
   endfor
 
+  if len(l:matches) == 0
+    return
+  endif
+
   let l:options = ["--ansi", "-e", "--no-sort"]
   call fzf#run(fzf#wrap({
               \ 'source': l:matches,
