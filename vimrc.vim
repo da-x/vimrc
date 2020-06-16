@@ -2077,13 +2077,6 @@ endfunction
 
 command! SplitGitHEAD call MyGitShowHead()
 
-function! MyFZFDiffSink(single)
-  let l:m = matchlist(a:single, '\V\^ \*\(\[0-9]\*\) \(\[^:]\*\):\(\[0-9]\*\)')
-  if len(l:m) != 0
-    execute "edit" l:m[2]
-    call setpos(".", [0, str2nr(l:m[3]), 0, 0])
-  endif
-endfunction
 
 let s:my_fzf_git_diff_hunk_program = expand('<sfile>:p:h')."/bin/fzf-git-diff-hunk-preview"
 
@@ -2121,12 +2114,15 @@ function! MyFZFDiffHunks(cmd,...) abort
   endfor
 
   if len(l:matches) == 0
+    if l:screen == 'full'
+      execute "normal! :x\<CR>"
+    endif
     return
   endif
 
   let l:options = [
       \"--ansi", "-e", "--no-sort",
-      \"--preview-window", "down:50%:noborder",
+      \"--preview-window", "down:70%:noborder",
       \"--preview", s:my_fzf_git_diff_hunk_program." '".a:cmd."' {}"
       \]
 
@@ -2136,10 +2132,21 @@ function! MyFZFDiffHunks(cmd,...) abort
     let l:down = "50%"
   endif
 
+  let l:opts = {}
+  function! l:opts.sink(single)
+    if len(a:single) == 1
+      let l:m = matchlist(a:single[0], '\V\^ \*\(\[0-9]\*\) \(\[^:]\*\):\(\[0-9]\*\)')
+      if len(l:m) != 0
+        execute "edit" l:m[2]
+        call setpos(".", [0, str2nr(l:m[3]), 0, 0])
+      endif
+    endif
+  endfunction
+
   let l:v = fzf#run(fzf#wrap({
               \ 'source': l:matches,
               \ 'down': l:down,
-              \ 'sink': function('MyFZFDiffSink'),
+              \ 'sink*': remove(opts, 'sink'),
               \ 'options': l:options,
               \ }))
 endfunction
