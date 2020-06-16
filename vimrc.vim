@@ -2077,27 +2077,50 @@ endfunction
 
 command! SplitGitHEAD call MyGitShowHead()
 
-function! MyGQuickfixDiff(cmd) abort
+function! MyFZFDiffSink(single)
+  echom a:single
+  let l:m = matchlist(a:single, '\V\^\(\[^:]\*\):\(\[0-9]\*\)')
+  if len(l:m) != 0
+    execute "edit" l:m[1]
+    call setpos(".", [0, str2nr(l:m[2]), 0, 0])
+  endif
+endfunction
+
+function! MyFZFDiffHunks(cmd) abort
   let l:matches = []
   let l:filename = ''
+  let l:filename_color = "\x1b[38;2;155;255;155m"
+  let l:white = "\x1b[38;2;255;255;255m"
+  let l:lnum_color = "\x1b[38;2;77;127;77m"
+  let l:grey = "\x1b[38;2;255;255;155m"
 
-  for l:line in systemlist(a:cmd . " -U0 | grep -E '^(diff|@@)'")
+  for l:line in systemlist("git diff " . a:cmd . " -U0 | grep -E '^(diff|@@)'")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
       continue
     endif
-    let l:m = matchlist(l:line, '\V\^@@ -\[^ ]\+ +\(\[0-9]\+\)\[^ ]\+ @@\(\.\*\)')
+    let l:m = matchlist(l:line, '\V\^@@ -\[^ ]\+ +\(\[0-9]\+\)\[ ,]\[^@]\*@@\(\.\*\)')
     if len(l:m) != 0
       let l:line_num = l:m[1]
       let l:title = l:m[2]
-      call add(l:matches, {'filename': l:filename, 'lnum': l:line_num, 'text': l:title})
+      call add(l:matches,
+            \ printf(l:filename_color . "%s"
+            \ . l:white. ":" . l:lnum_color. "%d"
+            \ . l:white. " %s",
+            \ l:filename,
+            \ l:line_num,
+            \ l:title))
     endif
   endfor
 
-  call setqflist(l:matches)
-  execute 'copen'
-  execute 'cfirst'
+  let l:options = ["--ansi", "-e", "--no-sort"]
+  call fzf#run(fzf#wrap({
+              \ 'source': l:matches,
+              \ 'down': 25,
+              \ 'sink': function('MyFZFDiffSink'),
+              \ 'options': l:options,
+              \ }))
 endfunction
 
 function! MyGitCheckoutHeadDiffHunk() abort
@@ -2107,14 +2130,6 @@ function! MyGitCheckoutHeadDiffHunk() abort
   let l:command = l:diff_command . ' | ' . l:filterdiff_command . ' | patch -p1'
   silent call system(l:command)
   normal! :edit<CR>
-endfunction
-
-function! MyGDiffHeadQuickfixHunks() abort
-  call MyGQuickfixDiff('git diff HEAD')
-endfunction
-
-function! MyGShowHeadQuickfixHunks() abort
-  call MyGQuickfixDiff('git diff HEAD~1')
 endfunction
 
 function! MyGitCommitHook() abort
@@ -2215,11 +2230,14 @@ command! -bang -nargs=0 GFilesHead
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
 nnoremap <C-g>f     :GFiles<CR>
-nnoremap <C-g>j     :call MyGShowHeadQuickfixHunks()<CR>
-nnoremap <C-g>b     :call MyGDiffHeadQuickfixHunks()<CR>
-nnoremap <C-g><C-b> :call MyGDiffHeadQuickfixHunks()<CR>
-nnoremap <C-g><C-h> :silent GFilesHead<CR>
+nnoremap <C-g>d     :call MyFZFDiffHunks('')<CR>
+nnoremap <C-g><C-d> :call MyFZFDiffHunks('')<CR>
+nnoremap <C-g>D     :call MyFZFDiffHunks('HEAD')<CR>
+nnoremap <C-g>C     :call MyFZFDiffHunks('--cached')<CR>
+nnoremap <C-g>j     :call MyFZFDiffHunks('HEAD~1')<CR>
+nnoremap <C-g><C-j> :call MyFZFDiffHunks('HEAD~1')<CR>
 nnoremap <C-g>h     :silent GFilesHead<CR>
+nnoremap <C-g><C-h> :silent GFilesHead<CR>
 nnoremap <C-g><C-e> :GFiles?<CR>
 nnoremap <C-g>e     :GFiles?<CR>
 nnoremap <C-g><C-l> :Commits<CR>
@@ -2254,15 +2272,10 @@ nmap     <C-g>q<CR>     <Plug>(conflict-marker-both)
 nnoremap <C-g>x         :Gina status -s<CR>
 
 " Other shortcuts
-" All commited or non-comited changes against HEAD
-nmap     <leader>gd     :call gv#diff('HEAD')<CR>
-nmap     <C-g><C-d>     <leader>gd
-nmap     <C-g>d         <leader>gd
-
-" `--cached` is what about to be commited.
-nmap     <leader>gD     :call gv#diff('--cached')<CR>
-nmap     <C-g><C-n>     <leader>gD
-nmap     <C-g>n         <leader>gD
+nmap     <leader>gj     :call gv#diff('HEAD~1')<CR>
+nmap     <leader>gD     :call gv#diff('HEAD')<CR>
+nmap     <leader>gd     :call gv#diff()<CR>
+nmap     <leader>gC     :call gv#diff('--cached')<CR>
 
 " Taking care of hunks
 nnoremap <C-g><Delete>  :GitGutterUndoHunk<CR>:w<CR>

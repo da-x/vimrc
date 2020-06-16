@@ -10,20 +10,30 @@ operations in my Vim configuration.
                                                                      *HomeGit*
 Git shortcuts (prefix <C-g>):
 
-    <C-g>f        Show a list of all Git commited files (git ls-files) using FZF
-    <C-g>s        Show a list of all files mentioned in `git status` using FZF
-    <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
     <C-g><CR>     Open vimagit
-    <C-g>h        Open a QuickFix list for all the hunks in the diff from HEAD,
-                  (i.e `git diff HEAD`)
-    <C-g>j        Open a QuickFix list for all the hunks in the diff from HEAD~1,
-                  (i.e `git diff HEAD~1`)
-    <C-g>d        Split view of `git diff HEAD`
-    <C-g>n        Split view of `git diff HEAD --cached` or what to be commited)
+    <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
+
+    FZF listing files
+
+    <C-g>f        Show a list of all Git commited files (git ls-files) using FZF
+    <C-g>e        Show a list of all uncommited modified Git commited files using FZF
+    <C-g>h        Show a list of files modified in `git diff HEAD` using FZF
+
+    FZF for hunks
+
+    <C-g>d        Show a list of hunks modified in `git diff` using FZF
+    <C-g>D        Show a list of hunks modified in `git diff HEAD` using FZF
+    <C-g>C        Show a list of hunks modified in `git diff --cached` using FZF
+    <C-g>j        Show a list of hunks modified in `git diff HEAD~1` using FZF
+
+    Open split views of diffs
+
     <C-g>o        Split view of `git show HEAD`
     <C-g>p        Split view of the commit currently being cherry-picked
                   (useful during conflict resolution in rebases)
     <C-g>Q        Open up the list of unmerged conflicts in a QuickFix list
+    <leader>gd    Split view of `git diff HEAD`
+    <leader>gD    Split view of `git diff HEAD --cached` or what to be commited)
 
   Various operations:
 
@@ -40,8 +50,6 @@ Git shortcuts (prefix <C-g>):
     <C-g>L        Show a list of commits (`git log`) for the current file using
                   FZF
     <C-g>r        Unstage current file (equivalent to a `git reset` on the file)
-    <C-g><CR>     Show a list of commits (`git log`) for the current file using
-                  FZF
 
   Hunk related:
 
