@@ -12,6 +12,8 @@ Git shortcuts (prefix <C-g>):
 
     <C-g><CR>     Open vimagit
     <C-g>l        Show a list of commits, equivalent to `git log`, using FZF
+    <leader>gi
+    <C-g>i        Rebase interactive
 
     FZF listing files
 

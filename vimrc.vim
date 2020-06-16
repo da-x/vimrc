@@ -2226,6 +2226,18 @@ command! -bang -nargs=0 GFilesHead
   \   <bang>0
   \ )
 
+function! s:rebase_interactive_sink(single_item)
+  if len(a:single_item) == 2
+    let l:items = split(a:single_item[1], " ")
+    execute "Grebase" l:items[1] "--interactive"
+  endif
+endfunction
+
+function! MyFZFChooseRebaseInteractive()
+  call fzf#vim#commits({
+  \  'sink*': function('s:rebase_interactive_sink'),
+  \})
+endfunction
 
 " FZF shortcuts
 nnoremap <C-g><C-f> :GFiles<CR>
@@ -2245,6 +2257,7 @@ nnoremap <C-g>l     :Commits<CR>
 nnoremap <C-g><C-o> :SplitGitHEAD<CR>
 nnoremap <C-g>o     :SplitGitHEAD<CR>
 nnoremap <C-g>L     :BCommits<CR>
+nnoremap <C-g>i     :call MyFZFChooseRebaseInteractive()<CR>
 nnoremap <C-g><cr>  :Magit<CR>
 nnoremap <C-g><C-CR>  :Magit<CR>
 nnoremap <C-g><C-c> :GCheckout<CR>
@@ -2276,6 +2289,7 @@ nmap     <leader>gj     :call gv#diff('HEAD~1')<CR>
 nmap     <leader>gD     :call gv#diff('HEAD')<CR>
 nmap     <leader>gd     :call gv#diff()<CR>
 nmap     <leader>gC     :call gv#diff('--cached')<CR>
+nmap     <leader>gi     :call MyFZFChooseRebaseInteractive()<CR>
 
 " Taking care of hunks
 nnoremap <C-g><Delete>  :GitGutterUndoHunk<CR>:w<CR>
