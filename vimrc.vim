@@ -2078,7 +2078,6 @@ endfunction
 command! SplitGitHEAD call MyGitShowHead()
 
 function! MyFZFDiffSink(single)
-  echom a:single
   let l:m = matchlist(a:single, '\V\^ \*\(\[0-9]\*\) \(\[^:]\*\):\(\[0-9]\*\)')
   if len(l:m) != 0
     execute "edit" l:m[2]
@@ -2088,7 +2087,8 @@ endfunction
 
 let s:my_fzf_git_diff_hunk_program = expand('<sfile>:p:h')."/bin/fzf-git-diff-hunk-preview"
 
-function! MyFZFDiffHunks(cmd) abort
+function! MyFZFDiffHunks(cmd,...) abort
+  let l:screen = get(a:, 1, 'half')
   let l:matches = []
   let l:filename = ''
   let l:filename_color = "\x1b[38;2;155;255;155m"
@@ -2096,6 +2096,7 @@ function! MyFZFDiffHunks(cmd) abort
   let l:lnum_color = "\x1b[38;2;77;127;77m"
   let l:grey = "\x1b[38;2;255;255;155m"
 
+  let l:hunknum = 1
   for l:line in systemlist("git diff " . a:cmd . " -U0 | grep -E '^(diff|@@)'")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
@@ -2125,12 +2126,19 @@ function! MyFZFDiffHunks(cmd) abort
 
   let l:options = [
       \"--ansi", "-e", "--no-sort",
+      \"--preview-window", "down:50%:noborder",
       \"--preview", s:my_fzf_git_diff_hunk_program." '".a:cmd."' {}"
       \]
 
-  call fzf#run(fzf#wrap({
+  if l:screen == 'full'
+    let l:down = "100%"
+  else
+    let l:down = "50%"
+  endif
+
+  let l:v = fzf#run(fzf#wrap({
               \ 'source': l:matches,
-              \ 'down': 25,
+              \ 'down': l:down,
               \ 'sink': function('MyFZFDiffSink'),
               \ 'options': l:options,
               \ }))
