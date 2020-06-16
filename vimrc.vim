@@ -2079,12 +2079,14 @@ command! SplitGitHEAD call MyGitShowHead()
 
 function! MyFZFDiffSink(single)
   echom a:single
-  let l:m = matchlist(a:single, '\V\^\(\[^:]\*\):\(\[0-9]\*\)')
+  let l:m = matchlist(a:single, '\V\^ \*\(\[0-9]\*\) \(\[^:]\*\):\(\[0-9]\*\)')
   if len(l:m) != 0
-    execute "edit" l:m[1]
-    call setpos(".", [0, str2nr(l:m[2]), 0, 0])
+    execute "edit" l:m[2]
+    call setpos(".", [0, str2nr(l:m[3]), 0, 0])
   endif
 endfunction
+
+let s:my_fzf_git_diff_hunk_program = expand('<sfile>:p:h')."/bin/fzf-git-diff-hunk-preview"
 
 function! MyFZFDiffHunks(cmd) abort
   let l:matches = []
@@ -2098,6 +2100,7 @@ function! MyFZFDiffHunks(cmd) abort
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
+      let l:hunknum = 1
       continue
     endif
     let l:m = matchlist(l:line, '\V\^@@ -\[^ ]\+ +\(\[0-9]\+\)\[ ,]\[^@]\*@@\(\.\*\)')
@@ -2105,20 +2108,26 @@ function! MyFZFDiffHunks(cmd) abort
       let l:line_num = l:m[1]
       let l:title = l:m[2]
       call add(l:matches,
-            \ printf(l:filename_color . "%s"
+            \ printf("%3d " . l:filename_color . "%s"
             \ . l:white. ":" . l:lnum_color. "%d"
             \ . l:white. " %s",
+            \ l:hunknum,
             \ l:filename,
             \ l:line_num,
             \ l:title))
     endif
+    let l:hunknum += 1
   endfor
 
   if len(l:matches) == 0
     return
   endif
 
-  let l:options = ["--ansi", "-e", "--no-sort"]
+  let l:options = [
+      \"--ansi", "-e", "--no-sort",
+      \"--preview", s:my_fzf_git_diff_hunk_program." '".a:cmd."' {}"
+      \]
+
   call fzf#run(fzf#wrap({
               \ 'source': l:matches,
               \ 'down': 25,
