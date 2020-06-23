@@ -37,6 +37,12 @@ snippet dis
 #[cfg(disable)]
 endsnippet
 
+snippet regex
+lazy_static! {
+    static ref RE: Regex = Regex::new("...").unwrap();
+}
+endsnippet
+
 snippet struct
 struct $1 {
 }

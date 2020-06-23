@@ -2090,7 +2090,7 @@ function! MyFZFDiffHunks(cmd,...) abort
   let l:grey = "\x1b[38;2;255;255;155m"
 
   let l:hunknum = 1
-  for l:line in systemlist("git diff " . a:cmd . " -U0 | grep -E '^(diff|@@)'")
+  for l:line in systemlist("git diff " . a:cmd . " | grep -E '^(diff|@@)'")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
@@ -2121,7 +2121,7 @@ function! MyFZFDiffHunks(cmd,...) abort
   endif
 
   let l:options = [
-      \"--ansi", "-e", "--no-sort",
+      \"--ansi", "-e", "--no-sort", "--tac",
       \"--preview-window", "down:70%:noborder",
       \"--preview", s:my_fzf_git_diff_hunk_program." '".a:cmd."' {}"
       \]
