@@ -1856,6 +1856,16 @@ augroup MarkdownEditSettings
   autocmd FileType markdown call MyMarkdownSettings()
 augroup END
 
+function! MyMailSettings()
+  setlocal spell
+endfunction
+
+augroup MarkdownEditSettings
+  autocmd!
+
+  autocmd FileType mail call MyMailSettings()
+augroup END
+
 " =============================================================================
 " Vim editing
 
