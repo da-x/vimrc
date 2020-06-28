@@ -31,6 +31,7 @@ Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-abolish'
+Plug 'dhruvasagar/vim-zoom'
 
 " Text manipulation
 Plug 'AndrewRadev/sideways.vim'
@@ -899,6 +900,8 @@ nnoremap <silent> -        :resize -2<CR>
 nnoremap <silent> =        :resize +2<CR>
 nnoremap <silent> <Bar>    :vert resize +2<CR>
 nnoremap <silent> <Bslash> :vert resize -2<CR>
+
+nmap <Tab>m <Plug>(zoom-toggle)
 
 " Splitting windows
 function! OnCtrlBar() abort
