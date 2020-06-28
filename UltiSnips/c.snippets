@@ -24,3 +24,8 @@ snippet mmapinc
 #include <sys/mman.h>
 ${0}
 endsnippet
+
+snippet kparam
+static unsigned int $1 = 0;
+module_param($1, uint, 0644);
+endsnippet
