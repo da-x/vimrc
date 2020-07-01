@@ -1852,7 +1852,7 @@ function! MyMailSettings()
   setlocal spell
 endfunction
 
-augroup MarkdownEditSettings
+augroup MailEditSettings
   autocmd!
 
   autocmd FileType mail call MyMailSettings()
