@@ -322,6 +322,14 @@ endfunc
 let timer = timer_start(60000,
       \ 'TimerCallback_ReloadEnvironenment', {'repeat': -1})
 
+if !exists("*ReloadVimConfig")
+  function! ReloadVimConfig()
+    source $MYVIMRC
+  endfunction
+endif
+
+command! ReloadVimConfig call ReloadVimConfig()
+
 " =============================================================================
 " Main settings
 "
