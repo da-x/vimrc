@@ -1811,6 +1811,7 @@ endfunction
 
 function! MyMarkdownSettings()
   setlocal spell
+  let b:Markdown_LinkFilter = function('expand')
   noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
