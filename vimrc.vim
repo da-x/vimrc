@@ -44,6 +44,7 @@ Plug 'Raimondi/delimitMate'
 Plug 'FooSoft/vim-argwrap'
 Plug 'kana/vim-textobj-user'
 Plug 'sgur/vim-textobj-parameter'
+Plug 'matze/vim-move'
 
 let g:my_name_assign_devel = get(g:, 'my_name_assign_devel', '')
 if g:my_name_assign_devel !=# ''
@@ -543,15 +544,6 @@ vnoremap <leader>u u
 vnoremap <leader>U U
 vnoremap u <C-c>u
 vnoremap U <C-c>U
-
-" Moving text up and down, either the current line or a selection, adjusting
-" for indentation. Extremely handy when re-ordering code manually.
-nnoremap <M-j> :m .+1<CR>==
-inoremap <M-j> <Esc>:m .+1<CR>==gi
-inoremap <M-k> <Esc>:m .-2<CR>==gi
-vnoremap <M-j> :m '>+1<CR>gv=gv
-nnoremap <M-k> :m .-2<CR>==
-vnoremap <M-k> :m '<-2<CR>gv=gv
 
 " Quickly add empty lines
 nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<CR>'[
