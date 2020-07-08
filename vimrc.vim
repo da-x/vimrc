@@ -1491,10 +1491,12 @@ function! CatQF(cmd) abort
 
   for l:line in systemlist(a:cmd)
     let l:m = matchlist(l:line, '\V\^\(\.\*\):\(\[0-9]\+\): \(\.\*\)')
-    let l:filename = l:m[1]
-    let l:line_num = l:m[2]
-    let l:title = l:m[3]
-    call add(l:matches, {'filename': l:filename, 'lnum': l:line_num, 'text': l:title})
+    if len(l:m) != 0
+      let l:filename = l:m[1]
+      let l:line_num = l:m[2]
+      let l:title = l:m[3]
+      call add(l:matches, {'filename': l:filename, 'lnum': l:line_num, 'text': l:title})
+    endif
   endfor
 
   call setqflist(l:matches)
