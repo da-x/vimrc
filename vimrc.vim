@@ -1512,6 +1512,12 @@ function! OnF11() abort
   execute "ptag " . expand("<cword>")
 endfunction
 
+function! LastEditTime() abort
+  echo strftime('%c',getftime(expand('%')))
+endfunction
+
+command! LastEditTime call LastEditTime()
+
 " =============================================================================
 "
 function! MyRedir(cmd)
