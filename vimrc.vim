@@ -65,6 +65,13 @@ Plug 'jreybert/vimagit'
 Plug 'da-x/conflict-marker.vim'
 Plug 'da-x/vim-git-conflict-edit'
 
+let g:my_depree_devel = get(g:, 'my_depree_devel', '')
+if g:my_depree_devel !=# ''
+  Plug 'da-x/depree.vim' , { 'dir': g:my_depree_devel, 'do': './rebuild.sh' }
+else
+  Plug 'da-x/depree.vim' , { 'do': './rebuild.sh' }
+endif
+
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
 
