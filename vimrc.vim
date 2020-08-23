@@ -1824,9 +1824,18 @@ function! MyMarkdownCodeBlockSelection() range
   call setpos('.', [0, l:line_start, 4, 0])
 endfunction
 
+function! MyFixupMarkdownLink(text)
+  let l:text = a:text
+  let l:matchurl = matchlist(a:text, '\V\^\(\.\*\).md')
+  if l:matchurl != []
+    let l:text = l:matchurl[1]
+  endif
+  return expand(l:text)
+endfunction
+
 function! MyMarkdownSettings()
   setlocal spell
-  let b:Markdown_LinkFilter = function('expand')
+  let b:Markdown_LinkFilter = function('MyFixupMarkdownLink')
   noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
