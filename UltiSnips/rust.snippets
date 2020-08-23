@@ -43,6 +43,19 @@ lazy_static! {
 }
 endsnippet
 
+snippet lazystaticmutex
+use std::sync::Mutex;
+
+lazy_static::lazy_static! {
+    static ref MUTEX: Mutex<$1> = Mutex::new($2);
+}
+
+fn example() {
+    let locked = MUTEX.lock().unwrap();
+    $3
+}
+endsnippet
+
 snippet struct
 struct $1 {
 }
