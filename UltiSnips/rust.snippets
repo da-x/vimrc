@@ -240,6 +240,73 @@ fn main() -> Result<(), ()> {
 }
 endsnippet
 
+snippet userpause
+    {
+        let mut s = String::new();
+        use std::io::{stdin};
+        let _ = stdin().read_line(&mut s);
+    }
+endsnippet
+
+snippet lalrpop
+// Cargo.toml
+//
+// [build-dependencies]
+// lalrpop = "0.17.2"
+//
+// build.rs:
+// lalrpop::process_root().unwrap();
+//
+// Crate root:
+//
+// #![recursion_limit = "1024"]
+// #![allow(unused_parens)] // Until lalrpop is fixing the warning it generates
+//
+// lalrpop_mod!(pub query);
+//
+// query.lalrpop:
+use crate::expr::Expr;
+
+grammar;
+
+pub expr: Expr = {
+    <e1:expr> "|" <e2:subexpr> => Expr::Or(Box::new(e1), Box::new(e2)),
+    <e:subexpr> => e,
+};
+
+subexpr : Expr = {
+    <e1:subexpr> "&" <e2:subexpr2> => Expr::And(Box::new(e1), Box::new(e2)),
+    <e:subexpr2> => e,
+};
+
+subexpr2 : Expr = {
+    "!" <e:subexpr3> => Expr::Not(Box::new(e)),
+    <e:subexpr3> => e,
+};
+
+subexpr3 : Expr = {
+    <e:lowexpr> => e,
+};
+
+lowexpr : Expr = {
+    <s:r"%([^%]|%%)+%"> => Expr::Substring(s.to_owned()),
+    "(" <e:expr> ")" => e,
+}
+
+// expr.rs
+#[derive(Debug)]
+pub enum Expr {
+    Substring(String),
+    Not(Box<Expr>),
+    And(Box<Expr>, Box<Expr>),
+    Or(Box<Expr>, Box<Expr>),
+}
+
+// Usage:
+//
+// crate::query::exprParser::new().parse(s)
+endsnippet
+
 snippet sep
 
 ///////////////////////////////////////////////////////////////////////////////
