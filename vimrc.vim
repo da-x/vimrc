@@ -2129,7 +2129,8 @@ function! MyFZFDiffHunks(cmd,...) abort
   let l:grey = "\x1b[38;2;255;255;155m"
 
   let l:hunknum = 1
-  for l:line in systemlist("git diff " . a:cmd . " | grep -E '^(diff|@@)'")
+  let l:found_change_start = 0
+  for l:line in systemlist("git diff " . a:cmd . " | grep -E '^(diff|@@)' -A 4")
     let l:m = matchlist(l:line, '\V\^diff --git a/\(\.\*\) b/\(\.\*\)')
     if len(l:m) != 0
       let l:filename = l:m[2]
@@ -2138,19 +2139,38 @@ function! MyFZFDiffHunks(cmd,...) abort
     endif
     let l:m = matchlist(l:line, '\V\^@@ -\[^ ]\+ +\(\[0-9]\+\)\[ ,]\[^@]\*@@\(\.\*\)')
     if len(l:m) != 0
+      let l:found_change_start = 0
       let l:line_num = l:m[1]
       let l:title = l:m[2]
-      call add(l:matches,
-            \ printf("%3d " . l:filename_color . "%s"
-            \ . l:white. ":" . l:lnum_color. "%d"
-            \ . l:white. " %s",
-            \ l:hunknum,
-            \ l:filename,
-            \ l:line_num,
-            \ l:title))
+      call add(l:matches, [l:hunknum, l:filename, l:line_num, l:title])
+      let l:hunknum += 1
+      continue
     endif
-    let l:hunknum += 1
+    if l:found_change_start == 0
+      let l:m = matchlist(l:line, '\V\^\[+-]')
+      if len(l:m) != 0
+        let l:found_change_start = 1
+      else
+        if len(l:matches) >= 1
+          let l:matches[len(l:matches) - 1][2] += 1
+        endif
+      endif
+    endif
   endfor
+
+  let l:i = 0
+  while l:i < len(l:matches)
+    let [l:hunknum, l:filename, l:line_num, l:title] = l:matches[l:i]
+    let l:matches[i] =
+        \ printf("%3d " . l:filename_color . "%s"
+        \ . l:white. ":" . l:lnum_color. "%d"
+        \ . l:white. " %s",
+        \ l:hunknum,
+        \ l:filename,
+        \ l:line_num,
+        \ l:title)
+    let l:i = l:i + 1
+  endwhile
 
   if len(l:matches) == 0
     if l:screen == 'full'
