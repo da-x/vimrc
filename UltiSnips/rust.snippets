@@ -124,6 +124,16 @@ fn $1(self) {
 }
 endsnippet
 
+snippet display
+use std::fmt;
+
+impl fmt::Display for $1 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "")
+    }
+}
+endsnippet
+
 snippet testmod "" m
 #[cfg(test)]
 mod tests {
@@ -248,23 +258,32 @@ snippet userpause
     }
 endsnippet
 
-snippet lalrpop
-// Cargo.toml
-//
-// [build-dependencies]
-// lalrpop = "0.17.2"
-//
-// build.rs:
-// lalrpop::process_root().unwrap();
-//
-// Crate root:
-//
-// #![recursion_limit = "1024"]
-// #![allow(unused_parens)] // Until lalrpop is fixing the warning it generates
-//
-// lalrpop_mod!(pub query);
-//
-// query.lalrpop:
+snippet lalrpop-cargo
+[package]
+build = "build.rs"
+
+[build-dependencies]
+lalrpop = "0.17.2"
+
+[dependencies]
+lalrpop-util = "0.18.1"
+regex = "1"
+endsnippet
+
+snippet lalrpop-build
+fn main() {
+    lalrpop::process_root().unwrap();
+}
+endsnippet
+
+snippet lalrpop-root
+#![recursion_limit = "1024"]
+#![allow(unused_parens)] // Until lalrpop is fixing the warning it generates
+
+lalrpop_mod!(pub query);
+endsnippet
+
+snippet lalrpop-expr
 use crate::expr::Expr;
 
 grammar;
@@ -292,8 +311,9 @@ lowexpr : Expr = {
     <s:r"%([^%]|%%)+%"> => Expr::Substring(s.to_owned()),
     "(" <e:expr> ")" => e,
 }
+endsnippet
 
-// expr.rs
+snippet lalrpop-expr
 #[derive(Debug)]
 pub enum Expr {
     Substring(String),
@@ -302,9 +322,11 @@ pub enum Expr {
     Or(Box<Expr>, Box<Expr>),
 }
 
-// Usage:
-//
-// crate::query::exprParser::new().parse(s)
+impl Expr {
+    pub fn parse(expr: &str) -> Result<Self, lalrpop_util::ParseError<usize, crate::parse::Token, &str>> {
+        super::parse::exprParser::new().parse(expr)
+    }
+}
 endsnippet
 
 snippet sep

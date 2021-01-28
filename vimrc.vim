@@ -21,7 +21,13 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'vim-scripts/tlib'
 
 "" Settings
-Plug 'LucHermitte/local_vimrc'
+let g:my_local_vimrc_devel = get(g:, 'my_local_vimrc_devel', '')
+if g:my_local_vimrc_devel !=# ''
+  Plug 'da-x/local_vimrc.vim' , { 'dir': g:my_local_vimrc_devel }
+else
+  Plug 'da-x/local_vimrc.vim'
+endif
+
 Plug 'airblade/vim-rooter'
 
 " Navigation and other state manipulation
@@ -966,7 +972,8 @@ map <leader><left> :tabp<cr>
 " local_vimrc.vim
 
 " Example: setlocal path=.,subdir/,/usr/include,,"
-let g:local_vimrc = ['.git/vimrc_local.vim']
+let g:local_vimrc = ['vimrc_local.vim']
+let g:local_vimrc_look_only_in_dot_git = v:true
 
 func! EditLocalVimrc()
   exec ":edit .git/vimrc_local.vim"
@@ -1884,6 +1891,7 @@ augroup END
 
 function! MyMailSettings()
   setlocal spell
+  setl textwidth=72
 endfunction
 
 augroup MailEditSettings
@@ -2230,7 +2238,6 @@ function! MyGitCommitHook() abort
   nnoremap <buffer> <M-PageUp> :w \| bd<CR>
   imap <buffer> <C-g><CR> <C-c><C-g><CR>
   imap <buffer> <M-PageUp> <C-c><C-g><CR>
-
   startinsert
 endfunction
 
@@ -2250,9 +2257,16 @@ function! MyGitUnstageCurrentFile() abort
   GitGutter
 endfunction
 
+function! MySetTextWidth() abort
+  if &filetype ==# 'gitcommit'
+    setlocal textwidth=72
+  endif
+endfunction
+
 augroup GitCommitAutocmds
   autocmd!
   autocmd! FileType gitcommit call MyGitCommitHook()
+  autocmd! InsertEnter * call MySetTextWidth()
   autocmd! BufDelete,BufWipeout * call MyCommitMessageEndHook()
 augroup END
 

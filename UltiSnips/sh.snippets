@@ -4,6 +4,28 @@ if [[ ${0} ]] ; then
 fi
 endsnippet
 
+snippet argparse
+while [[ $# != 0 ]] ; do
+    if [[ "\$1" == "--param" ]] ; then
+	local param=value
+	shift
+	continue
+    elif [[ "\$1" == "--name" ]] ; then
+	shift
+	local name=\$1
+	shift
+	continue
+    fi
+    break
+done
+endsnippet
+
+snippet perline-parse
+while read a b ; do
+    echo ${a} ${b}
+done < <(command)
+endsnippet
+
 snippet sigint
 trap ctrl_c INT
 
