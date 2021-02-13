@@ -7,14 +7,14 @@ endsnippet
 snippet argparse
 while [[ $# != 0 ]] ; do
     if [[ "\$1" == "--param" ]] ; then
-	local param=value
-	shift
-	continue
+        local param=value
+        shift
+        continue
     elif [[ "\$1" == "--name" ]] ; then
-	shift
-	local name=\$1
-	shift
-	continue
+        shift
+        local name=\$1
+        shift
+        continue
     fi
     break
 done

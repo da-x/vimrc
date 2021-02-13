@@ -124,6 +124,12 @@ fn $1(&self) {
 }
 endsnippet
 
+snippet fne
+fn $1(&self) -> Result<(), Error> {
+    Ok(())
+}
+endsnippet
+
 snippet dernum
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 $0
