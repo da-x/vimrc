@@ -23,9 +23,9 @@ Plug 'vim-scripts/tlib'
 "" Settings
 let g:my_local_vimrc_devel = get(g:, 'my_local_vimrc_devel', '')
 if g:my_local_vimrc_devel !=# ''
-  Plug 'da-x/local_vimrc.vim' , { 'dir': g:my_local_vimrc_devel }
+  Plug 'da-x/local_vimrc' , { 'dir': g:my_local_vimrc_devel }
 else
-  Plug 'da-x/local_vimrc.vim'
+  Plug 'da-x/local_vimrc'
 endif
 
 Plug 'airblade/vim-rooter'
@@ -73,9 +73,9 @@ Plug 'da-x/vim-git-conflict-edit'
 
 let g:my_depree_devel = get(g:, 'my_depree_devel', '')
 if g:my_depree_devel !=# ''
-  Plug 'da-x/depree.vim' , { 'dir': g:my_depree_devel, 'do': './rebuild.sh' }
+  Plug 'da-x/depree' , { 'dir': g:my_depree_devel, 'do': './rebuild.sh' }
 else
-  Plug 'da-x/depree.vim' , { 'do': './rebuild.sh' }
+  Plug 'da-x/depree' , { 'do': './rebuild.sh' }
 endif
 
 " Visual effects
@@ -143,6 +143,8 @@ if g:my_ale_devel !=# ''
 else
   Plug 'w0rp/ale'
 endif
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'vim-syntastic/syntastic'
 
 " Other
@@ -1150,6 +1152,7 @@ let g:ale_linters = {}
 let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
+let g:ale_linters.rust = []
 
 " =============================================================================
 " lightline with ALE integration
@@ -2546,30 +2549,42 @@ command! HomeRegenTags :helptags ~/.vim_runtime/doc
 " =============================================================================
 " Language server
 
-let g:deoplete#enable_at_startup = 1
-let g:LanguageClient_serverCommands = {
-      \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-      \ }
-let g:LanguageClient_autoStart = 0
+" let g:deoplete#enable_at_startup = 1
+" let g:LanguageClient_serverCommands = {
+"       \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+"       \ }
+" let g:LanguageClient_autoStart = 0
 
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-noremap <leader>r<CR> :call LanguageClient#textDocument_rename()<CR>
-nnoremap <leader>k :call LanguageClient#textDocument_hover()<CR>
-noremap <leader>rc :call LanguageClient#textDocument_rename(
-      \ {'newName': Abolish.camelcase(expand('<cword>'))})<CR>
-" Rename - rs => rename snake_case
-noremap <leader>rs :call LanguageClient#textDocument_rename(
-      \ {'newName': Abolish.snakecase(expand('<cword>'))})<CR>
-" Rename - ru => rename UPPERCASE
-noremap <leader>ru :call LanguageClient#textDocument_rename(
-      \ {'newName': Abolish.uppercase(expand('<cword>'))})<CR>
+" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" noremap <leader>r<CR> :call LanguageClient#textDocument_rename()<CR>
+" nnoremap <leader>k :call LanguageClient#textDocument_hover()<CR>
+" noremap <leader>rc :call LanguageClient#textDocument_rename(
+"       \ {'newName': Abolish.camelcase(expand('<cword>'))})<CR>
+" " Rename - rs => rename snake_case
+" noremap <leader>rs :call LanguageClient#textDocument_rename(
+"       \ {'newName': Abolish.snakecase(expand('<cword>'))})<CR>
+" " Rename - ru => rename UPPERCASE
+" noremap <leader>ru :call LanguageClient#textDocument_rename(
+"       \ {'newName': Abolish.uppercase(expand('<cword>'))})<CR>
 
 " =============================================================================
 
-if get(g:, 'my_rust_use_LC', v:false)
-    let g:ale_linters.rust = []
-    let g:LanguageClient_autoStart = 1
-endif
+" if get(g:, 'my_rust_use_LC', v:false)
+"     let g:ale_linters.rust = []
+"     let g:LanguageClient_autoStart = 1
+" endif
+
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>qf  <Plug>(coc-fix-current)
+map  <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>ac  :CocAction<CR>
 
 " =============================================================================
 " Config for vim-highlightedyank
