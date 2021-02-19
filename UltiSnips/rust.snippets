@@ -217,6 +217,19 @@ let mut item = match $1.entry($2) {
 };
 endsnippet
 
+snippet thiserror
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("Io error; {0}")]
+    IoError(#[from] std::io::Error),
+    #[error("Command error: {0}")]
+    Command(String),
+}
+
+// thiserror = "1"
+endsnippet
 
 snippet bigstructopt
 extern crate structopt;
