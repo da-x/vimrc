@@ -2585,6 +2585,7 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 map  <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  :CocAction<CR>
+hi CocHintSign gui=NONE guifg=#155070
 
 " =============================================================================
 " Config for vim-highlightedyank
