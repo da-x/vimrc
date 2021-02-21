@@ -217,6 +217,14 @@ let mut item = match $1.entry($2) {
 };
 endsnippet
 
+snippet ifletret
+let $1 = if let $2($1) = self.$3 {
+    $1
+} else {
+    return Ok(())
+};
+endsnippet
+
 snippet thiserror
 use thiserror::Error;
 
