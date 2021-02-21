@@ -1024,8 +1024,11 @@ let g:ctrlp_prompt_mappings = {
 
 let g:UltiSnipsExpandTrigger = '<c-q>'
 let g:UltiSnipsListSnippets = '<c-j>'
+
+" For jumping between $1, $2, ... placeholders:
 let g:UltiSnipsJumpForwardTrigger = '<c-e>'
 let g:UltiSnipsJumpBackwardTrigger = '<c-f>'
+
 let g:UltiSnipsRemoveSelectModeMappings = 0
 inoremap <silent> <c-u> <c-r>=cm#sources#ultisnips#trigger_or_popup("\<Plug>(ultisnips_expand)")<cr>
 
