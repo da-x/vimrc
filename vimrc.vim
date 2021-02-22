@@ -80,6 +80,7 @@ endif
 
 " Visual effects
 Plug 'machakann/vim-highlightedyank'
+Plug 'ap/vim-css-color'
 
 " Themes
 Plug 'itchyny/lightline.vim'
