@@ -1157,6 +1157,7 @@ let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
 let g:ale_linters.rust = []
+let g:ale_linters.python = ['pyflakes']
 
 " =============================================================================
 " lightline with ALE integration
@@ -2024,6 +2025,8 @@ augroup CurlyLanguages
   " Fallback to regular { in case we need it, with <A-[>
   autocmd FileType rust\|c\|cpp inoremap <silent> <buffer>
       \ <A-[> {
+
+  autocmd FileType spec iunmap <silent> <buffer> {
 augroup END
 
 
