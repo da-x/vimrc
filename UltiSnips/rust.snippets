@@ -112,6 +112,15 @@ impl std::fmt::Debug for $1 {
 }
 endsnippet
 
+snippet filewrite
+use std::io::{Write, BufWriter};
+use std::fs::{File, OpenOptions};
+
+let file = OpenOptions::new().write(true).truncate(true).open($1)?;
+let mut file = BufWriter::new(file);
+writeln!(&mut file, "{}", $2)?;
+endsnippet
+
 snippet fnms
 fn $1(&mut self) {
     $0
@@ -237,6 +246,11 @@ pub enum Error {
 }
 
 // thiserror = "1"
+endsnippet
+
+snippet adderror
+#[error("$1 error; {0}")]
+$1Error(#[from] $2::Error),
 endsnippet
 
 snippet thiserror_main
