@@ -387,7 +387,7 @@ set cmdheight=2
 set completeopt-=preview
 set showmatch
 set matchtime=2
-set showtabline=2
+set showtabline=0
 set laststatus=2
 set foldcolumn=1
 set noshowmode
