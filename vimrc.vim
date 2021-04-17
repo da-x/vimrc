@@ -383,7 +383,6 @@ set nowritebackup
 " Appearance of stuff
 set number
 set ruler
-set cmdheight=2
 set completeopt-=preview
 set showmatch
 set matchtime=2
