@@ -2293,15 +2293,15 @@ function! MyGitAntiCommitAndUnstage() abort
 endfunction
 
 function! MyGitCommitAll() abort
-  Gcommit -a
+  Git commit -a
 endfunction
 
 function! MyGitCommit() abort
-  Gcommit
+  Git commit
 endfunction
 
 function! MyGitAddAllAmend() abort
-  Gcommit -a --amend
+  Git commit -a --amend
 endfunction
 
 " Based on stuff from https://github.com/junegunn/fzf.vim/issues/603:
