@@ -112,6 +112,12 @@ impl std::fmt::Debug for $1 {
 }
 endsnippet
 
+snippet fileread
+let mut file = File::open($1)?;
+let mut contents = String::new();
+file.read_to_string(&mut contents)?;
+endsnippet
+
 snippet filewrite
 use std::io::{Write, BufWriter};
 use std::fs::{File, OpenOptions};
@@ -150,12 +156,22 @@ fn $1(self) {
 }
 endsnippet
 
-snippet display
+snippet impldisp
 use std::fmt;
 
 impl fmt::Display for $1 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "")
+    }
+}
+endsnippet
+
+snippet impldef
+impl Default for $1 {
+    fn default() -> Self {
+        Self {
+	    $2
+        }
     }
 }
 endsnippet
