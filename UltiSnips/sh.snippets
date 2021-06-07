@@ -4,10 +4,37 @@ if [[ ${0} ]] ; then
 fi
 endsnippet
 
+snippet prelude
+#!/bin/bash
+
+set -eu
+set -o pipefail
+set +o posix
+
+${0}
+endsnippet
+
+snippet trace
+_trace_to_file() {
+    export PS4='\$(date "+%Y.%m.%d-%H:%M:%S.%N") \${BASH_SOURCE}:\${FUNCNAME[0]:+\${FUNCNAME[0]}():}\${LINENO}: '
+    exec 3<> \$1
+    BASH_XTRACEFD=3
+    set -x
+}
+endsnippet
+
 snippet argparse
 while [[ $# != 0 ]] ; do
-    if [[ "\$1" == "--param" ]] ; then
-        local param=value
+    if [[ \$1 =~ ^-[a-zA-Z0-9]+$ ]] ; then
+        local c=\${1:\$i-1:1}
+        for ((i=2;i<=\${#1};i++)); do # Iterate characters
+	    case \${1:\$i-1:1} in
+                p) local param=1 ;;
+                *) echo "Invalid parameter" ; return -1 ;;
+	    esac
+        done
+    elif [[ "\$1" == "--param" ]] ; then
+        local param=1
         shift
         continue
     elif [[ "\$1" == "--name" ]] ; then
@@ -16,7 +43,7 @@ while [[ $# != 0 ]] ; do
         shift
         continue
     fi
-    break
+    break # Continue to positional arguments
 done
 endsnippet
 

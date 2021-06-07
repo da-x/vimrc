@@ -1964,6 +1964,14 @@ function! MyVimEditInsertDateLineWithTags() abort
   exec "normal! \<Right>"
 endfunction
 
+function! MySnippetsSettings() abort
+  setlocal shiftwidth=4 expandtab
+endfunction
+
+augroup SnippetsSettings
+  autocmd!
+  autocmd Filetype snippets call MySnippetsSettings()
+augroup END
 
 " =============================================================================
 " Rust
