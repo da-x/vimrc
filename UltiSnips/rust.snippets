@@ -281,6 +281,18 @@ fn main() {
 }
 endsnippet
 
+snippet none2err
+.ok_or_else(|| Error::$1)
+endsnippet
+
+snippet map2err
+.map_err(|_| Error::$1)
+endsnippet
+
+snippet wraperr
+.map_err(|x| Error::$1(context, x))
+endsnippet
+
 snippet bigstructopt
 extern crate structopt;
 #[macro_use]

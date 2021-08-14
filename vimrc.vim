@@ -18,7 +18,7 @@ endif
 " Libs
 Plug 'LucHermitte/lh-vim-lib'
 Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'vim-scripts/tlib'
+Plug 'tomtom/tlib_vim'
 
 "" Settings
 let g:my_local_vimrc_devel = get(g:, 'my_local_vimrc_devel', '')
@@ -609,6 +609,8 @@ vnoremap <A-r> :s/<C-r>=@/<CR>/<C-r>=InsertSelectionMatch()<CR>/g<left><left>
 " Same as above, but write a new string for replacement.
 nnoremap <A-n> :%s/<C-r>=@/<CR>//g<left><left>
 vnoremap <A-n> :s/<C-r>=@/<CR>//g<left><left>
+
+" Edit the regex for the current selection
 nnoremap <leader>x :/<C-r>=@/<CR>
 
 " Add a newline and move down
@@ -2599,6 +2601,7 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 map  <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  :CocAction<CR>
+imap <C-e>  <C-c>:CocAction<CR>
 
 hi CocHintSign gui=NONE guifg=#155070
 hi CocHintFloat gui=NONE guifg=#cccccc guibg=NONE

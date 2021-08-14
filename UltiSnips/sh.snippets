@@ -23,28 +23,44 @@ _trace_to_file() {
 }
 endsnippet
 
+snippet trace-pretty-stdout
+PS4='\033[38;5;237m$(date "+%Y.%m.%d-%H:%M:%S.%N" | cut -c-23) \033[38;5;243m${BASH_SOURCE}\033[38;5;237m:${FUNCNAME[0]:+${FUNCNAME[0]}():}\033[38;5;243m${LINENO}\033[38;5;237m: \033[00m'
+endsnippet
+
 snippet argparse
-while [[ $# != 0 ]] ; do
-    if [[ \$1 =~ ^-[a-zA-Z0-9]+$ ]] ; then
-        local c=\${1:\$i-1:1}
-        for ((i=2;i<=\${#1};i++)); do # Iterate characters
-	    case \${1:\$i-1:1} in
-                p) local param=1 ;;
-                *) echo "Invalid parameter" ; return -1 ;;
-	    esac
-        done
-    elif [[ "\$1" == "--param" ]] ; then
-        local param=1
-        shift
-        continue
-    elif [[ "\$1" == "--name" ]] ; then
-        shift
-        local name=\$1
-        shift
-        continue
-    fi
-    break # Continue to positional arguments
-done
+main-params-parse() {
+    local _verbose=0
+    local _debug=0
+
+    while [[ \$# != 0 ]] ; do
+        if [[ \$1 =~ ^-[a-zA-Z0-9]+\$ ]] ; then
+	    for ((i=2;i<=\${#1};i++)); do # Iterate characters
+	        local c=\${1:\$i-1:1}
+	        case \${1:\$i-1:1} in
+		    v) _verbose=1 ;;
+		    d) _debug=1 ;;
+		    *) echo "Invalid parameter \${c}" ; return -1 ;;
+	        esac
+	    done
+	    shift
+        elif [[ "\$1" == "--verbose" ]] ; then
+	    _verbose=1
+	    shift
+	    continue
+        elif [[ "\$1" == "--debug" ]] ; then
+	    _debug=\$1
+	    shift
+	    continue
+        fi
+        break # Continue to positional arguments
+    done
+
+    verbose=\${_verbose}
+    remaining_args=("\$@")
+}
+
+main-params-parse "\$@" # Outputs remaining_args
+set +u ; set -- "\${remaining_args[@]}" ; set -u
 endsnippet
 
 snippet perline-parse
