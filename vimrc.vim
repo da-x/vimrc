@@ -129,15 +129,6 @@ Plug 'vimoutliner/vimoutliner'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'editorconfig/editorconfig-vim'
 
-" Language related (checkers and suggest)
-
-if system("uname -m") != "aarch64"
-  Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
-endif
-
 let g:my_ale_devel = get(g:, 'my_ale_devel', '')
 if g:my_ale_devel !=# ''
   Plug 'w0rp/ale' , { 'dir': g:my_ale_devel }
@@ -1647,54 +1638,11 @@ set cursorline
 set background=dark
 
 function! MyHighlights() abort
-  let g:LanguageClient_diagnosticsDisplay = {
-        \    1: {
-        \        "name": "Error",
-        \        "texthl": "ALEError",
-        \        "signText": "✖",
-        \        "signTexthl": "ALEErrorSign",
-        \        "virtualTexthl": "LC_Error",
-        \    },
-        \    2: {
-        \        "name": "Warning",
-        \        "texthl": "ALEWarning",
-        \        "signText": "⚠",
-        \        "signTexthl": "ALEWarningSign",
-        \        "virtualTexthl": "LC_Warning",
-        \    },
-        \    3: {
-        \        "name": "Information",
-        \        "texthl": "ALEInfo",
-        \        "signText": "ℹ",
-        \        "signTexthl": "ALEInfoSign",
-        \        "virtualTexthl": "LC_Info",
-        \    },
-        \    4: {
-        \        "name": "Hint",
-        \        "texthl": "ALEInfo",
-        \        "signText": "➤",
-        \        "signTexthl": "ALEInfoSign",
-        \        "virtualTexthl": "LC_Hint",
-        \    },
-        \}
-
-  highlight cAnsiFunction  guifg=#dddd90 guibg=NONE     gui=NONE
-  highlight cBraces        guifg=#ffdd80 guibg=NONE     gui=NONE
-  highlight cDelimiter     guifg=#ffaa80 guibg=NONE     gui=NONE
-  highlight cNumber        guifg=#ff9999 guibg=NONE     gui=NONE
-  highlight cUserFunction  guifg=#ffcc90 guibg=NONE     gui=NONE
-
-  highlight IncSearch      guifg=#000000 guibg=#ffff00  gui=bold
-  highlight Search         guifg=#ccffdd guibg=#006611  gui=bold
-
-  highlight TabLineFill    guifg=#ffffff guibg=#000000
-  highlight TabLine        guifg=black   guibg=#222222
-  highlight TabLineSel     guifg=#444444 guibg=#202020  gui=bold
-
   highlight LC_Error       guibg=#200000 guifg=#600000
   highlight LC_Info        guibg=#002000 guifg=#006000
   highlight LC_Warning     guibg=#202000 guifg=#606000
   highlight LC_Hint        guibg=#200020 guifg=#600060
+
   highlight ALEError       guibg=#770000 guifg=#ffffff
   highlight ALEErrorSign   guibg=#770000 guifg=#ff0000
   highlight ALEInfo        guibg=#774400 guifg=#ffffff
@@ -1709,7 +1657,14 @@ function! MyHighlights() abort
 
   highlight ExtraWhitespace ctermbg=red guibg=red
 
-  highlight clear CursorLine
+  highlight HighlightedyankRegion guibg=#008080 gui=NONE term=NONE
+  highlight SpellBad guibg=#500000 gui=underline term=underline
+
+  highlight CocHintSign gui=NONE guifg=#155070
+  highlight CocHintFloat gui=NONE guifg=#cccccc guibg=NONE
+  highlight CocWarningHighlight guibg=NONE guifg=#999900
+  highlight CocUnusedHighlight guibg=NONE guifg=#999999
+
   highlight CursorLineNR   guifg=#dddddd guibg=#222222
 endfunction
 
@@ -2603,16 +2558,11 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  :CocAction<CR>
 imap <C-e>  <C-c>:CocAction<CR>
 
-hi CocHintSign gui=NONE guifg=#155070
-hi CocHintFloat gui=NONE guifg=#cccccc guibg=NONE
-
 " =============================================================================
 " Config for vim-highlightedyank
 
 let g:highlightedyank_highlight_duration = 200
 
-hi HighlightedyankRegion guibg=#008080 gui=NONE term=NONE
-hi SpellBad guibg=#500000 gui=underline term=underline
 
 " =============================================================================
 " Misc

@@ -585,6 +585,7 @@ elseif &background=='dark'
   " }}}2
 endif
 
+
 " Links:
 "
 " COLOR LINKS DEFINE START
@@ -613,6 +614,38 @@ hi TabLineSel guifg=white guibg=#202020 gui=bold
 hi QuickFixLine guifg=white guibg=#503030 gui=bold
 
 " COLOR LINKS DEFINE END
+
+" My overrides:
+
+highlight cAnsiFunction  guifg=#dddd90 guibg=NONE     gui=NONE
+highlight cBraces        guifg=#ffdd80 guibg=NONE     gui=NONE
+highlight cDelimiter     guifg=#ffaa80 guibg=NONE     gui=NONE
+highlight cNumber        guifg=#ff9999 guibg=NONE     gui=NONE
+highlight cUserFunction  guifg=#ffcc90 guibg=NONE     gui=NONE
+
+highlight rustUnsafeKeyword  guifg=#ff0000 guibg=NONE     gui=bold
+highlight rustCommentLine  guifg=#888833 guibg=NONE     gui=NONE
+highlight rustCommentLineDoc  guifg=#888833 guibg=NONE     gui=NONE
+highlight rustFuncName   guifg=#ffffff guibg=NONE     gui=bold
+highlight rustModule     guifg=#aaaaaa guibg=NONE     gui=NONE
+highlight rustKeyword    guifg=#ffffbb guibg=NONE     gui=NONE
+highlight rustStorage  guifg=#ffeeaa guibg=NONE     gui=NONE
+highlight rustMacroVariable guifg=#bbbb33 guibg=#111100     gui=NONE
+highlight link rustDecNumber  cNumber
+highlight link rustCharacter  cNumber
+highlight link rustStringDelimiter String
+highlight link rustRepeat rustKeyword
+highlight link rustConditional rustKeyword
+highlight link rustStructure  rustKeyword
+
+highlight TabLineFill    guifg=#ffffff guibg=#000000
+highlight TabLine        guifg=black   guibg=#222222
+highlight TabLineSel     guifg=#444444 guibg=#202020  gui=bold
+
+highlight IncSearch      guifg=#000000 guibg=#ffff00  gui=bold
+highlight Search         guifg=#ccffdd guibg=#006611  gui=bold
+
+highlight clear CursorLine
 
 " vim:et:nosta:sw=2:ts=8:
 " vim600:fdm=marker:fdl=1:
