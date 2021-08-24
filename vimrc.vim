@@ -1662,8 +1662,11 @@ function! MyHighlights() abort
 
   highlight CocHintSign gui=NONE guifg=#155070
   highlight CocHintFloat gui=NONE guifg=#cccccc guibg=NONE
+  highlight CocErrorFloat gui=NONE guifg=#cc2222 guibg=NONE
+  highlight CocWarningFloat gui=NONE guifg=#cccc22 guibg=NONE
   highlight CocWarningHighlight guibg=NONE guifg=#999900
   highlight CocUnusedHighlight guibg=NONE guifg=#999999
+  highlight CocFloating gui=NONE guifg=NONE guibg=#222222
 
   highlight CursorLineNR   guifg=#dddddd guibg=#222222
 endfunction
