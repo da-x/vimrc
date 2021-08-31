@@ -877,6 +877,7 @@ endfunction
 
 nnoremap <silent> <leader>ed :call AdjacentOrMetaOpen("todo.md")<CR>
 nnoremap <silent> <leader>ev :call AdjacentOrMetaOpen("design.md")<CR>
+nnoremap <silent> <leader>e? :call AdjacentOrMetaOpen("draft.md")<CR>
 nnoremap <silent> <leader>el :call AdjacentOrMetaOpen("log.md")<CR>
 
 " =============================================================================
@@ -2223,12 +2224,6 @@ function! SplitGitCherryPick() abort
   call MySplitGitMode('Gedit ' . content[0])
 endfunction
 
-function! MyCommitMessageEndHook() abort
-  if &filetype ==# 'gitcommit'
-    silent GitGutterAll
-  endif
-endfunction
-
 function! MyGitUnstageCurrentFile() abort
   silent execute '!git reset HEAD '.expand('%')
   GitGutter
@@ -2240,11 +2235,15 @@ function! MySetTextWidth() abort
   endif
 endfunction
 
+function! MyRepositoryChanged() abort
+  silent GitGutterAll
+endfunction
+
 augroup GitCommitAutocmds
   autocmd!
   autocmd! FileType gitcommit call MyGitCommitHook()
   autocmd! InsertEnter * call MySetTextWidth()
-  autocmd! BufDelete,BufWipeout * call MyCommitMessageEndHook()
+  autocmd! User FugitiveChanged call MyRepositoryChanged()
 augroup END
 
 function! MyGitResetBufferToLastCommitChanges()
