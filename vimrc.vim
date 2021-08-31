@@ -2205,6 +2205,14 @@ function! MyGitCheckoutHeadDiffHunk() abort
   normal! :edit<CR>
 endfunction
 
+function EndCommitMessageEdit()
+  if len(getbufinfo({'buflisted':1})) == 1
+    wq!
+  else
+    w | bd
+  endif
+endfunction
+
 function! MyGitCommitHook() abort
   setlocal spell
 
@@ -2213,9 +2221,11 @@ function! MyGitCommitHook() abort
 
   " Quick save commit message and return
   nnoremap <buffer> <C-g><CR> :w \| bd<CR>
-  nnoremap <buffer> <M-PageUp> :w \| bd<CR>
   imap <buffer> <C-g><CR> <C-c><C-g><CR>
-  imap <buffer> <M-PageUp> <C-c><C-g><CR>
+
+  " In Neovim, M-PageUp=C-CR
+  nnoremap <buffer> <M-PageUp> :call EndCommitMessageEdit()<CR>
+  imap <buffer> <M-PageUp> <C-c>:call EndCommitMessageEdit()<CR>
   startinsert
 endfunction
 
