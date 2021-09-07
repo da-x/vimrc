@@ -667,6 +667,19 @@ nmap <leader>1 :call RexSignal(1)<CR>
 nmap <leader>2 :call RexSignal(2)<CR>
 nmap <leader>3 :call RexSignal(3)<CR>
 
+function! WriteSourceReadyFile() abort
+  w
+  let l:gitdir = MyGitRoot()
+  if l:gitdir != ""
+    let l:source_ready_signal = l:gitdir . "/.source-ready"
+    call writefile([], l:source_ready_signal)
+  endif
+endfunction
+
+" In Neovim, M-PageUp=C-CR
+imap <M-PageUp> <C-c>:call WriteSourceReadyFile()<cr><right>i
+nmap <leader><cr> :call WriteSourceReadyFile()<CR>
+
 " =============================================================================
 " NEDTRee
 
