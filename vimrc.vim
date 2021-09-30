@@ -678,7 +678,7 @@ endfunction
 
 " In Neovim, M-PageUp=C-CR
 imap <M-PageUp> <C-c>:call WriteSourceReadyFile()<cr><right>i
-nmap <leader><cr> :call WriteSourceReadyFile()<CR>
+nmap <leader><M-PageUp> :call WriteSourceReadyFile()<CR>
 
 " =============================================================================
 " NEDTRee
@@ -2371,7 +2371,7 @@ nnoremap <C-g>r     :call MyGitUnstageCurrentFile()<CR>
 
 nnoremap <C-g>k     :call MyGitAntiCommitAndUnstage()<CR>
 nnoremap <C-g>AA    :call MyGitAddAllAmend()<CR>
-nnoremap <C-g>PP    :Gpush<CR>
+nnoremap <C-g>PP    :Git push<CR>
 nnoremap <C-g>1r    :call MyGitResetBufferToLastCommitChanges()<CR>
 
 nmap     <C-g>b         <Plug>(conflict-marker-next-hunk)
