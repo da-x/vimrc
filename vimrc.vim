@@ -2115,7 +2115,7 @@ endfunction
 
 command! SplitGitHEAD call MyGitShowHead()
 
-
+let g:fzf_preview_window = ['down:50%:hidden', 'ctrl-/']
 let s:my_fzf_git_diff_hunk_program = expand('<sfile>:p:h')."/bin/fzf-git-diff-hunk-preview"
 
 function! MyFZFDiffHunks(cmd,...) abort
