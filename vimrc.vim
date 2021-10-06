@@ -655,12 +655,8 @@ command! TrimWhiteSpace call TrimWhiteSpace()
 " =============================================================================
 
 function! RexSignal(chan) abort
-  let l:helper = "$HOME/.vim_runtime/bin/rex"
-  let l:cmd = l:helper . ' signal' . string(a:chan)
-  if exists(l:helper)
-    execute ":wa"
-    silent call system(l:helper . ' signal ' . string(a:chan), "")
-  endif
+  execute ":wa"
+  silent call system('rex signal ' . string(a:chan))
 endfunction
 
 nmap <leader>1 :call RexSignal(1)<CR>
