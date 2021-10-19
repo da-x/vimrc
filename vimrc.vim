@@ -2578,6 +2578,7 @@ map  <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>ac  :CocAction<CR>
 imap <C-e>  <C-c>:CocAction<CR>
+call coc#config('suggest.fixInsertedWord', 'false')
 
 " =============================================================================
 " Config for vim-highlightedyank
