@@ -105,6 +105,8 @@ Plug 'godlygeek/tabular'
 Plug 'vivien/vim-linux-coding-style'
 Plug 'cespare/vim-toml'
 Plug 'bronson/vim-trailing-whitespace'
+Plug 'dpelle/vim-LanguageTool'
+Plug 'pangloss/vim-javascript'
 
 " Markdown management
 Plug 'da-x/vim-markdown'
@@ -2617,6 +2619,10 @@ nnoremap <silent> <leader>t :e<CR>
 
 " Force-reload current file (losing changes!)
 nnoremap <silent> <leader>!t :e!<CR>
+
+" =============================================================================
+
+autocmd FileType javascript setlocal shiftwidth=2 expandtab
 
 " =============================================================================
 " File is not checked-in on purpose, it is for experimental per-environment overrides.
