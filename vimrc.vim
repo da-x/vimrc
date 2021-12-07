@@ -359,7 +359,8 @@ set wildmenu
 " Tabs and indentation
 set autoindent
 set cindent
-set cinoptions=:0,l1,t0,g0,(0
+" This originally messed up things in various modes, when { was under a (.
+" set cinoptions=:0,l1,t0,g0,(0
 set smartcase
 set shiftwidth=4
 set smarttab
