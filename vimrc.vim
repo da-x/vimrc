@@ -46,6 +46,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-eunuch'
 Plug 'Raimondi/delimitMate'
 Plug 'FooSoft/vim-argwrap'
 Plug 'kana/vim-textobj-user'
@@ -1701,12 +1702,12 @@ colorscheme peaksea-mod
 " https://vi.stackexchange.com/questions/2875/vim-slows-down-over-time-with-syntax-on
 "
 " The difference is huge with the following:
-set regexpengine=1
+" set regexpengine=1
 " I'm guessing that it depends on the type of file you're editing.
 
 " This may also be helpful, but more experimentation is needed:
 
-" syntax sync minlines=50
+syntax sync minlines=300
 
 " =============================================================================
 " Markdown
@@ -2577,9 +2578,9 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 nmap <leader>qf  <Plug>(coc-fix-current)
-map  <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>ac  :CocAction<CR>
+nmap <leader>a  <Plug>(coc-codeaction-cursor)
+map  <leader>A  <Plug>(coc-codeaction-selected)
+nmap <leader>A  <Plug>(coc-codeaction-selected)
 imap <C-e>  <C-c>:CocAction<CR>
 call coc#config('suggest.fixInsertedWord', 'false')
 

@@ -115,6 +115,11 @@ impl Iterator for $1 {
 }
 endsnippet
 
+snippet mt_ame
+async fn $1(&mut self) -> Result<(), Error> {
+    Ok(())
+}
+endsnippet
 
 snippet idebug
 impl std::fmt::Debug for $1 {
@@ -200,8 +205,20 @@ mod tests {
 }
 endsnippet
 
+snippet build_hashmap
+let $1 = {
+    let mut h = HashMap::new();
+
+    h
+};
+endsnippet
+
 snippet unsimport
 #![allow(unused_imports)]
+endsnippet
+
+snippet unscrates
+ #![warn(unused_extern_crates)]
 endsnippet
 
 snippet unused
