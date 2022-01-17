@@ -63,6 +63,9 @@ endif
 " Snipppets
 Plug 'SirVer/ultisnips'
 
+" Go
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
 " Git
 Plug 'da-x/vim-gitgutter' , { 'branch': 'allow-clobber' }
 Plug 'da-x/gv.vim'
@@ -2038,6 +2041,16 @@ augroup PythonEditSettings
   autocmd Filetype python setlocal smarttab
   autocmd Filetype python setlocal softtabstop=4
   autocmd Filetype python setlocal tabstop=8
+augroup END
+
+augroup GoLangEditSettings
+  autocmd!
+  autocmd Filetype go setlocal autoindent
+  autocmd Filetype go setlocal shiftround
+  autocmd Filetype go setlocal shiftwidth=4
+  autocmd Filetype go setlocal smarttab
+  autocmd Filetype go setlocal softtabstop=4
+  autocmd Filetype go setlocal tabstop=4
 augroup END
 
 " =============================================================================
