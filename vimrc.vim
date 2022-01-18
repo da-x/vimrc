@@ -2043,6 +2043,7 @@ augroup PythonEditSettings
   autocmd Filetype python setlocal tabstop=8
 augroup END
 
+let g:go_mod_fmt_autosave = 0
 augroup GoLangEditSettings
   autocmd!
   autocmd Filetype go setlocal autoindent
