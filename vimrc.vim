@@ -659,6 +659,11 @@ endfunction
 
 command! TrimWhiteSpace call TrimWhiteSpace()
 
+" Default behavior of these (increment/decrement number at cursoer) when these
+" are prefixes to other commands is unwanted.
+nmap <C-a> <Nop>
+nmap <C-x> <Nop>
+
 " =============================================================================
 
 function! RexSignal(chan) abort
@@ -2043,7 +2048,17 @@ augroup PythonEditSettings
   autocmd Filetype python setlocal tabstop=8
 augroup END
 
+" GoLang
+" ==============================================================================
+
 let g:go_mod_fmt_autosave = 0
+let g:go_highlight_structs = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_function_calls = 1
+
 augroup GoLangEditSettings
   autocmd!
   autocmd Filetype go setlocal autoindent
