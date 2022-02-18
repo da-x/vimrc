@@ -29,6 +29,7 @@ else
 endif
 
 Plug 'airblade/vim-rooter'
+Plug 'jamessan/vim-gnupg'
 
 " Navigation and other state manipulation
 Plug 'ctrlpvim/ctrlp.vim'
@@ -1171,7 +1172,7 @@ let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
 let g:ale_linters.rust = []
-let g:ale_linters.python = ['pyflakes']
+let g:ale_linters.python = ['pyflakes', 'flake8']
 
 " =============================================================================
 " lightline with ALE integration

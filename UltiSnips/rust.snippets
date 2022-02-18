@@ -35,10 +35,21 @@ fn main() -> std::io::Result<()> {
 }
 endsnippet
 
+snippet oktyped
+Ok::<_, Error>(())
+endsnippet
+
 snippet ifls
 if let Some($1) = $2 {
     $0
 }
+endsnippet
+
+snippet trycatchclosuer
+let _res = (|| {
+    $0
+    Ok::<_, Error>(())
+})();
 endsnippet
 
 snippet msome
@@ -446,6 +457,31 @@ pub enum Expr {
 impl Expr {
     pub fn parse(expr: &str) -> Result<Self, lalrpop_util::ParseError<usize, crate::parse::Token, &str>> {
         super::parse::exprParser::new().parse(expr)
+    }
+}
+endsnippet
+
+snippet recursive_closure
+struct Closure<'a> {
+    func: &'a dyn Fn(&Closure),
+}
+
+let recursive = Closure {
+    func: &|closure| {
+        (closure.func)()
+    },
+};
+(recursive.func)(&recursive);
+snippet
+
+snippet addcontext
+trait AddContext {
+    fn context(self, desc: &str) -> Self;
+}
+
+impl<T> AddContext for Result<T, Error> {
+    fn context(self, desc: &str) -> Self {
+        self.map_err(|e| Error::Context(desc.into(), Box::new(e)))
     }
 }
 endsnippet
