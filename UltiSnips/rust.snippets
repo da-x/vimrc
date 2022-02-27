@@ -24,6 +24,11 @@ impl Default for $1 {
 }
 endsnippet
 
+snippet jsclosure
+let $1 = Closure::wrap(Box::new(move || {
+    $2
+}) as Box<dyn FnMut()>);
+endsnippet
 
 snippet script
 #!/usr/bin/env -S cargo eval --
@@ -45,7 +50,23 @@ if let Some($1) = $2 {
 }
 endsnippet
 
-snippet trycatchclosuer
+snippet lsorok
+let $1 = if let Some($1) = $2 {
+    $1
+} else {
+    return Ok(());
+};
+endsnippet
+
+snippet lsorcontinue
+let $1 = if let Some($1) = $2 {
+    $1
+} else {
+    continue;
+};
+endsnippet
+
+snippet trycatchclosure
 let _res = (|| {
     $0
     Ok::<_, Error>(())
@@ -297,6 +318,7 @@ use thiserror::Error;
 pub enum Error {
     #[error("Io error; {0}")]
     IoError(#[from] std::io::Error),
+
     #[error("Command error: {0}")]
     Command(String),
 }
@@ -307,6 +329,18 @@ endsnippet
 snippet adderror
 #[error("$1 error; {0}")]
 $1Error(#[from] $2::Error),
+endsnippet
+
+snippet adderrcontext
+trait AddContext {
+    fn context(self, desc: &str) -> Self;
+}
+
+impl<T> AddContext for Result<T, Error> {
+    fn context(self, desc: &str) -> Self {
+        self.map_err(|e| Error::Context(desc.into(), Box::new(e)))
+    }
+}
 endsnippet
 
 snippet thiserror_main
@@ -468,22 +502,10 @@ struct Closure<'a> {
 
 let recursive = Closure {
     func: &|closure| {
-        (closure.func)()
+        (closure.func)(closure)
     },
 };
 (recursive.func)(&recursive);
-snippet
-
-snippet addcontext
-trait AddContext {
-    fn context(self, desc: &str) -> Self;
-}
-
-impl<T> AddContext for Result<T, Error> {
-    fn context(self, desc: &str) -> Self {
-        self.map_err(|e| Error::Context(desc.into(), Box::new(e)))
-    }
-}
 endsnippet
 
 snippet sep
