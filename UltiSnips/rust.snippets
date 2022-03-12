@@ -257,6 +257,10 @@ snippet unused
 #[allow(unused)] // TODO
 endsnippet
 
+snippet unreachable
+#[allow(unreachable_code)]
+endsnippet
+
 snippet unimpl "" m
 $0
 
@@ -327,18 +331,24 @@ pub enum Error {
 endsnippet
 
 snippet adderror
-#[error("$1 error; {0}")]
-$1Error(#[from] $2::Error),
+#[error("$1 error: {0}")]
+$1(#[from] $2::Error),
 endsnippet
 
 snippet adderrcontext
-trait AddContext {
-    fn context(self, desc: &str) -> Self;
+pub trait AddContext<T> {
+    fn context(self, desc: &str) -> Result<T, Error>;
 }
 
-impl<T> AddContext for Result<T, Error> {
-    fn context(self, desc: &str) -> Self {
+impl<T> AddContext<T> for Result<T, Error> {
+    fn context(self, desc: &str) -> Result<T, Error> {
         self.map_err(|e| Error::Context(desc.into(), Box::new(e)))
+    }
+}
+
+impl<T> AddContext<T> for Option<T> {
+    fn context(self, desc: &str) -> Result<T, Error> {
+        self.ok_or_else(|| Error::FreeText(desc.into()))
     }
 }
 endsnippet
