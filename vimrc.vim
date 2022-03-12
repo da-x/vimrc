@@ -112,6 +112,7 @@ Plug 'cespare/vim-toml'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'dpelle/vim-LanguageTool'
 Plug 'pangloss/vim-javascript'
+Plug 'hashivim/vim-terraform'
 
 " Markdown management
 Plug 'da-x/vim-markdown'
