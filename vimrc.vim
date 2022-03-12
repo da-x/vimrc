@@ -2615,6 +2615,12 @@ nmap <leader>A  <Plug>(coc-codeaction-selected)
 imap <C-e>  <C-c>:CocAction<CR>
 call coc#config('suggest.fixInsertedWord', 'false')
 
+let g:use_nightly_rust_analyzer = get(g:, 'use_nightly_rust_analyzer', '')
+if g:use_nightly_rust_analyzer !=# ''
+  call coc#config('rust-analyzer.server.path',
+        \'~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer')
+endif
+
 " =============================================================================
 " Config for vim-highlightedyank
 
