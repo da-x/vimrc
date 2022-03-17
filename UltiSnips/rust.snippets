@@ -340,9 +340,11 @@ pub trait AddContext<T> {
     fn context(self, desc: &str) -> Result<T, Error>;
 }
 
-impl<T> AddContext<T> for Result<T, Error> {
+impl<T, E> AddContext<T> for Result<T, E>
+    where E: Into<Error>
+{
     fn context(self, desc: &str) -> Result<T, Error> {
-        self.map_err(|e| Error::Context(desc.into(), Box::new(e)))
+        self.map_err(|e| Error::Context(desc.into(), Box::new(e.into())))
     }
 }
 
