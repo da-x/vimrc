@@ -336,6 +336,14 @@ $1(#[from] $2::Error),
 endsnippet
 
 snippet adderrcontext
+/*
+    #[error("Under {1}: {0}")]
+    Context(String, Box<Error>),
+
+    #[error("{0}")]
+    FreeText(String),
+*/
+
 pub trait AddContext<T> {
     fn context(self, desc: &str) -> Result<T, Error>;
 }
@@ -351,6 +359,20 @@ impl<T, E> AddContext<T> for Result<T, E>
 impl<T> AddContext<T> for Option<T> {
     fn context(self, desc: &str) -> Result<T, Error> {
         self.ok_or_else(|| Error::FreeText(desc.into()))
+    }
+}
+endsnippet
+
+snippet adderrbox
+/*
+    #[error("{0}")]
+    Boxed(Box<dyn std::error::Error>),
+
+*/
+
+impl Error {
+    pub fn boxed(e: impl std::error::Error + 'static) -> Self {
+        Error::Boxed(Box::new(e))
     }
 }
 endsnippet
@@ -380,51 +402,30 @@ snippet wraperr
 endsnippet
 
 snippet bigstructopt
-extern crate structopt;
-#[macro_use]
-extern crate structopt_derive;
-
+// structopt = "0.3"
 use structopt::StructOpt;
-use structopt::clap::AppSettings;
 
 #[derive(Debug, StructOpt)]
 pub struct Server {
-    #[structopt(name = "server_addr", short="s")]
-    pub server_addr: Option<String>,
-
-    #[structopt(name = "server_port", short="p", default_value="3232")]
-    pub server_port: u16,
+    pub server-addr: Option<String>,
 }
-
-#[derive(Debug, StructOpt)]
-pub struct Client {
-    #[structopt(name = "server_addr")]
-    pub server_addr: String,
-
-    #[structopt(name = "server_port", short="p", default_value="3232")]
-    pub server_port: u16,
-}
-
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
-    #[structopt(name = "server")]
     Server(Server),
-
-    #[structopt(name = "client")]
-    Client(Client),
 }
 
 #[derive(StructOpt, Debug)]
-#[structopt(raw(global_settings = "&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]"))]
 pub struct Opt {
     #[structopt(subcommand)]
     command: Command,
 }
 
-fn main() -> Result<(), ()> {
+fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
-    // Write me
+    match opt.command {
+        // $1
+    }
 }
 endsnippet
 
@@ -518,6 +519,12 @@ let recursive = Closure {
     },
 };
 (recursive.func)(&recursive);
+endsnippet
+
+snippet invert_option_result
+fn invert<T, E>(x: Option<Result<T, E>>) -> Result<Option<T>, E> {
+    x.map_or(Ok(None), |v| v.map(Some))
+}
 endsnippet
 
 snippet sep

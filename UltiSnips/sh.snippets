@@ -14,6 +14,12 @@ set +o posix
 ${0}
 endsnippet
 
+snippet heredoc
+cat > filename << EOF
+${0}
+EOF
+endsnippet
+
 snippet trace
 _trace_to_file() {
     export PS4='\$(date "+%Y.%m.%d-%H:%M:%S.%N") \${BASH_SOURCE}:\${FUNCNAME[0]:+\${FUNCNAME[0]}():}\${LINENO}: '
@@ -79,4 +85,10 @@ endsnippet
 
 snippet stderr
 >&2 echo "error"
+endsnippet
+
+snippet tempdir
+local tmp_dir=$(mktemp -d -t prefix-XXXXXXXXXX)
+# Stuff
+rm -rf ${tmp_dir}
 endsnippet
