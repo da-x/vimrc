@@ -527,6 +527,20 @@ fn invert<T, E>(x: Option<Result<T, E>>) -> Result<Option<T>, E> {
 }
 endsnippet
 
+snippet optionclosure
+let _ = || -> Option<_> {
+    $1
+    None::<()>
+}();
+endsnippet
+
+snippet resultclosure
+let _ = || -> Result<_, _> {
+    $1
+    Ok::<(), Error>(())
+}();
+endsnippet
+
 snippet sep
 
 ///////////////////////////////////////////////////////////////////////////////

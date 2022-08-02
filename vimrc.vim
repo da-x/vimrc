@@ -1047,7 +1047,6 @@ let g:UltiSnipsJumpForwardTrigger = '<c-e>'
 let g:UltiSnipsJumpBackwardTrigger = '<c-f>'
 
 let g:UltiSnipsRemoveSelectModeMappings = 0
-inoremap <silent> <c-u> <c-r>=cm#sources#ultisnips#trigger_or_popup("\<Plug>(ultisnips_expand)")<cr>
 
 function! MyEditUltiSnips()
   let l:filename = '~/.vim_runtime/UltiSnips/'.&filetype.'.snippets'
@@ -2613,6 +2612,12 @@ nmap <leader>a  <Plug>(coc-codeaction-cursor)
 map  <leader>A  <Plug>(coc-codeaction-selected)
 nmap <leader>A  <Plug>(coc-codeaction-selected)
 imap <C-e>  <C-c>:CocAction<CR>
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
 call coc#config('suggest.fixInsertedWord', 'false')
 
 let g:use_nightly_rust_analyzer = get(g:, 'use_nightly_rust_analyzer', '')
