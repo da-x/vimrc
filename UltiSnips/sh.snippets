@@ -98,3 +98,7 @@ local tmp_dir=$(mktemp -d -t prefix-XXXXXXXXXX)
 # Stuff
 rm -rf ${tmp_dir}
 endsnippet
+
+snippet oldarrayeval
+\${${1}[@]+"${${1}[@]}"}
+endsnippet

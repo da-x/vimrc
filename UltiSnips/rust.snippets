@@ -541,6 +541,10 @@ let _ = || -> Result<_, _> {
 }();
 endsnippet
 
+snippet opt_osstr_to_string
+.map(OsStr::to_string_lossy).map(String::from)
+endsnippet
+
 snippet sep
 
 ///////////////////////////////////////////////////////////////////////////////

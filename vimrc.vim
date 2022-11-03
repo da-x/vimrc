@@ -115,9 +115,10 @@ Plug 'pangloss/vim-javascript'
 Plug 'hashivim/vim-terraform'
 
 " Markdown management
-Plug 'da-x/vim-markdown'
+" Plug 'da-x/vim-markdown'
+Plug 'da-x/vim-markdown', { 'dir': '~/gh/vim-markdown' }
 
-"
+
 " Allow to override the directory from the command line, sourcing a
 " developemnt tree of rust.vim.
 "
@@ -1266,6 +1267,7 @@ function! SetPerBufferMappings() abort
   if &filetype ==# 'nerdtree'
     map <buffer> <tab>o <nop>
   endif
+  call SetCocMappingPerBuffer()
 endfunction
 
 augroup PerBufferActions
@@ -1727,6 +1729,7 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_spell_title = 0
 
 " This 'Compose' mode enables automatic reparagraphing, that is also properly
 " sensitive to bullet lists. However it needs to be enabled explicitly
@@ -1827,13 +1830,17 @@ function! MyFixupMarkdownLink(text)
   if l:matchurl != []
     let l:text = l:matchurl[1]
   endif
-  return expand(l:text)
+  return knot#ConvertIdLink(expand(l:text))
 endfunction
 
 function! MyMarkdownSettings()
   setlocal spell
   let b:Markdown_LinkFilter = function('MyFixupMarkdownLink')
-  noremap <buffer> <A-e>d  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+
+  inoremap <buffer> <A-e><Down>  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  inoremap <buffer> <A-e>d      Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  inoremap <buffer> <A-e><CR>  <C-R>=MyVimEditInsertTimestamp()<CR>
+
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
   imap <buffer> <A-e>d  <C-c><A-e>d
@@ -1933,19 +1940,10 @@ function! MyVimEditInsertDateLine() abort
   return strftime("# At %Y-%m-%d %H:%M:%S\n")
 endfunction
 
-function! MyVimEditInsertDateLineWithTags() abort
-  call append(line('$'), [
-      \ "",
-      \ "",
-      \ substitute(MyVimEditInsertDateLine(), '\n', '', ''),
-      \ "",
-      \ "Tags: "
-      \ ])
-  call setpos('.', [0, line("#") + 4])
-  exec "normal! G\<End>"
-  startinsert
-  exec "normal! \<Right>"
+function! MyVimEditInsertTimestamp() abort
+  return "__".strftime("%Y-%m-%d %H:%M:%S")."__: "
 endfunction
+
 
 function! MySnippetsSettings() abort
   setlocal shiftwidth=4 expandtab
@@ -2387,6 +2385,7 @@ nnoremap <C-g>l     :Commits<CR>
 nnoremap <C-g><C-o> :SplitGitHEAD<CR>
 nnoremap <C-g>o     :SplitGitHEAD<CR>
 nnoremap <C-g>L     :BCommits<CR>
+inoremap <C-g>L     :BCommits<CR>
 nnoremap <C-g>i     :call MyFZFChooseRebaseInteractive()<CR>
 nnoremap <C-g><cr>  :Magit<CR>
 nnoremap <C-g><C-CR>  :Magit<CR>
@@ -2613,10 +2612,17 @@ map  <leader>A  <Plug>(coc-codeaction-selected)
 nmap <leader>A  <Plug>(coc-codeaction-selected)
 imap <C-e>  <C-c>:CocAction<CR>
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+function! SetCocMappingPerBuffer() abort
+  " Make <CR> to accept selected completion item or notify coc.nvim to format
+  " <C-g>u breaks current undo, please make your own choice.
+  if &filetype ==# 'markdown'
+    inoremap <buffer><silent><expr> <M-PageUp> coc#pum#visible() ? coc#pum#confirm()
+                                    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  else
+    inoremap <buffer><silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  endif
+endfunction
 
 call coc#config('suggest.fixInsertedWord', 'false')
 

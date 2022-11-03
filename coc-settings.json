@@ -1,4 +1,2 @@
 {
-    "rust-analyzer.diagnostics.disabled" : ["unresolved-proc-macro", "unresolved-macro-call", "macro-error", "inactive-code","incorrect-ident-case", "unresolved-import"],
-    "rust-analyzer.procMacro.enable" : true
 }
