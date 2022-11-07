@@ -1222,6 +1222,21 @@ let g:lightline = {
       \ 'subseparator': { 'left': ' ', 'right': ' ' }
       \ }
 
+function! MyLightlineRelativePath()
+  if !get(b:, 'knotIdResolved', v:false)
+    let b:knotId = knot#currentFullID()
+    let b:knotIdResolved = v:true
+  endif
+  if b:knotId == v:null
+    return expand("%F")
+  endif
+  return "Knot: ".b:knotId
+endfunction
+
+let g:lightline.component = {
+      \ 'relativepath': '%{MyLightlineRelativePath()}',
+    \ }
+
 function! LightlineLinterWarnings() abort
   let l:counts = ale#statusline#Count(bufnr(''))
   let l:nr = l:counts.warning + l:counts.info
@@ -1849,10 +1864,6 @@ function! MyMarkdownSettings()
   setlocal spell
   let b:Markdown_LinkFilter = function('MyFixupMarkdownLink')
 
-  inoremap <buffer> <A-e><Down>  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  inoremap <buffer> <A-e>d      Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
-  inoremap <buffer> <A-e><CR>  <C-R>=MyVimEditInsertTimestamp()<CR>
-
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
   imap <buffer> <A-e>d  <C-c><A-e>d
@@ -1863,10 +1874,16 @@ function! MyMarkdownSettings()
 
   noremap <buffer> <silent> <A-e><Right> :call MyMarkdownInsertSubBullet()<CR>
   noremap <buffer> <silent> <leader><Right> :call MyMarkdownInsertSubBullet()<CR>
-  map <buffer> <CR> <Plug>Markdown_OpenAnyUnderCursor()
+  map <buffer> <silent> <CR> <Plug>Markdown_OpenAnyUnderCursor()
   noremap <buffer> <C-del> :call MyMarkdownToggleComposeMode()<CR>
   inoremap <buffer> <C-del> <C-c>:call MyMarkdownToggleComposeMode()<CR>
   vnoremap <buffer> <silent> <leader>` :call MyMarkdownCodeBlockSelection()<CR>
+
+  inoremap <buffer> <A-e><Down>  Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  inoremap <buffer> <A-e><CR>  <C-c>i<C-R>=MyVimEditTimestamp()<CR>
+  inoremap <buffer> <A-e>d      Go<CR><CR><C-R>=MyVimEditInsertDateLine()<CR><CR>
+  noremap <buffer> <A-e>d  Go<C-R>=MyVimEditInsertDateLine()<CR><CR>
+  noremap <buffer> <A-e><CR>  Go<C-R>=MyVimEditTimestamp()<CR>
 
   call MyMarkdownToggleComposeModeDisable()
   Indent4Spaces
@@ -1939,8 +1956,8 @@ endfunction
 
 function! MyVimEditSettings() abort
   setlocal shiftwidth=2 expandtab
-  nnoremap <buffer> <C-e> :call VimEvalLine()<CR>
-  vnoremap <buffer> <C-e> :call VimEvalSelected()<CR>
+  nnoremap <buffer> <leader><C-e> :call VimEvalLine()<CR>
+  vnoremap <buffer> <leader><C-e> :call VimEvalSelected()<CR>
 endfunction
 
 augroup VimEditSettings
@@ -1952,10 +1969,19 @@ function! MyVimEditInsertDateLine() abort
   return strftime("# At %Y-%m-%d %H:%M:%S\n")
 endfunction
 
-function! MyVimEditInsertTimestamp() abort
+function! MyVimEditTimestamp() abort
   return "__".strftime("%Y-%m-%d %H:%M:%S")."__: "
 endfunction
 
+function! MarkdownInsertTimestamp() abort
+  if getline('$') == ""
+    normal! G
+  else
+    normal! Go
+  endif
+  call setline(line('.'), MyVimEditTimestamp())
+  normal! G$a
+endfunction
 
 function! MySnippetsSettings() abort
   setlocal shiftwidth=4 expandtab
