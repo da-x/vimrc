@@ -968,6 +968,18 @@ nnoremap <leader>sp [s
 nnoremap <leader>sa zg
 nnoremap <leader>s? z=
 
+" From: https://www.codementor.io/@coreyja/coreyja-vim-spelling-suggestions-with-fzf-p6ce3zb9a
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
+endfunction
+
+nnoremap z= :call FzfSpell()<CR>
+
 " =============================================================================
 " DiffView
 "
