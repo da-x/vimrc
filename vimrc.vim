@@ -113,6 +113,8 @@ Plug 'bronson/vim-trailing-whitespace'
 Plug 'dpelle/vim-LanguageTool'
 Plug 'pangloss/vim-javascript'
 Plug 'hashivim/vim-terraform'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 
 " Markdown management
 " Plug 'da-x/vim-markdown'
@@ -1185,6 +1187,8 @@ let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
 let g:ale_linters.rust = []
+let g:ale_linters.typescript = []
+let g:ale_linters.typescriptreact = []
 let g:ale_linters.python = ['pyflakes', 'flake8']
 
 " =============================================================================
