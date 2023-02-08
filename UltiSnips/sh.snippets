@@ -39,6 +39,19 @@ snippet trace-pretty-stdout
 PS4='\033[38;5;237m$(date "+%Y.%m.%d-%H:%M:%S.%N" | cut -c-23) \033[38;5;243m${BASH_SOURCE}\033[38;5;237m:${FUNCNAME[0]:+${FUNCNAME[0]}():}\033[38;5;243m${LINENO}\033[38;5;237m: \033[00m'
 endsnippet
 
+snippet simple-argparse
+local _output_path=""
+
+while [[ $# != 0 ]] ; do
+    if [[ "$1" == "--output-path" ]] ; then
+        _output_path="$1"
+        shift
+        continue
+    fi
+    break # Continue to positional arguments
+done
+endsnippet
+
 snippet argparse
 main-params-parse() {
     local _verbose=0
