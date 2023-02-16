@@ -41,14 +41,16 @@ endsnippet
 
 snippet simple-argparse
 local _output_path=""
+local _positional=""
 
 while [[ $# != 0 ]] ; do
-    if [[ "$1" == "--output-path" ]] ; then
-        _output_path="$1"
+    if [[ "\$1" == "--output-path" ]] ; then
+        _output_path="\$1"
         shift
         continue
     fi
-    break # Continue to positional arguments
+    positional+=($1)
+    shift
 done
 endsnippet
 
@@ -114,4 +116,62 @@ endsnippet
 
 snippet oldarrayeval
 \${${1}[@]+"${${1}[@]}"}
+endsnippet
+
+snippet runscript
+#!/bin/bash
+
+set -eu
+set -o pipefail
+set +o posix
+
+scriptdir=\$(realpath \$(dirname \${BASH_SOURCE}))
+
+command() {
+    local _output_path=""
+    local positional=()
+
+    while [[ $# != 0 ]] ; do
+        if [[ "\$1" == "--output-path" ]] ; then
+            _output_path="\$1"
+            shift
+            continue
+        fi
+	positional+=($1)
+	shift
+    done
+
+    set -- "${positional[@]}"
+}
+
+help() {
+    cat << EOF
+
+Example:
+
+    ${BASH_SOURCE} command
+EOF
+}
+
+if [[ "$@" == "" ]] ; then
+    help
+else
+    "$@"
+fi
+endsnippet
+
+snippet clean-background-on-termination
+function leave() {
+    kill $(jobs -p)
+    wait $(jobs -p) 2>/dev/null || true
+}
+trap leave EXIT
+endsnippet
+
+snippet runparameterized
+#!/bin/bash
+
+# export KEY=VAL
+
+exec $(realpath $(dirname ${BASH_SOURCE}))/run "\$@"
 endsnippet
