@@ -39,6 +39,13 @@ snippet trace-pretty-stdout
 PS4='\033[38;5;237m$(date "+%Y.%m.%d-%H:%M:%S.%N" | cut -c-23) \033[38;5;243m${BASH_SOURCE}\033[38;5;237m:${FUNCNAME[0]:+${FUNCNAME[0]}():}\033[38;5;243m${LINENO}\033[38;5;237m: \033[00m'
 endsnippet
 
+snippet arrayiter
+local key
+for key in "${!array[@]}"; do
+    local value=${array[${key}]}
+done
+endsnippet
+
 snippet simple-argparse
 local _output_path=""
 local _positional=""
@@ -174,4 +181,31 @@ snippet runparameterized
 # export KEY=VAL
 
 exec $(realpath $(dirname ${BASH_SOURCE}))/run "\$@"
+endsnippet
+
+
+snippet detached
+run-detached() {
+    tmp_dir_to_delete="\$1"
+    shift
+
+    function leave() {
+        case ${tmp_dir_to_delete} in
+            /tmp/*)
+                rm -rf ${tmp_dir_to_delete}
+                ;;
+        esac
+    }
+    trap leave EXIT
+
+    "$@"
+}
+
+detached() {
+    # Copy the script aside and run it from tmp
+
+    local tmp_dir=$(mktemp -d -t syslab-XXXXXXXXXX)
+    cp ${BASH_SOURCE} ${tmp_dir}/syslab
+    exec ${tmp_dir}/syslab run-detached ${tmp_dir} "$@"
+}
 endsnippet
