@@ -545,6 +545,12 @@ snippet opt_osstr_to_string
 .map(OsStr::to_string_lossy).map(String::from)
 endsnippet
 
+snippet write_to_string
+let mut bufw = BufWriter::new(Vec::new());
+///
+let output = String::from_utf8_lossy(&bufw.into_inner()?).as_ref().to_owned());
+endsnippet
+
 snippet sep
 
 ///////////////////////////////////////////////////////////////////////////////
