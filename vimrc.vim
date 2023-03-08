@@ -1997,6 +1997,68 @@ augroup SnippetsSettings
 augroup END
 
 " =============================================================================
+" ModifyByAI
+
+function ModifyByAI() range
+  let tmpfile = tempname()
+  let lines = getbufline('%', line("'<"), line("'>"))
+  call writefile(lines, tmpfile)
+
+  let cmd = 'botai edit -m ' . tmpfile
+  let pbuf = bufnr('')
+  let botai = {
+      \ 'tmpfile': tmpfile,
+      \ 'buf': bufnr(''),
+      \ 'pbuf': pbuf,
+      \ 'start': line("'<"),
+      \ 'end': line("'>"),
+      \ }
+
+  function! botai.switch_back(inplace)
+    if a:inplace && bufnr('') == self.buf
+      if bufexists(self.pbuf)
+        execute 'keepalt keepjumps b' self.pbuf
+      endif
+      " No other listed buffer
+      if bufnr('') == self.buf
+        enew
+      endif
+    endif
+  endfunction
+
+  function! botai.on_exit(id, code, ...)
+    " if a:code == 0
+    "   let modified = 0
+    "   for lnum in range(self.start, self.end)
+    "     let linecontent = getline(lnum)
+    "     let tempfilecontent = readfile(self.tmpfile, '', lnum - self.start)
+    "     if linecontent !=# tempfilecontent
+    "       call setline(lnum, tempfilecontent)
+    "       let modified = 1
+    "     endif
+    "   endfor
+    "   if modified
+    "     echo "Replaced selected lines with output from someprog."
+    "   else
+    "     echo "Someprog output identical to original lines, nothing was modified."
+    "   endif
+    " else
+    "   echo "Someprog exited with error: " . v:shell_error
+    " endif
+    call delete(self.tmpfile)
+    call self.switch_back(1)
+
+    if bufexists(self.buf)
+      execute 'bd!' self.buf
+    endif
+  endfunction
+
+  call termopen(cmd, botai)
+endfunction
+
+vnoremap <silent> <C-a> :call ModifyByAI()<CR>
+
+" =============================================================================
 " Rust
 
 function! EditNearestCargo() abort
