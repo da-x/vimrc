@@ -46,22 +46,25 @@ for key in "${!array[@]}"; do
 done
 endsnippet
 
-snippet simple-argparse
-local _output_path=""
-local _positional=""
+snippet argparse
+local dryrun=1
+local positional=()
 
 while [[ $# != 0 ]] ; do
-    if [[ "\$1" == "--output-path" ]] ; then
-        _output_path="\$1"
+    if [[ "\$1" == "--real" ]] ; then
+        dryrun=0
         shift
         continue
     fi
-    positional+=($1)
+    positional+=(\$1)
     shift
 done
+
+local orig="${positional[0]}"
+local new_base="${positional[1]}"
 endsnippet
 
-snippet argparse
+snippet argparse-elab
 main-params-parse() {
     local _verbose=0
     local _debug=0
