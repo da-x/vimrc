@@ -11,7 +11,11 @@ set -eu
 set -o pipefail
 set +o posix
 
-${0}
+main() {
+    echo args: "$@"
+}
+
+main "$@"
 endsnippet
 
 snippet heredoc
