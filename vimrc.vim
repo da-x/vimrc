@@ -1194,6 +1194,10 @@ let g:ale_linters.python = ['pyflakes', 'flake8']
 " =============================================================================
 " Knots
 
+function! KnotInsertJIRAIssueComment()
+    return "\n\n### JIRA comment, on <NEW>\n\n\n\n<!-- end-of-jira-comment -->"
+endfunction
+
 function! InKnotBuffer()
     if &filetype !=# 'markdown'
         return
@@ -1211,6 +1215,7 @@ function! InKnotBuffer()
     nmap <buffer>     <F3> :call knot#Pick()<CR>
 
     noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
+    noremap <buffer>  <C-n>j <C-c>Go<C-R>=KnotInsertJIRAIssueComment()<CR><Up><Up>
     noremap <buffer>  <C-n>p :call knot#insertOpenedTabURL()<CR>
 
     xnoremap <buffer> <C-n><Insert> :<c-u>
