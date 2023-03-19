@@ -1192,6 +1192,35 @@ let g:ale_linters.typescriptreact = []
 let g:ale_linters.python = ['pyflakes', 'flake8']
 
 " =============================================================================
+" Knots
+
+function! InKnotBuffer()
+    if &filetype !=# 'markdown'
+        return
+    endif
+
+    let b:Markdown_LinkFilter = function('knot#ConvertIdLink')
+    nmap <buffer> <C-n>m              :call knot#MoveCurrentInteractive()<CR>
+    nmap <buffer> <C-n><Delete>       :call knot#DeleteCurrent()<CR>
+    nmap <silent> <buffer> <C-PageUp> :call knot#pickUrl()<CR>
+
+    " Ctrl-Backspace
+    nmap <buffer>     <C-h> :call knot#goToBacklinks()<CR>
+    inoremap <buffer> <F4>  <C-c>i<C-R>=MyVimEditTimestamp()<CR>
+    noremap <buffer>  <F4>  G:call MarkdownInsertTimestamp()<CR>A
+    nmap <buffer>     <F3> :call knot#Pick()<CR>
+
+    noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
+    noremap <buffer>  <C-n>p :call knot#insertOpenedTabURL()<CR>
+
+    xnoremap <buffer> <C-n><Insert> :<c-u>
+       \call knot#CarveCurrentInteractive()
+       \<CR>
+endfunction
+
+command! InKnotBuffer call InKnotBuffer()
+
+" =============================================================================
 " lightline with ALE integration
 
 let g:lightline = {
