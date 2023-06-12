@@ -4,6 +4,10 @@ if [[ ${0} ]] ; then
 fi
 endsnippet
 
+snippet timestamped
+(while [ 1 ] ; do echo command ; sleep 1; done) | awk '{ print strftime("\033[32m%Y-%m-%dT%H:%M:%S\033[0m"), $0 }'
+endsnippet
+
 snippet prelude
 #!/bin/bash
 
