@@ -115,6 +115,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'hashivim/vim-terraform'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
+Plug 'elixir-editors/vim-elixir'
 
 " Markdown management
 " Plug 'da-x/vim-markdown'
