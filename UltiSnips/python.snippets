@@ -14,3 +14,35 @@ snippet interact
 import code
 code.interact(local=locals())
 endsnippet
+
+snippet tempdir
+import tempfile
+import os
+
+# Create a temporary directory
+with tempfile.TemporaryDirectory() as temp_dir:
+    print(f'Temporary directory: {temp_dir}')
+    
+    # You can create files in the temporary directory
+    temp_file_path = os.path.join(temp_dir, 'temp_file.txt')
+    with open(temp_file_path, 'w') as temp_file:
+        temp_file.write('Hello, world!')
+
+    # At this point, the temporary file is in the temporary directory
+    print(f'Temporary file: {temp_file_path}')
+    print(f'Contents: {open(temp_file_path).read()}')
+endsnippet
+
+snippet download-file
+import requests
+
+def download_file(url, target_path):
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    with open(target_path, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
+# Example usage:
+download_file('http://example.com/bigfile.zip', '/path/to/destination/bigfile.zip')
+endsnippet
