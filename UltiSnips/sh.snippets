@@ -202,6 +202,39 @@ rpc() {
 }
 endsnippet
 
+snippet spawnjobs
+local pids=()
+local pid_work=()
+local work
+
+for work in a b c; do
+    some-work &
+    pids+=(\$!)
+    pid_work+=("${work}")
+done
+
+local idx
+local failed_names=()
+for idx in "\${!pids[@]}"; do
+    local e
+
+    set +e
+    wait \${pids[\${idx}]}
+    e=\$?
+    set -e
+
+    if [[ "\${e}" != "0" ]] ; then
+        failed_names+=(\${pid_work[\${idx}]})
+    fi
+done
+
+if [[ \${failed_names[@]+"\${failed_names[@]}"} != "" ]] ; then
+    echo "Some failed: \${failed_names[@]}"
+    return 1
+fi
+echo All succeeded
+endsnippet
+
 snippet clean-background-on-termination
 function leave() {
     kill $(jobs -p)

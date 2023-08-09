@@ -1188,9 +1188,8 @@ let g:ale_linters.c = ['pac']
 let g:ale_linters.cpp = ['pac']
 let g:ale_linters.markdown = []
 let g:ale_linters.rust = []
-let g:ale_linters.typescript = []
-let g:ale_linters.typescriptreact = []
-let g:ale_linters.python = ['pyflakes', 'flake8']
+let g:ale_linters.python = ['pyflakes', 'flake8', 'mypy']
+let g:ale_python_mypy_options = '--ignore-missing-imports'
 
 " =============================================================================
 " Knots
