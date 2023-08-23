@@ -14,6 +14,23 @@ indented() {
 }
 endsnippet
 
+snippet echo-color
+echo-color() {
+    local color
+    color="\$1"
+    shift
+    echo -e "\e[\${color};40;1mscript\e[30;40;1m:\e[\${color};40;1m \$@\e[0m"
+}
+
+echo-info() {
+    echo-color 32 "\$@"
+}
+
+echo-warn() {
+    echo-color 33 "\$@"
+}
+endsnippet
+
 snippet prelude
 #!/bin/bash
 
@@ -21,6 +38,18 @@ set -eu
 set -o pipefail
 set +o posix
 shopt -s inherit_errexit
+
+###############################################################
+# Main functions
+###############################################################
+
+some-func() {
+    :
+}
+
+###############################################################
+# Infra
+###############################################################
 
 help() {
     cat << EOF
