@@ -1204,20 +1204,31 @@ function! InKnotBuffer()
         return
     endif
 
+    call knot#InstallHooks()
+
     let b:Markdown_LinkFilter = function('knot#ConvertIdLink')
+
+    " Manipulation
     nmap <buffer> <C-n>m              :call knot#MoveCurrentInteractive()<CR>
     nmap <buffer> <C-n><Delete>       :call knot#DeleteCurrent()<CR>
+
+    "" Open URLs from current knot
     nmap <silent> <buffer> <C-PageUp> :call knot#pickUrl()<CR>
 
-    " Ctrl-Backspace
+    " Navigation
+    "   C-h: Ctrl-Backspace
     nmap <buffer>     <C-h> :call knot#goToBacklinks()<CR>
-    inoremap <buffer> <F4>  <C-c>i<C-R>=MyVimEditTimestamp()<CR>
-    noremap <buffer>  <F4>  G:call MarkdownInsertTimestamp()<CR>A
-    nmap <buffer>     <F3> :call knot#Pick()<CR>
+    nmap <buffer>     <C-n><PageDown>  :call knot#Pick()<CR>
+    nmap <buffer>     <F3>             :call knot#Pick()<CR>
+    nmap <buffer>     <C-F1> :call knot#openReminder()<CR>
 
-    noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
+    " Insertions or extractions
+    inoremap <buffer> <C-t>  <C-c>i<C-R>=MyVimEditTimestamp()<CR>
+    noremap <buffer>  <C-t>  G:call MarkdownInsertTimestamp()<CR>A
     noremap <buffer>  <C-n>j <C-c>Go<C-R>=KnotInsertJIRAIssueComment()<CR><Up><Up>
-    noremap <buffer>  <C-n>p :call knot#insertOpenedTabURL()<CR>
+    noremap <buffer>  <C-n>u :call knot#insertOpenedTabURL()<CR>
+    noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
+    nmap <buffer>     <C-n>y :call knot#insertReminder()<CR>
 
     xnoremap <buffer> <C-n><Insert> :<c-u>
        \call knot#CarveCurrentInteractive()

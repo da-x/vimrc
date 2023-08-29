@@ -31,6 +31,24 @@ echo-warn() {
 }
 endsnippet
 
+snippet readarray
+local $1
+if [[ -z "$inputvar" ]]; then
+    $1=()
+else
+    readarray -t $1 <<< "$inputvar"
+fi
+endsnippet
+
+
+snippet pythonscriptargs
+python2 -c "import sys; print(sys.argv[1:])" "$@"
+endsnippet
+
+snippet perlscriptargs
+perl -MData::Dumper -e '$Data::Dumper::Terse = 1; $Data::Dumper::Indent = 0; print Dumper(\@ARGV), "\n"' -- "$@"
+endsnippet
+
 snippet prelude
 #!/bin/bash
 
@@ -112,6 +130,27 @@ local key
 for key in "\${!array[@]}"; do
     local value=\${array[\${key}]}
 done
+endsnippet
+
+snippet escapeargs
+escapeargs() {
+    local i
+    for i in "$@"; do
+        printf " %s" \'
+        printf "%s" "$i" | sed -E "s#'#'\\\''#g"
+        printf "%s" \'
+    done
+}
+endsnippet
+
+snippet awkstdin
+    awk -f - ${inputfile} << EOF
+BEGIN { max=0 } {
+    if (match(\$1, /^Patch([0-9]+)/, arr)) {
+        if (arr[1] > max) max = arr[1];
+    }
+} END { print max }
+EOF
 endsnippet
 
 snippet argparse
