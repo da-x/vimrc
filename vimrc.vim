@@ -1246,7 +1246,6 @@ function! InKnotBuffer()
     " Insertions or extractions
     inoremap <buffer> <C-t>  <C-c>i<C-R>=MyVimEditTimestamp()<CR>
     noremap <buffer>  <C-t>  G:call MarkdownInsertTimestamp()<CR>A
-    noremap <buffer>  <C-n>j <C-c>Go<C-R>=KnotInsertJIRAIssueComment()<CR><Up><Up>
     noremap <buffer>  <C-n>u :call knot#insertOpenedTabURL()<CR>
     noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
     nmap <buffer>     <C-n>y :call knot#insertReminder()<CR>
