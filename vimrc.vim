@@ -1178,6 +1178,27 @@ augroup END
 let g:syntastic_auto_loc_list = 1
 
 " =============================================================================
+" Server mode
+
+function! MyStartVIMServer()
+  let l:xdg_dir = $XDG_RUNTIME_DIR
+  let l:pid = getpid()
+  let l:dir = xdg_dir . "/nvim/" . pid
+
+  " Create directory if it doesn't exist
+  silent !mkdir -p -m 0700 $XDG_RUNTIME_DIR/nvim
+
+  " Start the server
+  call serverstart(dir)
+endfunction
+
+" Disable it by default because we are using ALE
+augroup MyVimEnterServerMode
+  autocmd!
+  autocmd VimEnter * silent call MyStartVIMServer()
+augroup END
+
+" =============================================================================
 " ALE (syntax checker)
 
 let g:ale_rust_ignore_secondary_spans = 1
