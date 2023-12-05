@@ -141,6 +141,7 @@ Plug 'justinmk/vim-syntax-extra'
 Plug 'vimoutliner/vimoutliner'
 Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 let g:my_ale_devel = get(g:, 'my_ale_devel', '')
 if g:my_ale_devel !=# ''
@@ -230,8 +231,6 @@ map <ESC>[5;30004~ <C-S-s>
 map! <ESC>[5;30004~ <C-S-s>
 map <ESC>[5;30005~ <C-A-CR>
 map! <ESC>[5;30005~ <C-A-CR>
-map <ESC>[5;30014~ <C-Space>
-map! <ESC>[5;30014~ <C-Space>
 
 map <ESC>[Z <S-tab>
 map <ESC>a <A-a>
@@ -2810,6 +2809,11 @@ if filereadable(expand("~/.vim_runtime/project-specific.vim"))
   " map <leader><tab>m :tabedit <some-path><CR>
   runtime project-specific.vim
 endif
+
+" =============================================================================
+" Lua stuff
+
+lua require('treesitter')
 
 " Goodbye!
 " =============================================================================

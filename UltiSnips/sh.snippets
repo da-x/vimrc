@@ -317,6 +317,11 @@ function leave() {
 trap leave EXIT
 endsnippet
 
+snippet scriptpath
+local scriptpath
+scriptpath=$(dirname $(realpath ${BASH_SOURCE}))
+endsnippet
+
 snippet runparameterized
 #!/bin/bash
 
