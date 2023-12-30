@@ -1,0 +1,11 @@
+snippet errmod
+defmodule $1 do
+  @moduledoc """
+  """
+  defexception [:message]
+end
+endsnippet
+
+snippet warnstring
+    Logger.warning("#{inspect(params)}")
+endsnippet
