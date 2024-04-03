@@ -1,9 +1,12 @@
 snippet freqdeps
-serde = "1"
-serde_derive = "1"
-structopt = "0.3"
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
 derive-error = "0"
+hyper = { version = "0.14", features = ["full"] }
 lazy_static = "1"
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+structopt = "0.3"
 endsnippet
 
 snippet regex
@@ -14,4 +17,18 @@ snippet mycrate
 $1-keymap = { git = "https://github.com/da-x/$1-keymap" }
 # Local dev:
 # $1-keymap = { path = "$1-keymap" }
+endsnippet
+
+snippet fastdev
+[profile.fast-dev]
+inherits = "dev"
+
+[profile.fast-dev.package."*"]
+opt-level = 2
+debug = false
+endsnippet
+
+snippet patch
+[patch.crates-io]
+example = { path = "deps/example" }
 endsnippet
