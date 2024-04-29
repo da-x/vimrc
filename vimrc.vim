@@ -1986,6 +1986,17 @@ augroup MarkdownEditSettings
   autocmd FileType markdown call MyMarkdownSettings()
 augroup END
 
+function! MyTypeScriptSettings()
+  Indent4Spaces
+endfunction
+
+augroup TypeScriptSettings
+  autocmd!
+
+  autocmd FileType typescript call MyTypeScriptSettings()
+  autocmd FileType typescriptreact call MyTypeScriptSettings()
+augroup END
+
 function! MyMailSettings()
   setlocal spell
   setl textwidth=72
