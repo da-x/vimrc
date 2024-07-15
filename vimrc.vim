@@ -1196,7 +1196,9 @@ endfunction
 " Disable it by default because we are using ALE
 augroup MyVimEnterServerMode
   autocmd!
-  autocmd VimEnter * silent call MyStartVIMServer()
+  if has('nvim')
+    autocmd VimEnter * silent call MyStartVIMServer()
+  endif
 augroup END
 
 " =============================================================================
@@ -2826,7 +2828,9 @@ endif
 " =============================================================================
 " Lua stuff
 
-lua require('treesitter')
+if has('nvim')
+  lua require('treesitter')
+endif
 
 " Goodbye!
 " =============================================================================
