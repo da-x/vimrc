@@ -387,3 +387,25 @@ detached() {
     exec ${tmp_dir}/syslab __run-detached ${tmp_dir} "$@"
 }
 endsnippet
+
+snippet sequence
+main() {
+    local a=()
+
+    while [[ $# != 0 ]] ; do
+        if [[ "$1" =~ ^--$ ]] ; then
+            "${a[@]}"
+            shift
+            a=()
+            continue
+        fi
+
+        a+=("$1")
+        shift
+    done
+
+    "${a[@]}"
+}
+
+main "$@"
+endsnippet
