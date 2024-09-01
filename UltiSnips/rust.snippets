@@ -568,3 +568,13 @@ snippet sep
 //
 
 endsnippet
+
+snippet lazyfromstr
+impl FromStr for $1 {
+    type Err = serde_json::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        serde_json::from_str(&format!("\"{s}\""))
+    }
+}
+endsnippet
