@@ -89,6 +89,10 @@ snippet dis
 #[cfg(disable)]
 endsnippet
 
+snippet fdis
+#[cfg(feature = "disabled")]
+endsnippet
+
 snippet regex
 lazy_static! {
     static ref RE: Regex = Regex::new("...").unwrap();
