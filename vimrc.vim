@@ -1237,6 +1237,15 @@ function! InKnotBuffer()
 
     call knot#InstallHooks()
 
+    " Make the knots related to the current desktop one with a special background color
+    if exists('b:Markdown_PerFileBackgroundSaving')
+      if knot#currentFullID() != knot#currentDesktopKnotID()
+        let l:color = "#150015"
+        execute "highlight Normal guibg=".l:color
+        execute "highlight EndOfBuffer guibg=".l:color
+      endif
+    endif
+
     let b:Markdown_LinkFilter = function('knot#ConvertIdLink')
 
     " Manipulation
@@ -2060,6 +2069,7 @@ endfunction
 function! MyMarkdownSettings()
   setlocal spell
   let b:Markdown_LinkFilter = function('MyFixupMarkdownLink')
+  let b:Markdown_PerFileBackgroundSaving = synIDattr(synIDtrans(hlID("Normal")), "bg", "gui")
 
   map <buffer> <leader>e\ <A-e>d
   noremap <buffer> <silent> gq :call MyMarkdownGQ()<CR>
@@ -2137,6 +2147,19 @@ augroup MailEditSettings
 
   autocmd FileType mail call MyMailSettings()
 augroup END
+
+function! MyRestoreBackgroundColor()
+  if exists('b:Markdown_PerFileBackgroundSaving')
+    execute "highlight Normal guibg=".b:Markdown_PerFileBackgroundSaving
+    execute "highlight EndOfBuffer guibg=".b:Markdown_PerFileBackgroundSaving
+  endif
+endfunction
+
+augroup RestoreBackgroundColor
+  autocmd!
+  autocmd BufLeave * call MyRestoreBackgroundColor()
+augroup END
+
 
 " =============================================================================
 " Vim editing
