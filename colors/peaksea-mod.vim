@@ -56,6 +56,7 @@ if &background=='light'
   hi Comment		guifg=#606000	guibg=NONE	gui=NONE
   hi Number		guifg=#907000	guibg=NONE	gui=NONE
   hi Constant		guifg=#007068	guibg=NONE	gui=NONE
+  hi String		guifg=#007068	guibg=NONE	gui=NONE
   hi StatusLine		guifg=fg	guibg=#a6caf0	gui=NONE
   hi LineNr		guifg=#686868	guibg=NONE	gui=NONE
   hi Question		guifg=fg	guibg=#d0d090	gui=NONE
@@ -262,6 +263,7 @@ elseif &background=='dark'
   hi Normal		guifg=#e5e5e5	guibg=#000014	gui=NONE
   hi Comment		guifg=#d0d090	guibg=NONE	gui=NONE
   hi Constant		guifg=#80c0e0	guibg=NONE	gui=NONE
+  hi String		guifg=#80c0e0	guibg=NONE	gui=NONE
   hi Number		guifg=#e0c060	guibg=NONE	gui=NONE
   hi Identifier		guifg=#f0c0f0	guibg=NONE	gui=NONE
   hi Keyword		guifg=#c0f8f8	guibg=NONE	gui=NONE
@@ -507,6 +509,7 @@ elseif &background=='dark'
     "hi Normal		ctermfg=252	ctermbg=NONE	cterm=NONE
     hi Comment		ctermfg=186	ctermbg=NONE	cterm=NONE
     hi Constant		ctermfg=110	ctermbg=NONE	cterm=NONE
+    hi String		ctermfg=110	ctermbg=NONE	cterm=NONE
     hi Number		ctermfg=179	ctermbg=NONE	cterm=NONE
     hi Identifier	ctermfg=219	ctermbg=NONE	cterm=NONE
     hi Statement	ctermfg=153	ctermbg=NONE	cterm=NONE

@@ -32,7 +32,7 @@ Plug 'airblade/vim-rooter'
 Plug 'jamessan/vim-gnupg'
 
 " Navigation and other state manipulation
-Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
