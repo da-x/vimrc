@@ -2923,6 +2923,8 @@ if g:use_nightly_rust_analyzer !=# ''
   call coc#config('rust-analyzer.server.path',
         \'~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer')
 endif
+" call coc#config('rust-analyzer.inlayHints.typeHints.enable', v:false)
+call coc#config('rust-analyzer.inlayHints.parameterHints.enable', v:false)
 
 " =============================================================================
 " Config for vim-highlightedyank
