@@ -33,7 +33,7 @@ Plug 'jamessan/vim-gnupg'
 
 " Navigation and other state manipulation
 " Plug 'ctrlpvim/ctrlp.vim'
-Plug 'scrooloose/nerdtree'
+Plug 'nvim-tree/nvim-tree.lua'
 Plug 'kshenoy/vim-signature'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-obsession'
@@ -460,10 +460,10 @@ imap <C-F2> <C-c><C-F2>
 nmap <C-S-F2> :GFiles<CR>
 map! <C-S-F2> <Nop>
 imap <C-S-F2> <C-c><C-F2>
-nmap <F3> :NERDTreeFind<CR>
+nmap <F3> :NvimTreeFindFileToggle<CR>
 map! <F3> <Nop>
 imap <F3> <C-c><F3>
-nmap <C-F3> :NERDTreeToggle<CR>
+nmap <C-F3> :NvimTreeToggle<CR>
 map! <C-F3> <Nop>
 imap <C-F3> <C-c><F3>
 nmap <C-S-F3> :BCommits<CR>
@@ -1377,14 +1377,14 @@ inoremap <A-d> ""<Esc>i
 
 function! SetPerBufferMappings() abort
   " Prevent certain actions in various buffers
-  if &filetype ==# 'qf' || &filetype ==# 'nerdtree'
+  if &filetype ==# 'qf' || &filetype ==# 'NvimTree'
     map <buffer> <leader>o <nop>
     map <buffer> <C-F2> <nop>
   endif
   if &filetype ==# 'bufexplorer'
     map <buffer> <tab>q <nop>
   endif
-  if &filetype ==# 'nerdtree'
+  if &filetype ==# 'NvimTree'
     map <buffer> <tab>o <nop>
   endif
   call SetCocMappingPerBuffer()
