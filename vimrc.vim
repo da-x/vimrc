@@ -507,6 +507,8 @@ nmap <S-F5> <C-S-F5>
 map! <S-F5> <C-S-F5>
 imap <S-F5> <C-S-F5>
 
+nmap <F6> :CocList diagnostics<CR>
+
 " Quickly record a macro and execute it
 
 function! OnOffRecord() abort
@@ -1187,6 +1189,23 @@ augroup END
 
 let g:syntastic_auto_loc_list = 1
 
+function! LSCollect()
+  let s:all_locs = []
+  for bufnr in range(1, bufnr('$'))
+    let s:locs = getloclist(bufnr)
+    if !empty(s:locs)
+      call map(s:locs, {idx, val -> extend(val, {'filename': bufname(bufnr)})})
+      let s:all_locs += s:locs
+    endif
+  endfor
+  call setqflist(s:all_locs)
+  copen
+endfunction
+
+command! LSCollect call LSCollect()
+
+" nmap <silent> <leader>s+ :call LSCollect()<CR>
+
 " =============================================================================
 " Server mode
 
@@ -1812,6 +1831,7 @@ function! MyHighlights() abort
   highlight CocWarningHighlight guibg=NONE guifg=#999900
   highlight CocUnusedHighlight guibg=NONE guifg=#999999
   highlight CocFloating gui=NONE guifg=NONE guibg=#222222
+  highlight CocListLine guibg=#505050
 
   highlight CursorLineNR   guifg=#dddddd guibg=#222222
 endfunction
@@ -2929,6 +2949,10 @@ if g:use_nightly_rust_analyzer !=# ''
 endif
 " call coc#config('rust-analyzer.inlayHints.typeHints.enable', v:false)
 call coc#config('rust-analyzer.inlayHints.parameterHints.enable', v:false)
+call coc#config('tsserver.experimental.enableProjectDiagnostics', v:true)
+
+" let g:coc_enable_locationlist = 0
+" autocmd User CocLocationsChange call setloclist(0, g:coc_jump_locations) | lwindow
 
 " =============================================================================
 " Config for vim-highlightedyank
