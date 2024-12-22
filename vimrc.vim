@@ -4,6 +4,8 @@
 " Some original work, plus some bits from: https://github.com/amix/vimrc
 " Others from https://github.com/jonhoo/configs/blob/master/.vimrc
 
+" Reminder-task: +ID in-vim, in VIM subject
+
 " =============================================================================
 " # PLUGINS
 " =============================================================================
@@ -1290,7 +1292,7 @@ function! InKnotBuffer()
     noremap <buffer>  <C-t>  G:call MarkdownInsertTimestamp()<CR>A
     noremap <buffer>  <C-n>u :call knot#insertOpenedTabURL()<CR>
     noremap <buffer>  <C-n><Up>  i<C-R>=knot#DateLink()<CR>
-    nmap <buffer>     <C-n>y :call knot#insertReminder()<CR>
+    nnoremap <buffer> <leader>]  :call knot#InsertReminder()<CR>
 
     xnoremap <buffer> <C-n><Insert> :<c-u>
        \call knot#CarveCurrentInteractive()
@@ -2950,6 +2952,7 @@ endif
 " call coc#config('rust-analyzer.inlayHints.typeHints.enable', v:false)
 call coc#config('rust-analyzer.inlayHints.parameterHints.enable', v:false)
 call coc#config('tsserver.experimental.enableProjectDiagnostics', v:true)
+call coc#config('typescript.suggestionActions.enabled', v:false)
 
 " let g:coc_enable_locationlist = 0
 " autocmd User CocLocationsChange call setloclist(0, g:coc_jump_locations) | lwindow
