@@ -119,6 +119,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'elixir-editors/vim-elixir'
 Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
+Plug 'wuelnerdotexe/vim-astro'
 
 " Markdown management
 " Plug 'da-x/vim-markdown'
@@ -459,7 +460,7 @@ imap <F2> <C-c><F2>
 nmap <C-F2> :History<CR>
 map! <C-F2> <Nop>
 imap <C-F2> <C-c><C-F2>
-nmap <C-S-F2> :GFiles<CR>
+nmap <C-S-F2> :call GFilesWithPreview()<CR>
 map! <C-S-F2> <Nop>
 imap <C-S-F2> <C-c><C-F2>
 nmap <F3> :NvimTreeFindFileToggle<CR>
@@ -2686,8 +2687,8 @@ function! MyFZFChooseRebaseInteractive()
 endfunction
 
 " FZF shortcuts
-nnoremap <C-g><C-f> :GFiles<CR>
-nnoremap <C-g>f     :GFiles<CR>
+nnoremap <C-g><C-f> :call GFilesWithPreview()<CR>
+nnoremap <C-g>f     :call GFilesWithPreview()<CR>
 nnoremap <C-g>d     :call MyFZFDiffHunks('')<CR>
 nnoremap <C-g><C-d> :call MyFZFDiffHunks('')<CR>
 nnoremap <C-g>D     :call MyFZFDiffHunks('HEAD')<CR>
@@ -2778,14 +2779,17 @@ function! MyGitRebaseTodoHook(...) abort
   nmap <buffer> <M-PageDown> <M-j>
 endfunction
 
-augroup GitRebaseTodoRebinding
-  autocmd!
+augroup GitRebaseTodoRebinding autocmd!
   autocmd! BufRead git-rebase-todo call MyGitRebaseTodoHook()
 augroup END
 
 " =============================================================================
 " FZF
-"
+
+let g:fzf_vim = {}
+let g:fzf_vim.preview_window = ['hidden,right,50%,<70(up,40%)', 'ctrl-/']
+let g:fzf_vim.window = { 'width': 0.2, 'height': 0.9, 'xoffset': 1 }
+
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
@@ -2797,8 +2801,22 @@ imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 imap <c-x><c-l> <plug>(fzf-complete-line)
 
+function GFilesWithPreview()
+  call fzf#vim#gitfiles('', {'options': [
+        \ '--sync',
+        \ '--query', expand('%h'),
+        \ '--bind', 'result:transform:
+           \  if [[ -n $FZF_QUERY ]]; then ;
+           \      echo "track-current+clear-query" ;
+           \  else ;
+           \      echo "untrack-current+offset-middle+unbind(result)" ;
+           \  fi',
+        \ '--preview', 'bat -p --color always {}'],
+        \ 'window': { 'width': 0.9, 'height': 0.9 }})
+endfunction
+
 nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fg :GFiles<CR>
+nnoremap <leader>fg :call GFilesWithPreview()<CR>
 nnoremap <leader>fs :GFiles?<CR>
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fl :BLines<CR>
@@ -2953,6 +2971,21 @@ endif
 call coc#config('rust-analyzer.inlayHints.parameterHints.enable', v:false)
 call coc#config('tsserver.experimental.enableProjectDiagnostics', v:true)
 call coc#config('typescript.suggestionActions.enabled', v:false)
+
+function! RustAllFeatures() abort
+  call coc#config('rust-analyzer.cargo.features', "all")
+endfunction
+
+command! RustAllFeatures call RustAllFeatures()
+
+function! RustNoFeatures() abort
+  call coc#config('rust-analyzer.cargo.features', [])
+endfunction
+
+command! RustNoFeatures call RustNoFeatures()
+
+
+"# call coc#config('rust-analyzer.cargo.features', ["all"])
 
 " let g:coc_enable_locationlist = 0
 " autocmd User CocLocationsChange call setloclist(0, g:coc_jump_locations) | lwindow

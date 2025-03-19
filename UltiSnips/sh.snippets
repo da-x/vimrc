@@ -166,6 +166,7 @@ endsnippet
 snippet argparse
 local interactive=0
 local positional=()
+
 while [[ \$# != 0 ]] ; do
     if [[ "\$1" =~ ^--(.*)\$ ]] ; then
         shift
@@ -180,6 +181,7 @@ while [[ \$# != 0 ]] ; do
         shift
     fi
 done
+
 set -- "\${positional[@]}"
 endsnippet
 

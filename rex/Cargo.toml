@@ -3,7 +3,7 @@ name = "rex"
 description = "rex: A utility for process standby re-execution"
 version = "0.1.0"
 authors = ["Dan Aloni <alonid@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 structopt = "0.3"

@@ -13,6 +13,12 @@ snippet def
 Default::default()
 endsnippet
 
+snippet errcast
+if let Some(e) = e.downcast_ref::<Error>() {
+    ${1}
+}
+endsnippet
+
 snippet ..def
 ..Default::default()
 endsnippet
