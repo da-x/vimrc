@@ -1,0 +1,29 @@
+[package]
+name = "eat"
+description = "eat: Editor-Actio terminal"
+version = "0.1.0"
+edition = "2021"
+authors = ["Dan Aloni <alonid@gmail.com>"]
+
+[dependencies]
+dirs = "1.0.4"
+crossterm = { version = "0.28.1", features = ["event-stream"] }
+futures = "0.3.31"
+anyhow = "1.0.97"
+libc = "0.2.171"
+errno = "0.3.10"
+termion = "4.0.4"
+pty-process = { version = "0.5.1", features = ["tokio", "async"] }
+tokio = { version = "1.44.1", features = ["fs", "io-std", "io-util", "macros", "net", "process", "rt", "rt-multi-thread", "tokio-macros", "time", "sync"] }
+nix = { version = "0.29.0", features = ["term", "poll"] }
+ratatui = { version = "0.29.0", features = ["all-widgets", "scrolling-regions"] }
+tui-input = "0.11.1"
+ansi-parser = "0.9.1"
+regex = "1.11.1"
+hyper = { version = "0.14", features = ["full"] }
+hyper-tls = "0.5"
+hyperlocal = "0.8"
+hyper-tungstenite = "0.9"
+tokio-tungstenite = { git = "https://github.com/da-x/tokio-tungstenite.git", features = ["uds"] }
+serde_json = "1.0.140"
+serde = { version = "1.0.219", features = ["derive"] }

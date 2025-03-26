@@ -30,6 +30,13 @@ impl Default for $1 {
 }
 endsnippet
 
+snippet fmtwidth
+assert_eq!(format!("Hello {:<width$}!", "x", width=5),  "Hello x    !");
+assert_eq!(format!("Hello {:-<5}!", "x"), "Hello x----!");
+assert_eq!(format!("Hello {:^5}!", "x"),  "Hello   x  !");
+assert_eq!(format!("Hello {:>5}!", "x"),  "Hello     x!");
+endsnippet
+
 snippet withctx
 with_context(|| format!("{}"))
 endsnippet
@@ -413,6 +420,10 @@ impl Error {
         Error::Boxed(Box::new(e))
     }
 }
+endsnippet
+
+snippet debugtofile
+std::fs::write("/tmp/x", &format!("{:#?}", stuff));
 endsnippet
 
 snippet thiserror_main

@@ -2,7 +2,7 @@
 
 set -e
 
-cd rex
+cd eat
 
 T=/tmp/$USER/rust/targets/`pwd`/target
 
@@ -18,5 +18,5 @@ mkdir -p $T
 ln -s $T target
 
 cargo build --release
-mv target/release/rex ../bin
+mv target/release/eat ~/.local/bin
 rm -rf ${T}

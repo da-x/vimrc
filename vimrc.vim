@@ -3016,8 +3016,16 @@ let g:qf_auto_resize = 0
 let g:qf_window_bottom = 0
 let g:qf_mapping_ack_style = 1
 
-noremap <silent> <F8>   :Explore<CR>
-noremap <silent> <S-F8> :sp +Explore<CR>
+noremap <silent> <F8>                 :call EatNext()<CR>
+noremap <silent> <M-F8>               :call EatRedo()<CR>
+noremap <silent> <C-F8>               :call EatFirst()<CR>
+noremap <silent> <leader>ol           :call EatScan()<CR>
+noremap <silent> <leader>oo           :call EatRedo()<CR>
+noremap <silent> <leader>o<Backspace> :call EatPrev()<CR>
+noremap <silent> <leader>o<Return>    :call EatNext()<CR>
+noremap <silent> <leader>o<space>     :call EatFirst()<CR>
+noremap <silent> <leader>o[           :call EatPrev()<CR>
+noremap <silent> <leader>o]           :call EatNext()<CR>
 
 " Look for a man page
 map <C-F1> <Plug>(Man)
