@@ -3019,6 +3019,8 @@ let g:qf_mapping_ack_style = 1
 noremap <silent> <F8>                 :call EatNext()<CR>
 noremap <silent> <M-F8>               :call EatRedo()<CR>
 noremap <silent> <C-F8>               :call EatFirst()<CR>
+noremap <silent> <leader>o<Insert>    :call EatScan()<CR>
+noremap <silent> <leader>o<Home>      :call EatFirst()<CR>
 noremap <silent> <leader>ol           :call EatScan()<CR>
 noremap <silent> <leader>oo           :call EatRedo()<CR>
 noremap <silent> <leader>o<Backspace> :call EatPrev()<CR>

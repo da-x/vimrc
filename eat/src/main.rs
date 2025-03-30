@@ -763,7 +763,7 @@ impl Context {
     }
 }
 
-fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, s: &str, selected: bool) -> u16 {
+fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undecoded_str: &str, selected: bool) -> u16 {
     let mut cs = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(0, 0, 0));
     let orig_cs = if !selected { cs } else { cs.bg(Color::Rgb(80, 80, 80)) };
     let bad_ansi = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(255, 0, 0));
@@ -773,7 +773,17 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, s: &s
     let mut line_has_content = true;
     let start_of_line = (x, y);
 
-    for item in s.ansi_parse() {
+    let mut remove_cr: Vec<char> = undecoded_str.chars().collect();
+    while let Some(last_r) =  remove_cr.iter().rposition(|x| *x == '\r') {
+        if last_r + 1 == remove_cr.len() { // Ends with \r, let's find the second one
+            remove_cr.truncate(last_r);
+        } else { // There's text after '\r', let's just take it
+            remove_cr = remove_cr.split_off(last_r + 1);
+            break;
+        }
+    }
+
+    for item in remove_cr.iter().collect::<String>().ansi_parse() {
         let mut unknown = None;
         match item {
             ansi_parser::Output::TextBlock(b) => {
@@ -862,6 +872,8 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, s: &s
                             buf.set_string(x, cy as u16, &empty, cs);
                         }
                         y = start_of_line.1;
+                        line_has_content = true;
+                        lines = 1;
                     }
                     e => {
                         unknown = Some(format!("<<ESC[{:?};>>", e));

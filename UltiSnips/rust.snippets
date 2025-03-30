@@ -209,6 +209,16 @@ let mut file = BufWriter::new(file);
 writeln!(&mut file, "{}", $2)?;
 endsnippet
 
+snippet fileappend
+use std::io::{Write, BufWriter};
+use std::fs::{File, OpenOptions};
+
+if let Ok(file ) = OpenOptions::new().write(true).create(true).append(true).open("/tmp/x") {
+    let mut file = BufWriter::new(file);
+    let _ = writeln!(&mut file, "{:?}", content);
+}
+endsnippet
+
 snippet fnms
 fn $1(&mut self) {
     $0
