@@ -684,28 +684,6 @@ nmap <C-x> <Nop>
 
 " =============================================================================
 
-function! RexSignal(chan) abort
-  execute ":wa"
-  silent call system('rex signal ' . string(a:chan))
-endfunction
-
-nmap <leader>1 :call RexSignal(1)<CR>
-nmap <leader>2 :call RexSignal(2)<CR>
-nmap <leader>3 :call RexSignal(3)<CR>
-
-function! WriteSourceReadyFile() abort
-  w
-  let l:gitdir = MyGitRoot()
-  if l:gitdir != ""
-    let l:source_ready_signal = l:gitdir . "/.source-ready"
-    call writefile([], l:source_ready_signal)
-  endif
-endfunction
-
-" In Neovim, M-PageUp=C-CR
-imap <M-PageUp> <C-c>:call WriteSourceReadyFile()<cr><right>i
-nmap <leader><M-PageUp> :call WriteSourceReadyFile()<CR>
-
 " =============================================================================
 " NEDTRee
 
@@ -3016,13 +2994,23 @@ let g:qf_auto_resize = 0
 let g:qf_window_bottom = 0
 let g:qf_mapping_ack_style = 1
 
+function! SaveAllAndEatRedo() abort
+  wa!
+  call EatRedo()
+endfunction
+
+" In Neovim, M-PageUp=C-CR
+imap <M-PageUp> <C-c>:call SaveAllAndEatRedo()<cr><right>i
+imap <C-CR>     <C-c>:call SaveAllAndEatRedo()<cr><right>i
+nmap <ESC>[5;30003~  :call SaveAllAndEatRedo()<CR>
+
 noremap <silent> <F8>                 :call EatNext()<CR>
-noremap <silent> <M-F8>               :call EatRedo()<CR>
+noremap <silent> <M-F8>               :call SaveAllAndEatRedo()<CR>
 noremap <silent> <C-F8>               :call EatFirst()<CR>
 noremap <silent> <leader>o<Insert>    :call EatScan()<CR>
 noremap <silent> <leader>o<Home>      :call EatFirst()<CR>
 noremap <silent> <leader>ol           :call EatScan()<CR>
-noremap <silent> <leader>oo           :call EatRedo()<CR>
+noremap <silent> <leader>oo           :call SaveAllAndEatRedo()<CR>
 noremap <silent> <leader>o<Backspace> :call EatPrev()<CR>
 noremap <silent> <leader>o<Return>    :call EatNext()<CR>
 noremap <silent> <leader>o<space>     :call EatFirst()<CR>

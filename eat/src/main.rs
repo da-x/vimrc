@@ -8,7 +8,7 @@ use futures::{FutureExt, SinkExt, StreamExt};
 use hyper::service::{make_service_fn, service_fn};
 use hyperlocal::UnixServerExt;
 use keyaction::{EventVector, KeyTree};
-use ratatui::{layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style}};
+use ratatui::{layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style, Stylize}};
 use regex::Regex;
 use serde::{Serialize, Deserialize};
 use tokio::{io::AsyncReadExt as _, sync::{mpsc, Mutex}};
@@ -450,20 +450,24 @@ impl Main {
         let middle_rects = Layout::horizontal(horizontal_items).split(middle_section_rect);
         let middle_section_rect = middle_rects[1];
 
-        let mut screen_lines_printed = 0;
+        let mut middle_print_offset: i16 = 0;
         let current_match = match self.selected_match {
             Some(idx) => self.found_matches.get(idx),
             None => None,
         };
 
-        let mut line_idx = match current_match {
+        let (reversed_print, mut line_idx ) = match current_match {
             Some(current_match) => {
-                current_match.start_line_idx.saturating_sub(1)
+                (false, current_match.start_line_idx.saturating_sub(1))
             },
-            None => 0,
+            None => {
+                (true, self.line_offsets.len().saturating_sub(1))
+            },
         };
 
-        while screen_lines_printed < middle_section_rect.height {
+        let mut total_line_heights = 0;
+        let mut lines_printed = vec![];
+        while middle_print_offset < middle_section_rect.height as i16 {
             let content = if let Some(s) = self.get_line(line_idx) {
                 s
             } else {
@@ -478,9 +482,30 @@ impl Main {
                 None => false,
             };
 
-            screen_lines_printed += draw_line(buf, screen_lines_printed, middle_section_rect,
-                content, selected);
-            line_idx += 1;
+            let split_height = draw_line(buf, middle_print_offset, middle_section_rect, content, selected);
+            middle_print_offset += split_height as i16;
+            if reversed_print {
+                total_line_heights += split_height;
+                lines_printed.push((content, selected));
+                if line_idx == 0 {
+                    break;
+                }
+                line_idx = line_idx - 1;
+            } else {
+                line_idx += 1;
+            }
+        }
+
+        if reversed_print {
+            middle_print_offset = (middle_section_rect.height as i16 - total_line_heights as i16).min(0);
+            for (content, selected) in lines_printed.iter().rev() {
+                middle_print_offset += draw_line(buf,
+                    middle_print_offset, middle_section_rect, *content, *selected) as i16;
+            }
+
+            while middle_print_offset < middle_section_rect.height as i16 {
+                middle_print_offset += draw_line(buf, middle_print_offset, middle_section_rect, "", false) as i16;
+            }
         }
 
         let buf = frame.buffer_mut();
@@ -763,15 +788,18 @@ impl Context {
     }
 }
 
-fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undecoded_str: &str, selected: bool) -> u16 {
+fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undecoded_str: &str, selected: bool) -> u16 {
     let mut cs = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(0, 0, 0));
+    let cs_reset = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(0, 0, 0)).reset();
     let orig_cs = if !selected { cs } else { cs.bg(Color::Rgb(80, 80, 80)) };
     let bad_ansi = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(255, 0, 0));
     let mut lines = 1;
-    let mut y = bounds.y.saturating_add(rel_y);
+    let mut y = (bounds.y as i16).saturating_add(rel_y);
     let mut x = bounds.x;
     let mut line_has_content = true;
     let start_of_line = (x, y);
+
+    cs = cs_reset;
 
     let mut remove_cr: Vec<char> = undecoded_str.chars().collect();
     while let Some(last_r) =  remove_cr.iter().rposition(|x| *x == '\r') {
@@ -790,7 +818,7 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undec
                 let v: Vec<char> = b.chars().collect();
                 let mut v_scan  = 0;
                 while v_scan < v.len() {
-                    if y >= bounds.bottom() {
+                    if y >= bounds.bottom() as i16 {
                         break;
                     }
 
@@ -810,7 +838,9 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undec
                         line_has_content = true;
                     }
 
-                    buf.set_string(x, y, chunk.into_iter().collect::<String>(), cs);
+                    if y >= bounds.y as i16 {
+                        buf.set_string(x, y as u16, chunk.into_iter().collect::<String>(), cs);
+                    }
                     x = x.saturating_add(chunk.len() as u16);
                     v_scan += remaining;
                 }
@@ -869,7 +899,9 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undec
                         x = start_of_line.0;
                         let empty = " ".repeat(bounds.width as usize);
                         for cy in start_of_line.1..=y {
-                            buf.set_string(x, cy as u16, &empty, cs);
+                            if cy >= bounds.y as i16 {
+                                buf.set_string(x, cy as u16, &empty, cs);
+                            }
                         }
                         y = start_of_line.1;
                         line_has_content = true;
@@ -883,8 +915,18 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: u16, bounds: Rect, undec
         }
 
         if let Some(unknown) = unknown.take() {
-            buf.set_string(x, y as u16, &unknown, bad_ansi);
+            if y >= bounds.y as i16 {
+                buf.set_string(x, y as u16, &unknown, bad_ansi);
+            }
             x += unknown.len() as u16;
+        }
+    }
+
+    let screen_remaining = bounds.right().saturating_sub(x) as usize;
+    if screen_remaining > 0 {
+        let empty = " ".repeat(screen_remaining as usize);
+        if y >= bounds.y as i16 {
+            buf.set_string(x, y as u16, &empty, cs);
         }
     }
 
