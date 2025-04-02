@@ -46,3 +46,10 @@ def download_file(url, target_path):
 # Example usage:
 download_file('http://example.com/bigfile.zip', '/path/to/destination/bigfile.zip')
 endsnippet
+
+snippet prettyprint
+pp = pprint.PrettyPrinter(depth=3)
+with open('/tmp/some-file.txt', 'w') as file:
+    pp = pprint.PrettyPrinter(stream=file)
+    pp.pprint(some_obj)
+endsnippet
