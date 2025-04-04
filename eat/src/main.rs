@@ -49,6 +49,7 @@ impl Main {
         let (mut pty, pts) = pty_process::open()?;
         pty.resize(pty_process::Size::new(dims.1, dims.0))?;
         let mut child = pty_process::Command::new(&self.cmd[0])
+            .current_dir(self.parsed_opts.exec_cwd.clone())
             .args(&self.cmd[1..])
             .spawn(pts)?;
 
@@ -706,7 +707,7 @@ impl Main {
         }
 
         let context = Context {
-            dir: self.cwd.to_string_lossy().as_ref().to_owned(),
+            dir: self.parsed_opts.parsing_cwd.to_string_lossy().as_ref().to_owned(),
             command: self.cmd.join(" "),
             editor_update_tx: self.editor_update_tx.clone(),
             shared: self.shared.clone(),
@@ -741,7 +742,7 @@ impl Main {
             if let Some(m) = self.found_matches.get(idx) {
                 if let Some(controller_tx) = &self.controller_tx {
                     let _ = controller_tx.send(ControllerMessage::VisitSource {
-                        pathname: std::env::current_dir()?.join(&m.file_name).to_string_lossy().as_ref().to_owned(),
+                        pathname: self.parsed_opts.parsing_cwd.join(&m.file_name).to_string_lossy().as_ref().to_owned(),
                         line_idx: m.file_line as u32,
                     }).await;
                 };
@@ -1038,7 +1039,7 @@ struct Main {
     found_matches: Vec<Match>,
     matchers: Vec<(MatchKind, Regex)>,
     selected_match: Option<usize>,
-    cwd: PathBuf,
+    parsed_opts: ParsedOpts,
 }
 
 #[derive(Debug)]
@@ -1051,7 +1052,7 @@ struct Match {
 }
 
 impl Main {
-    fn new(cwd: PathBuf, v: Vec<String>) -> anyhow::Result<Self> {
+    fn new(parsed_opts: ParsedOpts, v: Vec<String>) -> anyhow::Result<Self> {
         let (program_update_tx, program_update_rx) = mpsc::channel(100);
         let (editor_update_tx, editor_update_rx) = mpsc::channel(10);
 
@@ -1059,7 +1060,7 @@ impl Main {
             exit: Default::default(),
             mode: Mode::Normal,
             cmd: v,
-            cwd,
+            parsed_opts,
             key_accum: EventVector::new(),
             program_update_rx,
             program_update_tx,
@@ -1091,8 +1092,8 @@ impl Main {
     }
 }
 
-pub async fn eat_async(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> {
-    let mut main = Main::new(cwd, eat_mode.iter().map(|x| (*x).to_owned()).collect())?;
+async fn eat_async(po: ParsedOpts, eat_mode: &[String]) -> anyhow::Result<()> {
+    let mut main = Main::new(po, eat_mode.iter().map(|x| (*x).to_owned()).collect())?;
     main.run().await?;
     let status = main.exit;
 
@@ -1103,9 +1104,9 @@ pub async fn eat_async(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> 
     );
 }
 
-pub fn eat(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> {
+fn eat(po: ParsedOpts, eat_mode: &[String]) -> anyhow::Result<()> {
     tokio::runtime::Builder::new_current_thread().enable_all().build()?.block_on(async move {
-        eat_async(cwd, eat_mode).await
+        eat_async(po, eat_mode).await
     })?;
 
     Ok(())
@@ -1113,8 +1114,11 @@ pub fn eat(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> {
 
 #[derive(Debug, StructOpt)]
 pub struct Opts {
-    #[structopt(long, short)]
-    pub cwd: Option<PathBuf>,
+    #[structopt(long, short = "e")]
+    pub exec_cwd: Option<PathBuf>,
+
+    #[structopt(long, short = "c")]
+    pub parsing_cwd: Option<PathBuf>,
 
     #[structopt(flatten)]
     pub cmd: Sub,
@@ -1126,8 +1130,7 @@ pub enum Sub {
     Eat(Vec<String>),
 }
 
-fn main() {
-    let opts = Opts::from_args();
+fn with_cwd(p: &Option<PathBuf>) -> PathBuf {
     let cwd = match std::env::current_dir() {
         Ok(cwd) => cwd,
         Err(e) => {
@@ -1135,11 +1138,24 @@ fn main() {
             std::process::exit(255);
         },
     };
-    let cwd = match opts.cwd {
+
+    match p {
         Some(p) =>  cwd.join(PathBuf::from(p)),
         None => cwd,
-    };
-    let err = eat(cwd, match &opts.cmd {
+    }
+}
+
+struct ParsedOpts {
+    exec_cwd: PathBuf,
+    parsing_cwd: PathBuf,
+}
+
+fn main() {
+    let opts = Opts::from_args();
+    let exec_cwd = with_cwd(&opts.exec_cwd);
+    let parsing_cwd = with_cwd(&opts.parsing_cwd);
+    let po = ParsedOpts { exec_cwd, parsing_cwd };
+    let err = eat(po, match &opts.cmd {
         Sub::Eat(items) => &items,
     });
 
