@@ -27,3 +27,4 @@ hyper-tungstenite = "0.9"
 tokio-tungstenite = { git = "https://github.com/da-x/tokio-tungstenite.git", features = ["uds"] }
 serde_json = "1.0.140"
 serde = { version = "1.0.219", features = ["derive"] }
+structopt = "0.3.26"

@@ -11,6 +11,7 @@ use keyaction::{EventVector, KeyTree};
 use ratatui::{layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style, Stylize}};
 use regex::Regex;
 use serde::{Serialize, Deserialize};
+use structopt::StructOpt;
 use tokio::{io::AsyncReadExt as _, sync::{mpsc, Mutex}};
 use anyhow::{bail, Context as AnyhowContext};
 
@@ -705,7 +706,7 @@ impl Main {
         }
 
         let context = Context {
-            dir: std::env::current_dir()?.to_string_lossy().as_ref().to_owned(),
+            dir: self.cwd.to_string_lossy().as_ref().to_owned(),
             command: self.cmd.join(" "),
             editor_update_tx: self.editor_update_tx.clone(),
             shared: self.shared.clone(),
@@ -1037,6 +1038,7 @@ struct Main {
     found_matches: Vec<Match>,
     matchers: Vec<(MatchKind, Regex)>,
     selected_match: Option<usize>,
+    cwd: PathBuf,
 }
 
 #[derive(Debug)]
@@ -1049,7 +1051,7 @@ struct Match {
 }
 
 impl Main {
-    fn new(v: Vec<String>) -> anyhow::Result<Self> {
+    fn new(cwd: PathBuf, v: Vec<String>) -> anyhow::Result<Self> {
         let (program_update_tx, program_update_rx) = mpsc::channel(100);
         let (editor_update_tx, editor_update_rx) = mpsc::channel(10);
 
@@ -1057,6 +1059,7 @@ impl Main {
             exit: Default::default(),
             mode: Mode::Normal,
             cmd: v,
+            cwd,
             key_accum: EventVector::new(),
             program_update_rx,
             program_update_tx,
@@ -1088,8 +1091,8 @@ impl Main {
     }
 }
 
-pub async fn eat_async(eat_mode: &[String]) -> anyhow::Result<()> {
-    let mut main = Main::new(eat_mode.iter().map(|x| (*x).to_owned()).collect())?;
+pub async fn eat_async(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> {
+    let mut main = Main::new(cwd, eat_mode.iter().map(|x| (*x).to_owned()).collect())?;
     main.run().await?;
     let status = main.exit;
 
@@ -1100,17 +1103,45 @@ pub async fn eat_async(eat_mode: &[String]) -> anyhow::Result<()> {
     );
 }
 
-pub fn eat(eat_mode: &[String]) -> anyhow::Result<()> {
+pub fn eat(cwd: PathBuf, eat_mode: &[String]) -> anyhow::Result<()> {
     tokio::runtime::Builder::new_current_thread().enable_all().build()?.block_on(async move {
-        eat_async(eat_mode).await
+        eat_async(cwd, eat_mode).await
     })?;
 
     Ok(())
 }
 
+#[derive(Debug, StructOpt)]
+pub struct Opts {
+    #[structopt(long, short)]
+    pub cwd: Option<PathBuf>,
+
+    #[structopt(flatten)]
+    pub cmd: Sub,
+}
+
+#[derive(Debug, StructOpt)]
+pub enum Sub {
+    #[structopt(external_subcommand)]
+    Eat(Vec<String>),
+}
+
 fn main() {
-    let args = std::env::args().collect::<Vec<String>>();
-    let err = eat(&args[1..]);
+    let opts = Opts::from_args();
+    let cwd = match std::env::current_dir() {
+        Ok(cwd) => cwd,
+        Err(e) => {
+            eprintln!("error getting current directory: {:?}", e);
+            std::process::exit(255);
+        },
+    };
+    let cwd = match opts.cwd {
+        Some(p) =>  cwd.join(PathBuf::from(p)),
+        None => cwd,
+    };
+    let err = eat(cwd, match &opts.cmd {
+        Sub::Eat(items) => &items,
+    });
 
     match err {
         Ok(_) => {
