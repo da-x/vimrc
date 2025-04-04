@@ -19,6 +19,16 @@ if let Some(e) = e.downcast_ref::<Error>() {
 }
 endsnippet
 
+snippet errcast
+match e.downcast::<Error>() {
+    Ok(Error::Something) => {
+        // Handling
+    },
+    Ok(e) => return Err(e).context("unhandled error"),
+    Err(e) => return Err(e.context("unhandled error")),
+}
+endsnippet
+
 snippet ..def
 ..Default::default()
 endsnippet
