@@ -878,9 +878,13 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
                                         36 => cs = cs.fg(Color::LightCyan),
                                         37 => cs = cs.fg(Color::White),
                                         1 => cs = cs.add_modifier(Modifier::BOLD),
+                                        2 => cs = cs.add_modifier(Modifier::DIM),
                                         3 => cs = cs.add_modifier(Modifier::ITALIC),
                                         4 => cs = cs.add_modifier(Modifier::UNDERLINED),
+                                        5 => cs = cs.add_modifier(Modifier::SLOW_BLINK),
+                                        6 => cs = cs.add_modifier(Modifier::RAPID_BLINK),
                                         7 => cs = cs.add_modifier(Modifier::REVERSED),
+                                        8 => cs = cs.add_modifier(Modifier::HIDDEN),
                                         9 => cs = cs.add_modifier(Modifier::CROSSED_OUT),
                                         e => {
                                             match unknown {
