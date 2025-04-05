@@ -1077,7 +1077,7 @@ impl Main {
             unexpected: "".to_owned(),
             matchers: vec![
                 (MatchKind::Error,
-                 Regex::new(r#"(?m)^error\[.*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#)?
+                 Regex::new(r#"(?m)^error(\[.*\])?:.*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#)?
                  ),
                 (MatchKind::Warning,
                  Regex::new(r#"(?m)(^warning\[|^warning:).*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#)?
