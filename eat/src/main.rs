@@ -1144,7 +1144,19 @@ fn with_cwd(p: &Option<PathBuf>) -> PathBuf {
     };
 
     match p {
-        Some(p) =>  cwd.join(PathBuf::from(p)),
+        Some(p) => {
+            let p = if p.to_string_lossy() == "@git" {
+                match std::process::Command::new("bash").arg("-c")
+                    .arg("git rev-parse --show-toplevel 2>/dev/null").output()
+                {
+                    Ok(v) => PathBuf::from(String::from_utf8_lossy(&v.stdout).as_ref().trim()),
+                    Err(_) => p.clone(),
+                }
+            } else {
+                p.clone()
+            };
+            cwd.join(p)
+        },
         None => cwd,
     }
 }
