@@ -803,6 +803,11 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
 
     cs = cs_reset;
 
+    let empty = " ".repeat(bounds.right().saturating_sub(x) as usize as usize);
+    if y >= bounds.y as i16 {
+        buf.set_string(x, y as u16, &empty, cs);
+    }
+
     let mut remove_cr: Vec<char> = undecoded_str.chars().collect();
     while let Some(last_r) =  remove_cr.iter().rposition(|x| *x == '\r') {
         if last_r + 1 == remove_cr.len() { // Ends with \r, let's find the second one
@@ -831,6 +836,10 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
                         y += 1;
                         x = bounds.x;
                         line_has_content = false;
+                        let empty = " ".repeat(bounds.right().saturating_sub(x) as usize as usize);
+                        if y >= bounds.y as i16 {
+                            buf.set_string(x, y as u16, &empty, cs);
+                        }
                         continue;
                     }
 
