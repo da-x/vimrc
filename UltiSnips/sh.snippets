@@ -394,7 +394,7 @@ snippet sequence
 main() {
     local a=()
 
-    while [[ $# != 0 ]] ; do
+    while [[ \$# != 0 ]] ; do
         if [[ "$1" =~ ^--$ ]] ; then
             "${a[@]}"
             shift
@@ -402,7 +402,7 @@ main() {
             continue
         fi
 
-        a+=("$1")
+        a+=("\$1")
         shift
     done
 

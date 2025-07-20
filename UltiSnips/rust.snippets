@@ -19,7 +19,7 @@ if let Some(e) = e.downcast_ref::<Error>() {
 }
 endsnippet
 
-snippet errcast
+snippet errcast_match
 match e.downcast::<Error>() {
     Ok(Error::Something) => {
         // Handling
@@ -242,7 +242,19 @@ fn $1(&self) {
 endsnippet
 
 snippet fne
-fn $1(&self) -> Result<(), Error> {
+fn $1(&self) -> anyhow::Result<()> {
+    Ok(())
+}
+endsnippet
+
+snippet afe
+async fn $1() -> anyhow::Result<()> {
+    Ok(())
+}
+endsnippet
+
+snippet pafe
+pub async fn $1() -> anyhow::Result<()> {
     Ok(())
 }
 endsnippet
@@ -634,6 +646,19 @@ impl FromStr for $1 {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         serde_json::from_str(&format!("\"{s}\""))
+    }
+}
+endsnippet
+
+snippet sillylog
+fn sillylog(content: &str) {
+    use std::io::{Write, BufWriter};
+    use std::fs::{OpenOptions};
+
+    let now = chrono::Local::now().timestamp_micros();
+    if let Ok(file ) = OpenOptions::new().write(true).create(true).append(true).open("/tmp/x") {
+        let mut file = BufWriter::new(file);
+        let _ = writeln!(&mut file, "{:?} {:?}", now, content);
     }
 }
 endsnippet

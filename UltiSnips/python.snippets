@@ -53,3 +53,21 @@ with open('/tmp/some-file.txt', 'w') as file:
     pp = pprint.PrettyPrinter(stream=file)
     pp.pprint(some_obj)
 endsnippet
+
+snippet handylog
+def log_write_append(s: str) -> None:
+    LOG_PATH = "/tmp/my-tracelog.log"
+    from datetime import datetime
+    import os
+    import threading
+    tid = threading.get_native_id()
+    flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT
+    fd = os.open(LOG_PATH, flags, 0o644)
+    try:
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        pid = os.getpid()
+        prefix = f"{ts} [{pid:7d}/{tid:7d}] "
+        os.write(fd, (prefix + s + "\n").encode("utf-8"))
+    finally:
+        os.close(fd)
+endsnippet
