@@ -662,3 +662,18 @@ fn sillylog(content: &str) {
     }
 }
 endsnippet
+
+
+snippet tokioselect
+        tokio::select! {
+            //? biased;
+
+            Some(req) = self.some_incoming.recv(), if !self.some_incoming.is_closed() => {
+            }
+
+            _ = self.cancel_token.cancelled() => {
+                return false;
+            }
+        }
+
+endsnippet
