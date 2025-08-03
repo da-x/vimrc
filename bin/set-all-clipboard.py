@@ -18,14 +18,21 @@ def ssh_cb():
 # Try ssh_cb first
 ssh_cb()
 
+if os.getenv("WAYLAND_DISPLAY"):
+    opts = ["-p"]
+    fmt = "wl-copy %s"
+else:
+    opts = ["p", "s", "b"]
+    fmt = "xsel -i -%s"
+
 # Otherwise, fallback
 def myfunc(cmd):
-    p = os.popen("xsel -i -%s" % (i, ), "w")
+    p = os.popen(fmt % (i, ), "w")
     p.write(inp)
     p.close()
 
 threads = []
-for i in ["p", "s", "b"]:
+for i in opts:
     t = Thread(target=myfunc, args=(i,))
     t.start()
     threads.append(t)
