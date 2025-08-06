@@ -19,7 +19,7 @@ def ssh_cb():
 ssh_cb()
 
 if os.getenv("WAYLAND_DISPLAY"):
-    opts = ["-p"]
+    opts = ["-p", ""]
     fmt = "wl-copy %s"
 else:
     opts = ["p", "s", "b"]
