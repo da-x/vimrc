@@ -2954,7 +2954,11 @@ function! RustAllFeatures() abort
   call coc#config('rust-analyzer.cargo.features', "all")
 endfunction
 
-command! RustAllFeatures call RustAllFeatures()
+function! RustSetFeatures(v) abort
+  call coc#config('rust-analyzer.cargo.features', a:v)
+endfunction
+
+command! -nargs=* RustSetFeatures :call RustSetFeatures(<f-args>)
 
 function! RustNoFeatures() abort
   call coc#config('rust-analyzer.cargo.features', [])

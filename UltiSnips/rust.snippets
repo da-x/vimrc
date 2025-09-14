@@ -33,6 +33,10 @@ snippet ..def
 ..Default::default()
 endsnippet
 
+snippet traceback
+tracing::error!("Backtrace: {}", std::backtrace::Backtrace::force_capture());
+endsnippet
+
 snippet idef
 impl Default for $1 {
     fn default() -> Self {
@@ -482,31 +486,38 @@ snippet wraperr
 .map_err(|x| Error::$1(context, x))
 endsnippet
 
-snippet bigstructopt
-// structopt = "0.3"
+snippet maintemplate
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
+#[allow(unused)]
 pub struct Server {
-    pub server-addr: Option<String>,
+    pub server_addr: Option<String>,
 }
 
-#[derive(Debug, StructOpt)]
-pub enum Command {
-    Server(Server),
+
+#[derive(StructOpt, Debug)]
+#[allow(unused)]
+enum Command {
+    Server(Server)
 }
 
 #[derive(StructOpt, Debug)]
 pub struct Opt {
+    // Flags
+
     #[structopt(subcommand)]
     command: Command,
 }
 
-fn main() -> Result<(), Error> {
+fn main() -> anyhow::Result<()> {
     let opt = Opt::from_args();
     match opt.command {
-        // $1
+        Command::Server(..) => {
+        }
     }
+
+    Ok(())
 }
 endsnippet
 
