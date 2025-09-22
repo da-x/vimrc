@@ -1744,10 +1744,9 @@ command! CInsertIncludeForTag call CInsertIncludeForTag()
 " Invoking completions
 
 " Completion
-" tab to select
-" and don't hijack my enter key
-" inoremap <expr><Tab> (pumvisible()?(empty(v:completed_item)?"\<C-n>":"\<C-y>"):"\<Tab>")
-" inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<CR>\<CR>":"\<C-y>"):"\<CR>")
+inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<CR>"
+inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 inoremap <C-s> <C-x><C-s>
 inoremap <C-d> <C-x><C-d>
