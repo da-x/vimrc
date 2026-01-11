@@ -1,19 +1,28 @@
 // With some code from https://github.com/doy/pty-process/blob/main/examples/tokio.rs
 //
-use std::{collections::BTreeMap, convert::Infallible, os::unix::process::ExitStatusExt, path::PathBuf, process::ExitStatus, sync::Arc};
 use ansi_parser::{AnsiParser, AnsiSequence};
+use anyhow::{bail, Context as AnyhowContext};
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 use event::{EventHandler, ProgramEvent};
 use futures::{FutureExt, SinkExt, StreamExt};
 use hyper::service::{make_service_fn, service_fn};
 use hyperlocal::UnixServerExt;
 use keyaction::{EventVector, KeyTree};
-use ratatui::{layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style, Stylize}};
+use ratatui::{
+    layout::{Constraint, Layout, Rect},
+    style::{Color, Modifier, Style, Stylize},
+};
 use regex::Regex;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::{
+    collections::BTreeMap, convert::Infallible, os::unix::process::ExitStatusExt, path::PathBuf,
+    process::ExitStatus, sync::Arc,
+};
 use structopt::StructOpt;
-use tokio::{io::AsyncReadExt as _, sync::{mpsc, Mutex}};
-use anyhow::{bail, Context as AnyhowContext};
+use tokio::{
+    io::AsyncReadExt as _,
+    sync::{mpsc, Mutex},
+};
 
 mod event;
 mod keyaction;
@@ -32,7 +41,7 @@ impl Main {
         ratatui::restore();
 
         if let Err(e) = &res {
-            for (idx, sub ) in e.chain().enumerate() {
+            for (idx, sub) in e.chain().enumerate() {
                 println!("Err {}: {:?}", idx, sub);
             }
         }
@@ -136,10 +145,8 @@ impl Main {
 
     async fn do_action(&mut self, action: Action) -> anyhow::Result<()> {
         match action {
-            Action::Exit => {
-            },
-            Action::Redraw => {
-            },
+            Action::Exit => {}
+            Action::Redraw => {}
             Action::NextMatch => {
                 let selected_match = self.selected_match;
 
@@ -151,18 +158,18 @@ impl Main {
                         } else {
                             self.selected_match = None;
                         }
-                    },
+                    }
                     None => {
                         if self.found_matches.len() > 0 {
                             self.selected_match = Some(0);
                         }
-                    },
+                    }
                 }
 
                 if selected_match != self.selected_match {
                     self.send_selected_match().await?;
                 }
-            },
+            }
             Action::PrevMatch => {
                 let selected_match = self.selected_match;
 
@@ -173,18 +180,18 @@ impl Main {
                         if prev < self.found_matches.len() {
                             self.selected_match = Some(prev);
                         }
-                    },
+                    }
                     None => {
                         if self.found_matches.len() > 0 {
                             self.selected_match = Some(0);
                         }
-                    },
+                    }
                 }
 
                 if selected_match != self.selected_match {
                     self.send_selected_match().await?;
                 }
-            },
+            }
             Action::FirstMatch => {
                 let selected_match = self.selected_match;
 
@@ -198,7 +205,7 @@ impl Main {
                 if selected_match != self.selected_match {
                     self.send_selected_match().await?;
                 }
-            },
+            }
             Action::Redo => {
                 self.running = false;
                 self.no_color_output.clear();
@@ -214,7 +221,7 @@ impl Main {
                 self.found_matches.clear();
                 self.selected_match = None;
                 self.start_proc().await?;
-            },
+            }
         }
 
         Ok(())
@@ -229,13 +236,13 @@ impl Main {
             if let Some(pos) = rest.find('\n') {
                 let pos = self.output_line_scan + pos + 1;
                 self.line_offsets.push(pos);
-                for item in self.raw_output[self.output_line_scan .. pos].ansi_parse() {
+                for item in self.raw_output[self.output_line_scan..pos].ansi_parse() {
                     match item {
                         ansi_parser::Output::TextBlock(text) => {
                             let mut text = Vec::from(text.as_bytes());
                             text.retain(|x| *x != 0x0d);
                             self.no_color_output += &String::from_utf8_lossy(&text.as_ref());
-                        },
+                        }
                         ansi_parser::Output::Escape(_) => {}
                     }
                 }
@@ -250,7 +257,8 @@ impl Main {
             if let Some(pos) = rest.find('\n') {
                 let pos = self.no_color_output_scan + pos + 1;
                 self.no_color_lines += 1;
-                self.no_color_line_offset_to_idx.insert(pos, self.no_color_lines - 1);
+                self.no_color_line_offset_to_idx
+                    .insert(pos, self.no_color_lines - 1);
                 self.no_color_output_scan = pos;
             } else {
                 self.no_color_output_scan = self.no_color_output.len();
@@ -267,17 +275,19 @@ impl Main {
                     let filename = cap.name("filename");
                     let line = cap.name("line");
 
-                    if let (Some(line), Some(filename), Some(all)) =
-                        (line, filename, all)
-                    {
+                    if let (Some(line), Some(filename), Some(all)) = (line, filename, all) {
                         last_match_end = all.end().max(last_match_end);
                         let start_offset = self.output_regex_scan + all.start();
                         let end_offset = self.output_regex_scan + all.start();
-                        let r =
-                            self.no_color_line_offset_to_idx.range(start_offset..=end_offset).nth(0);
+                        let r = self
+                            .no_color_line_offset_to_idx
+                            .range(start_offset..=end_offset)
+                            .nth(0);
                         let start_line_idx = *(r.map(|x| x.1).unwrap_or(&0));
-                        let r =
-                            self.no_color_line_offset_to_idx.range(start_offset..=end_offset).last();
+                        let r = self
+                            .no_color_line_offset_to_idx
+                            .range(start_offset..=end_offset)
+                            .last();
                         let end_line_idx = *(r.map(|x| x.1).unwrap_or(&0)) + 1;
 
                         self.found_matches.push(Match {
@@ -285,7 +295,10 @@ impl Main {
                             start_line_idx,
                             end_line_idx,
                             file_name: filename.as_str().to_owned(),
-                            file_line: line.as_str().to_owned().parse()
+                            file_line: line
+                                .as_str()
+                                .to_owned()
+                                .parse()
                                 .with_context(|| format!("String: {:?}", line))?,
                         });
 
@@ -297,8 +310,9 @@ impl Main {
             }
 
             if last_match_end == 0 {
-                self.output_regex_scan = self.output_regex_scan.max(
-                    self.no_color_output.len().saturating_sub(0x1000));
+                self.output_regex_scan = self
+                    .output_regex_scan
+                    .max(self.no_color_output.len().saturating_sub(0x1000));
                 break;
             }
 
@@ -320,23 +334,23 @@ impl Main {
                 tokio::spawn(async move {
                     let _ = ack.send(()).await;
                 });
-            },
+            }
             EditorUpdate::Unbind => {
                 self.controller_tx = None;
                 self.shared.lock().await.bound = false;
             }
             EditorUpdate::Next => {
                 self.do_action(Action::NextMatch).await?;
-            },
+            }
             EditorUpdate::Prev => {
                 self.do_action(Action::PrevMatch).await?;
-            },
+            }
             EditorUpdate::First => {
                 self.do_action(Action::FirstMatch).await?;
-            },
+            }
             EditorUpdate::Redo => {
                 self.do_action(Action::Redo).await?;
-            },
+            }
         }
 
         Ok(())
@@ -346,11 +360,11 @@ impl Main {
         match x {
             ProgramUpdate::Data(data) => {
                 self.new_data(data).await?;
-            },
+            }
             ProgramUpdate::ExitStatus(exit_status) => {
                 self.exit = exit_status;
                 self.running = false;
-            },
+            }
             ProgramUpdate::Abnormal(status) => {
                 if self.running {
                     self.unexpected = format!("abnormal: {}", status);
@@ -428,8 +442,8 @@ impl Main {
 
         let vertical_items = vec![
             Constraint::Length(command_lines as u16), // Title section
-            Constraint::Min(1), // Middle section
-            Constraint::Length(1) // Footer
+            Constraint::Min(1),                       // Middle section
+            Constraint::Length(1),                    // Footer
         ];
 
         let title_style = Style::new().fg(Color::White).bg(Color::Rgb(0, 0, 230));
@@ -437,7 +451,7 @@ impl Main {
             let part = &cmd[i * screen_width..];
             let part = &part[..screen_width.min(part.len())];
             let part = part.iter().collect::<String>();
-            let part = format!("{:<width$}!", part, width=screen_width);
+            let part = format!("{:<width$}!", part, width = screen_width);
             buf.set_string(0, i as u16, part, title_style);
         }
 
@@ -445,7 +459,7 @@ impl Main {
 
         let horizontal_items = vec![
             Constraint::Length(1), // Sign bar
-            Constraint::Min(1), // Middle section
+            Constraint::Min(1),    // Middle section
         ];
 
         let middle_section_rect = (*rects)[1];
@@ -458,13 +472,9 @@ impl Main {
             None => None,
         };
 
-        let (reversed_print, mut line_idx ) = match current_match {
-            Some(current_match) => {
-                (false, current_match.start_line_idx.saturating_sub(1))
-            },
-            None => {
-                (true, self.line_offsets.len().saturating_sub(1))
-            },
+        let (reversed_print, mut line_idx) = match current_match {
+            Some(current_match) => (false, current_match.start_line_idx.saturating_sub(1)),
+            None => (true, self.line_offsets.len().saturating_sub(1)),
         };
 
         let mut total_line_heights = 0;
@@ -478,13 +488,19 @@ impl Main {
 
             let selected = match current_match {
                 Some(current_match) => {
-                    line_idx >= current_match.start_line_idx &&
-                    line_idx <= current_match.end_line_idx
-                },
+                    line_idx >= current_match.start_line_idx
+                        && line_idx <= current_match.end_line_idx
+                }
                 None => false,
             };
 
-            let split_height = draw_line(buf, middle_print_offset, middle_section_rect, content, selected);
+            let split_height = draw_line(
+                buf,
+                middle_print_offset,
+                middle_section_rect,
+                content,
+                selected,
+            );
             middle_print_offset += split_height as i16;
             if reversed_print {
                 total_line_heights += split_height;
@@ -499,26 +515,42 @@ impl Main {
         }
 
         if reversed_print {
-            middle_print_offset = (middle_section_rect.height as i16 - total_line_heights as i16).min(0);
+            middle_print_offset =
+                (middle_section_rect.height as i16 - total_line_heights as i16).min(0);
             for (content, selected) in lines_printed.iter().rev() {
-                middle_print_offset += draw_line(buf,
-                    middle_print_offset, middle_section_rect, *content, *selected) as i16;
+                middle_print_offset += draw_line(
+                    buf,
+                    middle_print_offset,
+                    middle_section_rect,
+                    *content,
+                    *selected,
+                ) as i16;
             }
 
             while middle_print_offset < middle_section_rect.height as i16 {
-                middle_print_offset += draw_line(buf, middle_print_offset, middle_section_rect, "", false) as i16;
+                middle_print_offset +=
+                    draw_line(buf, middle_print_offset, middle_section_rect, "", false) as i16;
             }
         }
 
         let buf = frame.buffer_mut();
         let (mut status, status_style) = if self.running {
-            ("Running".to_owned(), Style::new().fg(Color::Rgb(255, 128, 255)).bg(Color::Rgb(80, 0, 80)))
+            (
+                "Running".to_owned(),
+                Style::new()
+                    .fg(Color::Rgb(255, 128, 255))
+                    .bg(Color::Rgb(80, 0, 80)),
+            )
         } else {
             if self.exit.success() {
                 ("OK".to_owned(), title_style)
             } else {
-                (format!("Code {}", self.exit.code().unwrap_or(0)),
-                    Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(80, 0, 0)))
+                (
+                    format!("Code {}", self.exit.code().unwrap_or(0)),
+                    Style::new()
+                        .fg(Color::Rgb(255, 255, 255))
+                        .bg(Color::Rgb(80, 0, 0)),
+                )
             }
         };
 
@@ -527,10 +559,16 @@ impl Main {
         }
 
         let mut extra = vec![];
-        let nr_errors = self.found_matches.iter().filter(
-            |x| x.match_kind == MatchKind::Error).count();
-        let nr_warnings = self.found_matches.iter().filter(
-            |x| x.match_kind == MatchKind::Warning).count();
+        let nr_errors = self
+            .found_matches
+            .iter()
+            .filter(|x| x.match_kind == MatchKind::Error)
+            .count();
+        let nr_warnings = self
+            .found_matches
+            .iter()
+            .filter(|x| x.match_kind == MatchKind::Warning)
+            .count();
 
         if self.controller_tx.is_some() {
             extra.push(format!("🔌"));
@@ -545,11 +583,15 @@ impl Main {
             extra.push(format!("warnings: {}", nr_warnings));
         }
 
-        let status = format!("{} | {} lines | {}",
-            status, self.line_offsets.len(), extra.join(" | "));
+        let status = format!(
+            "{} | {} lines | {}",
+            status,
+            self.line_offsets.len(),
+            extra.join(" | ")
+        );
 
         let status = &status[..screen_width.min(status.len())];
-        let part = format!("{:<width$}!", status, width=screen_width);
+        let part = format!("{:<width$}!", status, width = screen_width);
         buf.set_string(0, rects[2].y, part, status_style);
     }
 
@@ -559,10 +601,10 @@ impl Main {
         match (s, e) {
             (Some(s), None) => {
                 return Some(&self.raw_output[*s..]);
-            },
+            }
             (Some(s), Some(e)) => {
                 return Some(&self.raw_output[*s..*e - 1]);
-            },
+            }
             _ => return None,
         }
     }
@@ -578,10 +620,17 @@ impl Main {
         }
     }
 
-    fn event_to_action_normal_mode(&mut self, event: ProgramEvent) -> anyhow::Result<Option<Action>> {
+    fn event_to_action_normal_mode(
+        &mut self,
+        event: ProgramEvent,
+    ) -> anyhow::Result<Option<Action>> {
         if let ProgramEvent::Crossterm(Event::Key(key)) = event {
             if key.kind == KeyEventKind::Press {
-                if let Some(action) = self.key_accum.accum_get(&Main::default_key_actions()).get_action(key) {
+                if let Some(action) = self
+                    .key_accum
+                    .accum_get(&Main::default_key_actions())
+                    .get_action(key)
+                {
                     return Ok(Some(action.clone()));
                 }
             }
@@ -621,8 +670,7 @@ impl Main {
 
             tokio::spawn(async move {
                 if let Ok(mut stream) = stream.await {
-                    let (tx_events, mut rx_events) =
-                        tokio::sync::mpsc::channel(10);
+                    let (tx_events, mut rx_events) = tokio::sync::mpsc::channel(10);
                     let mut editor = Editor { bound: true };
 
                     loop {
@@ -707,7 +755,12 @@ impl Main {
         }
 
         let context = Context {
-            dir: self.parsed_opts.parsing_cwd.to_string_lossy().as_ref().to_owned(),
+            dir: self
+                .parsed_opts
+                .parsing_cwd
+                .to_string_lossy()
+                .as_ref()
+                .to_owned(),
             command: self.cmd.join(" "),
             editor_update_tx: self.editor_update_tx.clone(),
             shared: self.shared.clone(),
@@ -722,17 +775,14 @@ impl Main {
 
         let make_svc = make_service_fn(move |_conn| {
             let context = context.clone();
-            let service_handler = move |req|
-                service_handle(context.clone(), req);
+            let service_handler = move |req| service_handle(context.clone(), req);
             async move { Ok::<_, Infallible>(service_fn(service_handler)) }
         });
 
         let bound = hyper::Server::bind_unix(&socket_path)?;
         let server = bound.serve(make_svc);
 
-        tokio::spawn(async move {
-            server.await
-        });
+        tokio::spawn(async move { server.await });
 
         Ok(())
     }
@@ -741,10 +791,18 @@ impl Main {
         if let Some(idx) = self.selected_match {
             if let Some(m) = self.found_matches.get(idx) {
                 if let Some(controller_tx) = &self.controller_tx {
-                    let _ = controller_tx.send(ControllerMessage::VisitSource {
-                        pathname: self.parsed_opts.parsing_cwd.join(&m.file_name).to_string_lossy().as_ref().to_owned(),
-                        line_idx: m.file_line as u32,
-                    }).await;
+                    let _ = controller_tx
+                        .send(ControllerMessage::VisitSource {
+                            pathname: self
+                                .parsed_opts
+                                .parsing_cwd
+                                .join(&m.file_name)
+                                .to_string_lossy()
+                                .as_ref()
+                                .to_owned(),
+                            line_idx: m.file_line as u32,
+                        })
+                        .await;
                 };
             }
         }
@@ -754,7 +812,12 @@ impl Main {
 }
 
 impl Context {
-    async fn editor_message(&self, msg: EditorMessage, sender: &mpsc::Sender<ControllerMessage>, editor: &mut Editor) -> anyhow::Result<EatMessage> {
+    async fn editor_message(
+        &self,
+        msg: EditorMessage,
+        sender: &mpsc::Sender<ControllerMessage>,
+        editor: &mut Editor,
+    ) -> anyhow::Result<EatMessage> {
         match msg {
             EditorMessage::SendInfo => {
                 return Ok(EatMessage::Info {
@@ -762,39 +825,58 @@ impl Context {
                     command: self.command.clone(),
                     bound: self.shared.lock().await.bound,
                 })
-            },
+            }
             EditorMessage::Bind => {
                 let (tx, mut rx) = tokio::sync::mpsc::channel(1);
-                self.editor_update_tx.send(EditorUpdate::Bind(sender.clone(), tx)).await?;
+                self.editor_update_tx
+                    .send(EditorUpdate::Bind(sender.clone(), tx))
+                    .await?;
                 let _msg = rx.recv().await;
                 editor.bound = true;
                 return Ok(EatMessage::Ok);
-            },
+            }
             EditorMessage::Next => {
                 self.editor_update_tx.send(EditorUpdate::Next).await?;
                 return Ok(EatMessage::Ok);
-            },
+            }
             EditorMessage::Prev => {
                 self.editor_update_tx.send(EditorUpdate::Prev).await?;
                 return Ok(EatMessage::Ok);
-            },
+            }
             EditorMessage::Redo => {
                 self.editor_update_tx.send(EditorUpdate::Redo).await?;
                 return Ok(EatMessage::Ok);
-            },
+            }
             EditorMessage::First => {
                 self.editor_update_tx.send(EditorUpdate::First).await?;
                 return Ok(EatMessage::Ok);
-            },
+            }
         }
     }
 }
 
-fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undecoded_str: &str, selected: bool) -> u16 {
-    let mut cs = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(0, 0, 0));
-    let cs_reset = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(0, 0, 0)).reset();
-    let orig_cs = if !selected { cs } else { cs.bg(Color::Rgb(80, 80, 80)) };
-    let bad_ansi = Style::new().fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(255, 0, 0));
+fn draw_line(
+    buf: &mut ratatui::prelude::Buffer,
+    rel_y: i16,
+    bounds: Rect,
+    undecoded_str: &str,
+    selected: bool,
+) -> u16 {
+    let mut cs = Style::new()
+        .fg(Color::Rgb(255, 255, 255))
+        .bg(Color::Rgb(0, 0, 0));
+    let cs_reset = Style::new()
+        .fg(Color::Rgb(255, 255, 255))
+        .bg(Color::Rgb(0, 0, 0))
+        .reset();
+    let orig_cs = if !selected {
+        cs
+    } else {
+        cs.bg(Color::Rgb(80, 80, 80))
+    };
+    let bad_ansi = Style::new()
+        .fg(Color::Rgb(255, 255, 255))
+        .bg(Color::Rgb(255, 0, 0));
     let mut lines = 1;
     let mut y = (bounds.y as i16).saturating_add(rel_y);
     let mut x = bounds.x;
@@ -809,10 +891,12 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
     }
 
     let mut remove_cr: Vec<char> = undecoded_str.chars().collect();
-    while let Some(last_r) =  remove_cr.iter().rposition(|x| *x == '\r') {
-        if last_r + 1 == remove_cr.len() { // Ends with \r, let's find the second one
+    while let Some(last_r) = remove_cr.iter().rposition(|x| *x == '\r') {
+        if last_r + 1 == remove_cr.len() {
+            // Ends with \r, let's find the second one
             remove_cr.truncate(last_r);
-        } else { // There's text after '\r', let's just take it
+        } else {
+            // There's text after '\r', let's just take it
             remove_cr = remove_cr.split_off(last_r + 1);
             break;
         }
@@ -823,7 +907,7 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
         match item {
             ansi_parser::Output::TextBlock(b) => {
                 let v: Vec<char> = b.chars().collect();
-                let mut v_scan  = 0;
+                let mut v_scan = 0;
                 while v_scan < v.len() {
                     if y >= bounds.bottom() as i16 {
                         break;
@@ -855,78 +939,68 @@ fn draw_line(buf: &mut ratatui::prelude::Buffer, rel_y: i16, bounds: Rect, undec
                     x = x.saturating_add(chunk.len() as u16);
                     v_scan += remaining;
                 }
-            },
-            ansi_parser::Output::Escape(e) => {
-                match e {
-                    AnsiSequence::SetGraphicsMode(v) => {
-                        match v.as_slice() {
-                            &[38, 2, r, g, b] => {
-                                cs = cs.fg(Color::Rgb(r, g, b));
-                            }
-                            &[48, 2, r, g, b] => {
-                                cs = cs.bg(Color::Rgb(r, g, b));
-                            }
-                            &[38, 5, r] => {
-                                cs = cs.fg(Color::Indexed(r));
-                            }
-                            &[48, 5, r] => {
-                                cs = cs.bg(Color::Indexed(r));
-                            }
-                            _ => {
-                                for byte in v {
-                                    match byte {
-                                        0 => {
-                                            cs = orig_cs;
-                                        }
-                                        30 => cs = cs.fg(Color::Black),
-                                        31 => cs = cs.fg(Color::LightRed),
-                                        32 => cs = cs.fg(Color::LightGreen),
-                                        33 => cs = cs.fg(Color::LightYellow),
-                                        34 => cs = cs.fg(Color::LightBlue),
-                                        35 => cs = cs.fg(Color::LightMagenta),
-                                        36 => cs = cs.fg(Color::LightCyan),
-                                        37 => cs = cs.fg(Color::White),
-                                        1 => cs = cs.add_modifier(Modifier::BOLD),
-                                        2 => cs = cs.add_modifier(Modifier::DIM),
-                                        3 => cs = cs.add_modifier(Modifier::ITALIC),
-                                        4 => cs = cs.add_modifier(Modifier::UNDERLINED),
-                                        5 => cs = cs.add_modifier(Modifier::SLOW_BLINK),
-                                        6 => cs = cs.add_modifier(Modifier::RAPID_BLINK),
-                                        7 => cs = cs.add_modifier(Modifier::REVERSED),
-                                        8 => cs = cs.add_modifier(Modifier::HIDDEN),
-                                        9 => cs = cs.add_modifier(Modifier::CROSSED_OUT),
-                                        e => {
-                                            match unknown {
-                                                Some(x) => {
-                                                    unknown = Some(format!("<<{} - SGD[{:?}]>>", x, e))
-                                                },
-                                                None => {
-                                                    unknown = Some(format!("<<SGD[{:?}]>>", e))
-                                                },
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    AnsiSequence::EraseLine => {
-                        x = start_of_line.0;
-                        let empty = " ".repeat(bounds.width as usize);
-                        for cy in start_of_line.1..=y {
-                            if cy >= bounds.y as i16 {
-                                buf.set_string(x, cy as u16, &empty, cs);
-                            }
-                        }
-                        y = start_of_line.1;
-                        line_has_content = true;
-                        lines = 1;
-                    }
-                    e => {
-                        unknown = Some(format!("<<ESC[{:?};>>", e));
-                    }
-                }
             }
+            ansi_parser::Output::Escape(e) => match e {
+                AnsiSequence::SetGraphicsMode(v) => match v.as_slice() {
+                    &[38, 2, r, g, b] => {
+                        cs = cs.fg(Color::Rgb(r, g, b));
+                    }
+                    &[48, 2, r, g, b] => {
+                        cs = cs.bg(Color::Rgb(r, g, b));
+                    }
+                    &[38, 5, r] => {
+                        cs = cs.fg(Color::Indexed(r));
+                    }
+                    &[48, 5, r] => {
+                        cs = cs.bg(Color::Indexed(r));
+                    }
+                    _ => {
+                        for byte in v {
+                            match byte {
+                                0 => {
+                                    cs = orig_cs;
+                                }
+                                30 => cs = cs.fg(Color::Black),
+                                31 => cs = cs.fg(Color::LightRed),
+                                32 => cs = cs.fg(Color::LightGreen),
+                                33 => cs = cs.fg(Color::LightYellow),
+                                34 => cs = cs.fg(Color::LightBlue),
+                                35 => cs = cs.fg(Color::LightMagenta),
+                                36 => cs = cs.fg(Color::LightCyan),
+                                37 => cs = cs.fg(Color::White),
+                                1 => cs = cs.add_modifier(Modifier::BOLD),
+                                2 => cs = cs.add_modifier(Modifier::DIM),
+                                3 => cs = cs.add_modifier(Modifier::ITALIC),
+                                4 => cs = cs.add_modifier(Modifier::UNDERLINED),
+                                5 => cs = cs.add_modifier(Modifier::SLOW_BLINK),
+                                6 => cs = cs.add_modifier(Modifier::RAPID_BLINK),
+                                7 => cs = cs.add_modifier(Modifier::REVERSED),
+                                8 => cs = cs.add_modifier(Modifier::HIDDEN),
+                                9 => cs = cs.add_modifier(Modifier::CROSSED_OUT),
+                                e => match unknown {
+                                    Some(x) => unknown = Some(format!("<<{} - SGD[{:?}]>>", x, e)),
+                                    None => unknown = Some(format!("<<SGD[{:?}]>>", e)),
+                                },
+                            }
+                        }
+                    }
+                },
+                AnsiSequence::EraseLine => {
+                    x = start_of_line.0;
+                    let empty = " ".repeat(bounds.width as usize);
+                    for cy in start_of_line.1..=y {
+                        if cy >= bounds.y as i16 {
+                            buf.set_string(x, cy as u16, &empty, cs);
+                        }
+                    }
+                    y = start_of_line.1;
+                    line_has_content = true;
+                    lines = 1;
+                }
+                e => {
+                    unknown = Some(format!("<<ESC[{:?};>>", e));
+                }
+            },
         }
 
         if let Some(unknown) = unknown.take() {
@@ -1012,10 +1086,7 @@ enum EditorMessage {
 
 #[derive(Serialize)]
 enum ControllerMessage {
-    VisitSource {
-        pathname: String,
-        line_idx: u32,
-    }
+    VisitSource { pathname: String, line_idx: u32 },
 }
 
 #[derive(Serialize, Deserialize)]
@@ -1089,12 +1160,18 @@ impl Main {
             running: false,
             unexpected: "".to_owned(),
             matchers: vec![
-                (MatchKind::Error,
-                 Regex::new(r#"(?m)^error(\[.*\])?:.*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#)?
-                 ),
-                (MatchKind::Warning,
-                 Regex::new(r#"(?m)(^warning\[|^warning:).*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#)?
-                 ),
+                (
+                    MatchKind::Error,
+                    Regex::new(
+                        r#"(?m)^error(\[.*\])?:.*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#,
+                    )?,
+                ),
+                (
+                    MatchKind::Warning,
+                    Regex::new(
+                        r#"(?m)(^warning\[|^warning:).*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#,
+                    )?,
+                ),
             ],
             output_regex_scan: 0,
             found_matches: vec![],
@@ -1118,9 +1195,10 @@ async fn eat_async(po: ParsedOpts, eat_mode: &[String]) -> anyhow::Result<()> {
 }
 
 fn eat(po: ParsedOpts, eat_mode: &[String]) -> anyhow::Result<()> {
-    tokio::runtime::Builder::new_current_thread().enable_all().build()?.block_on(async move {
-        eat_async(po, eat_mode).await
-    })?;
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()?
+        .block_on(async move { eat_async(po, eat_mode).await })?;
 
     Ok(())
 }
@@ -1149,14 +1227,16 @@ fn with_cwd(p: &Option<PathBuf>) -> PathBuf {
         Err(e) => {
             eprintln!("error getting current directory: {:?}", e);
             std::process::exit(255);
-        },
+        }
     };
 
     match p {
         Some(p) => {
             let p = if p.to_string_lossy() == "@git" {
-                match std::process::Command::new("bash").arg("-c")
-                    .arg("git rev-parse --show-toplevel 2>/dev/null").output()
+                match std::process::Command::new("bash")
+                    .arg("-c")
+                    .arg("git rev-parse --show-toplevel 2>/dev/null")
+                    .output()
                 {
                     Ok(v) => PathBuf::from(String::from_utf8_lossy(&v.stdout).as_ref().trim()),
                     Err(_) => p.clone(),
@@ -1165,7 +1245,7 @@ fn with_cwd(p: &Option<PathBuf>) -> PathBuf {
                 p.clone()
             };
             cwd.join(p)
-        },
+        }
         None => cwd,
     }
 }
@@ -1179,18 +1259,24 @@ fn main() {
     let opts = Opts::from_args();
     let exec_cwd = with_cwd(&opts.exec_cwd);
     let parsing_cwd = with_cwd(&opts.parsing_cwd);
-    let po = ParsedOpts { exec_cwd, parsing_cwd };
-    let err = eat(po, match &opts.cmd {
-        Sub::Eat(items) => &items,
-    });
+    let po = ParsedOpts {
+        exec_cwd,
+        parsing_cwd,
+    };
+    let err = eat(
+        po,
+        match &opts.cmd {
+            Sub::Eat(items) => &items,
+        },
+    );
 
     match err {
         Ok(_) => {
             std::process::exit(0);
-        },
+        }
         Err(e) => {
             eprintln!("error: {:?}", e);
             std::process::exit(255);
-        },
+        }
     }
 }
