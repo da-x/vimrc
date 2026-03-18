@@ -23,6 +23,8 @@ use tokio::{
     io::AsyncReadExt as _,
     sync::{mpsc, Mutex},
 };
+use tracing::debug;
+use tracing_subscriber::{fmt, EnvFilter};
 
 mod event;
 mod keyaction;
@@ -236,7 +238,11 @@ impl Main {
             if let Some(pos) = rest.find('\n') {
                 let pos = self.output_line_scan + pos + 1;
                 self.line_offsets.push(pos);
-                for item in self.raw_output[self.output_line_scan..pos].ansi_parse() {
+                let raw_data = &self.raw_output[self.output_line_scan..pos];
+
+                debug!("raw_data {:?}:", raw_data);
+                for item in raw_data.ansi_parse() {
+                    debug!("  item {:?}", item);
                     match item {
                         ansi_parser::Output::TextBlock(text) => {
                             let mut text = Vec::from(text.as_bytes());
@@ -274,6 +280,8 @@ impl Main {
                     let all = cap.get(0);
                     let filename = cap.name("filename");
                     let line = cap.name("line");
+
+                    debug!("match {:?}:", cap);
 
                     if let (Some(line), Some(filename), Some(all)) = (line, filename, all) {
                         last_match_end = all.end().max(last_match_end);
@@ -1179,6 +1187,18 @@ impl Main {
                         r#"(?m)(^warning\[|^warning:).*\n.*-->.* (?P<filename>[^:]+):(?P<line>[0-9]+)(:[0-9]+)?\n"#,
                     )?,
                 ),
+                (
+                    MatchKind::Error,
+                    Regex::new(
+                        r#"(?m)^ ?(?P<filename>[^\n:]+):(?P<line>[0-9]+):([0-9]+:)? error:[^\n]*\n"#,
+                    )?,
+                ),
+                (
+                    MatchKind::Warning,
+                    Regex::new(
+                        r#"(?m)^ ?(?P<filename>[^\n:]+):(?P<line>[0-9]+):([0-9]+:)? warning:[^\n]*\n"#,
+                    )?,
+                ),
             ],
             output_regex_scan: 0,
             found_matches: vec![],
@@ -1214,6 +1234,9 @@ fn eat(po: ParsedOpts, eat_mode: &[String]) -> anyhow::Result<()> {
 pub struct Opts {
     #[structopt(long, short = "e")]
     pub exec_cwd: Option<PathBuf>,
+
+    #[structopt(long, help = "Log file path")]
+    pub logfile: Option<String>,
 
     #[structopt(long, short = "c")]
     pub parsing_cwd: Option<PathBuf>,
@@ -1262,8 +1285,23 @@ struct ParsedOpts {
     parsing_cwd: PathBuf,
 }
 
-fn main() {
+fn init_tracing(logfile: Option<&str>) -> anyhow::Result<()> {
+    if let Some(logfile_path) = logfile {
+        let file = std::fs::File::create(logfile_path)?;
+
+        fmt()
+            .with_env_filter(EnvFilter::from_default_env())
+            .with_writer(file)
+            .with_ansi(false)
+            .with_target(false)
+            .init();
+    }
+    Ok(())
+}
+
+fn main() -> anyhow::Result<()> {
     let opts = Opts::from_args();
+    init_tracing(opts.logfile.as_deref())?;
     let exec_cwd = with_cwd(&opts.exec_cwd);
     let parsing_cwd = with_cwd(&opts.parsing_cwd);
     let po = ParsedOpts {
